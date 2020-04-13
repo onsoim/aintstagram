@@ -26,7 +26,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintGuide_end="60dp"/>
 
-    <Button
+    <ImageButton
         android:id="@+id/button_to_camera"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -36,6 +36,9 @@
         app:layout_constraintBottom_toTopOf="@id/guideline_top_menu"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/button_logo"
+        android:src="@drawable/camera"
+        android:scaleType="fitCenter"
+        android:background="@android:color/background_dark"
         tools:ignore="MissingConstraints" />
 
     <Button
@@ -48,9 +51,13 @@
         app:layout_constraintBottom_toTopOf="@id/guideline_top_menu"
         app:layout_constraintLeft_toRightOf="@id/button_to_camera"
         app:layout_constraintRight_toLeftOf="@id/button_to_chat"
+        android:text="Aintstagram"
+        android:textColor="@android:color/white"
+        android:textStyle="italic"
+        android:background="@android:color/background_dark"
         tools:ignore="MissingConstraints" />
 
-    <Button
+    <ImageButton
         android:id="@+id/button_to_chat"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -60,6 +67,9 @@
         app:layout_constraintBottom_toTopOf="@id/guideline_top_menu"
         app:layout_constraintLeft_toRightOf="@id/button_logo"
         app:layout_constraintRight_toRightOf="parent"
+        android:src="@drawable/sms"
+        android:scaleType="fitCenter"
+        android:background="@android:color/background_dark"
         tools:ignore="MissingConstraints" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -73,7 +83,7 @@
         android:scrollbars="horizontal"
         tools:ignore="MissingConstraints" />
 
-    <Button
+    <ImageButton
         android:id="@+id/button_to_home"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -83,9 +93,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/button_to_search"
+        android:src="@drawable/home"
+        android:scaleType="fitCenter"
+        android:background="@android:color/background_dark"
         tools:ignore="MissingConstraints" />
 
-    <Button
+    <ImageButton
         android:id="@+id/button_to_search"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -95,9 +108,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/button_to_home"
         app:layout_constraintRight_toLeftOf="@id/button_to_add"
+        android:src="@drawable/search"
+        android:scaleType="fitCenter"
+        android:background="@android:color/background_dark"
         tools:ignore="MissingConstraints" />
 
-    <Button
+    <ImageButton
         android:id="@+id/button_to_add"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -107,9 +123,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/button_to_search"
         app:layout_constraintRight_toLeftOf="@id/button_to_history"
+        android:src="@drawable/add"
+        android:scaleType="fitCenter"
+        android:background="@android:color/background_dark"
         tools:ignore="MissingConstraints" />
 
-    <Button
+    <ImageButton
         android:id="@+id/button_to_history"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -119,9 +138,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/button_to_add"
         app:layout_constraintRight_toLeftOf="@id/button_to_info"
+        android:src="@drawable/heart"
+        android:scaleType="fitCenter"
+        android:background="@android:color/background_dark"
         tools:ignore="MissingConstraints" />
 
-    <Button
+    <ImageButton
         android:id="@+id/button_to_info"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -131,6 +153,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/button_to_history"
         app:layout_constraintRight_toRightOf="parent"
+        android:src="@drawable/userinfo"
+        android:scaleType="fitCenter"
+        android:background="@android:color/background_dark"
         tools:ignore="MissingConstraints" />
 
     <androidx.recyclerview.widget.RecyclerView
