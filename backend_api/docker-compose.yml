@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+ graphql:
+  container_name: aintstagram
+  image: graphql-django:1.0
+  environment:
+    - DJANGO_DEBUG=true
+  volumes:
+    - ./code:/code
+  ports:
+    - "8000:8000"
+  tty: true
+  command: python3 ./backend_aintstagram/manage.py runserver 0:8000
