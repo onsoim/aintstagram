@@ -2,6 +2,7 @@ package com.ssg.aintstagram;
 
 import android.os.Message;
 import android.os.Handler;
+import com.kakao.auth.Session;
 
 public class IntroThread extends Thread {
     private Handler handler;
@@ -16,7 +17,13 @@ public class IntroThread extends Thread {
 
         try{
             Thread.sleep(2000);
-            msg.what = 1;
+
+            if(Session.getCurrentSession().isOpened()){
+                msg.what = 1;
+            }
+            else{
+                msg.what = 2;
+            }
             handler.sendEmptyMessage(msg.what);
         } catch (Exception e){
             e.printStackTrace();

@@ -24,6 +24,11 @@ public class IntroActivity extends AppCompatActivity {
                 Intent intent = new Intent(IntroActivity.this, MainActivity.class);
                 startActivity(intent);
             }
+            else{
+                Intent intent = new Intent(IntroActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+            finish();
         }
     };
 }
