@@ -32,4 +32,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    implementation group: 'com.kakao.sdk', name: 'usermgmt', version: '1.27.0'
+    // 카카오톡
+    implementation group: 'com.kakao.sdk', name: 'kakaotalk', version: '1.27.0'
+    // 카카오링크
+    implementation group: 'com.kakao.sdk', name: 'kakaolink', version: '1.27.0'
 }
