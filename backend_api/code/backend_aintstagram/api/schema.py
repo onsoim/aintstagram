@@ -16,4 +16,30 @@ class Query(graphene.ObjectType):
         return UserModel.objects.all()
 
 
-schema = graphene.Schema(query=Query)
+class CreateUser(graphene.Mutation):
+    name = graphene.String()
+    kakaoID = graphene.Int()
+    date = graphene.DateTime()
+
+    class Arguments:
+        name = graphene.String(required=True)
+        kakaoID = graphene.Int(required=True)
+
+    def mutate(self, info, name, kakaoID):
+        user = UserModel(name=name, kakaoID=kakaoID)
+        user.save()
+        return CreateUser(
+            name=user.name,
+            kakaoID=user.kakaoID,
+            date=user.date
+        )
+
+
+class Mutation(graphene.ObjectType):
+    create_user = CreateUser.Field()
+
+
+schema = graphene.Schema(
+    query=Query,
+    mutation=Mutation
+)
