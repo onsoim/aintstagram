@@ -26,8 +26,11 @@ class CreateUser(graphene.Mutation):
         kakaoID = graphene.Int(required=True)
 
     def mutate(self, info, name, kakaoID):
-        user = UserModel(name=name, kakaoID=kakaoID)
-        user.save()
+        try:
+            user = UserModel.objects.get(kakaoID=kakaoID)
+        except:
+            user = UserModel(name=name, kakaoID=kakaoID)
+            user.save()
         return CreateUser(
             name=user.name,
             kakaoID=user.kakaoID,

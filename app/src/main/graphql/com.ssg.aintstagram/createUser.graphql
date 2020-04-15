@@ -1,0 +1,7 @@
+mutation create_user($name:String!, $kakaoID:Int!){
+    createUser (name: $name, kakaoID: $kakaoID){
+        name
+        kakaoID
+        date
+    }
+}

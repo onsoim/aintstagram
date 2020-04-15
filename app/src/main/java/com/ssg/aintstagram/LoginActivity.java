@@ -2,10 +2,15 @@ package com.ssg.aintstagram;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.annotation.Nullable;
 
+import com.apollographql.apollo.ApolloCall;
+import com.apollographql.apollo.ApolloClient;
+import com.apollographql.apollo.api.Response;
+import com.apollographql.apollo.exception.ApolloException;
 import com.kakao.auth.ErrorCode;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.Session;
@@ -21,14 +26,16 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+
+
 public class LoginActivity extends Activity {
 
     private ISessionCallback sessionCallback = new ISessionCallback() {
         @Override
         public void onSessionOpened() {
             getUserInfo();
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
         }
 
         @Override
@@ -80,12 +87,24 @@ public class LoginActivity extends Activity {
             public void onSuccess(MeV2Response result) {
                 String Nickname = result.getNickname();
                 int kakaoID = (int) result.getId();
-                Log.e("LOG HERE", "requestMe onSuccess message : " + Nickname + " " + kakaoID);
 
-                UserManagement.getInstance().requestLogout(new LogoutResponseCallback() {
+                String base_URL = "http://10.0.2.2:8000/graphql/";
+                OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                ApolloClient apolloClient = ApolloClient.builder().serverUrl(base_URL).okHttpClient(okHttpClient).build();
+
+                final Create_userMutation userCreation = Create_userMutation.builder().name(Nickname).kakaoID(kakaoID).build();
+
+                apolloClient.mutate(userCreation).enqueue(new ApolloCall.Callback<Create_userMutation.Data>() {
                     @Override
-                    public void onCompleteLogout() {
+                    public void onResponse(Response<Create_userMutation.Data> response) {
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
 
+                    }
+
+                    @Override
+                    public void onFailure(ApolloException e) {
+                        Log.e("grapql", e.getLocalizedMessage());
                     }
                 });
             }
