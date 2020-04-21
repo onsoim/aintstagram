@@ -62,32 +62,12 @@ public class ProfileActivity extends Activity {
 
         setBtn();
 
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
         getUserProfile();
-
-        Button btn_name = (Button)findViewById(R.id.button_to_username);
-        btn_name.setTextColor(Color.WHITE);
-        btn_name.setText(username.toString());
-
-        Button btn_posts = (Button)findViewById(R.id.user_posts);
-        btn_posts.setText(String.valueOf(post_cnt));
-
-        Button btn_follow = (Button)findViewById(R.id.user_followers);
-        btn_follow.setText(String.valueOf(follower_cnt));
-
-        Button btn_following = (Button)findViewById(R.id.user_followings);
-        btn_following.setText(String.valueOf(following_cnt));
-
-        TextView v_comment = (TextView)findViewById(R.id.user_comment);
-        Log.e("LOG", text_comment.toString());
-        v_comment.setText(text_comment);
-
     }
 
     public void setBtn() {
@@ -147,12 +127,26 @@ public class ProfileActivity extends Activity {
                 apolloClient.query(u).enqueue(new ApolloCall.Callback<UserTypeQuery.Data>() {
                     @Override
                     public void onResponse(@NotNull Response<UserTypeQuery.Data> response) {
-                        username.append(response.data().users().get(0).name);
-                        text_comment.append(response.data().users().get(0).textComment);
                         post_cnt = response.data().users().get(0).postCount;
                         follower_cnt = response.data().users().get(0).followerCount;
                         following_cnt = response.data().users().get(0).followingCount;
                         is_open = response.data().users().get(0).isOpen;
+
+                        Button btn_name = (Button)findViewById(R.id.button_to_username);
+                        btn_name.setTextColor(Color.WHITE);
+                        btn_name.setText(response.data().users().get(0).name);
+
+                        Button btn_posts = (Button)findViewById(R.id.user_posts);
+                        btn_posts.setText(String.valueOf(post_cnt)+"\n게시물");
+
+                        Button btn_follow = (Button)findViewById(R.id.user_followers);
+                        btn_follow.setText(String.valueOf(follower_cnt)+"\n팔로워");
+
+                        Button btn_following = (Button)findViewById(R.id.user_followings);
+                        btn_following.setText(String.valueOf(following_cnt)+"\n팔로잉");
+
+                        TextView v_comment = (TextView)findViewById(R.id.user_comment);
+                        v_comment.setText(response.data().users().get(0).textComment);
                     }
 
                     @Override
