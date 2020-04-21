@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity{
     private static final int REQUEST_TAKE_ALBUM = 2;
     private ImageButton btn_camera;
     private ImageButton btn_add;
+    private ImageButton btn_profile;
 
 
     String[] PERMISSIONS = {
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity{
     public void setBtn() {
         btn_camera = (ImageButton) findViewById(R.id.button_to_camera);
         btn_add = (ImageButton) findViewById(R.id.button_to_add);
+        btn_profile = (ImageButton) findViewById(R.id.button_to_info);
 
         View.OnClickListener Listener = new View.OnClickListener() {
             @Override
@@ -81,12 +83,17 @@ public class MainActivity extends AppCompatActivity{
                             startActivityForResult(intent, REQUEST_TAKE_ALBUM);
                         }
                         break;
+
+                    case R.id.button_to_info:
+                        Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                        startActivity(intent);
                 }
             }
         };
 
         btn_camera.setOnClickListener(Listener);
         btn_add.setOnClickListener(Listener);
+        btn_profile.setOnClickListener(Listener);
     }
 }
 

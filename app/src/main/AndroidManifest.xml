@@ -25,6 +25,8 @@
         </activity>
         <activity android:name=".MainActivity">
         </activity>
+        <activity android:name=".ProfileActivity" />
+
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="3f5c6005c0954ba8a11e315b702a5442" />

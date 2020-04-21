@@ -30,7 +30,6 @@
         android:id="@+id/button_to_username"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:text="wizley"
         android:textColorHint="@android:color/white"
         app:layout_constraintVertical_weight="3"
         app:layout_constraintHorizontal_weight="3"
@@ -56,27 +55,93 @@
         android:background="@android:color/background_dark"
         tools:ignore="MissingConstraints" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/special_tags"
-        android:layout_height="30dp"
-        android:layout_width="match_parent"
+    <View
+        android:id="@+id/user_profile"
+        android:layout_height="150dp"
+        android:layout_width="0dp"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintHorizontal_weight="1.5"
         app:layout_constraintTop_toTopOf="@id/guideline_top_menu"
-        app:layout_constraintBottom_toTopOf="@id/special_posts"
+        app:layout_constraintBottom_toTopOf="@id/user_comment"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:scrollbars="horizontal"
+        app:layout_constraintRight_toLeftOf="@id/user_posts"
         tools:ignore="MissingConstraints" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/special_posts"
-        android:layout_height="0dp"
-        android:layout_width="match_parent"
-        app:layout_constraintTop_toBottomOf="@id/special_tags"
-        app:layout_constraintBottom_toTopOf="@id/guideline_bottom_menu"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:scrollbars="horizontal"
+    <Button
+        android:id="@+id/user_posts"
+        android:layout_height="150dp"
+        android:layout_width="0dp"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toTopOf="@id/guideline_top_menu"
+        app:layout_constraintBottom_toTopOf="@id/user_comment"
+        app:layout_constraintLeft_toRightOf="@id/user_profile"
+        app:layout_constraintRight_toLeftOf="@id/user_followers"
         tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/user_followers"
+        android:layout_height="150dp"
+        android:layout_width="0dp"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toTopOf="@id/guideline_top_menu"
+        app:layout_constraintBottom_toTopOf="@id/user_comment"
+        app:layout_constraintLeft_toRightOf="@id/user_posts"
+        app:layout_constraintRight_toLeftOf="@id/user_followings"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/user_followings"
+        android:layout_height="150dp"
+        android:layout_width="0dp"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toTopOf="@id/guideline_top_menu"
+        app:layout_constraintBottom_toTopOf="@id/user_comment"
+        app:layout_constraintLeft_toRightOf="@id/user_followers"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/user_comment"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text=""
+        app:layout_constraintTop_toBottomOf="@id/user_profile"
+        app:layout_constraintBottom_toTopOf="@id/edit_profile"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:id="@+id/edit_profile"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="프로필 수정"
+        app:layout_constraintTop_toBottomOf="@id/user_comment"
+        app:layout_constraintBottom_toTopOf="@id/my_pics"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <ImageButton
+        android:id="@+id/my_pics"
+        android:layout_height="40dp"
+        android:layout_width="0dp"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toBottomOf="@id/edit_profile"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/others_pics" />
+
+    <ImageButton
+        android:id="@+id/others_pics"
+        android:layout_height="40dp"
+        android:layout_width="0dp"
+        app:layout_constraintHorizontal_weight="1"
+        android:text="프로필 수정"
+        app:layout_constraintTop_toBottomOf="@id/edit_profile"
+        app:layout_constraintLeft_toRightOf="@id/my_pics"
+        app:layout_constraintRight_toRightOf="parent" />
+
 
     <ImageButton
         android:id="@+id/button_to_home"

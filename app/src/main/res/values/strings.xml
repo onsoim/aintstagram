@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">aintstagram</string>
+    <string name="comment">%s</string>
 </resources>

@@ -1,0 +1,11 @@
+query userType($name:String, $kakaoID:Int){
+    users (username: $name, kakaoID: $kakaoID){
+        name
+        kakaoID
+        textComment
+        postCount
+        followerCount
+        followingCount
+        isOpen
+    }
+}
