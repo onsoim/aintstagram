@@ -11,7 +11,7 @@ class UserModel(models.Model):
     post_count = models.IntegerField(verbose_name="포스트", default=0)
     follower_count = models.IntegerField(verbose_name="팔로워", default=0)
     following_count = models.IntegerField(verbose_name="팔로잉", default=0)
-    is_open = models.BooleanField(verbose_name="비공개 여부", default=True)
+    is_open = models.BooleanField(verbose_name="공개 여부", default=True)
 
     def __str__(self):
         return self.name

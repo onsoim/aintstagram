@@ -10,10 +10,22 @@ class UserType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    users = graphene.List(UserType)
+    users = graphene.List(UserType,
+                          kakaoID=graphene.Int(),
+                          username=graphene.String(),
+                          )
 
-    def resolve_users(self, info):
-        return UserModel.objects.all()
+    def resolve_users(self, info, kakaoID=None, username=None):
+        query = UserModel.objects.all()
+
+        if kakaoID:
+            return UserModel.objects.filter(kakaoID=kakaoID)
+
+        elif username:
+            return UserModel.objects.filter(name=username)
+
+        else:
+            return query
 
 
 class CreateUser(graphene.Mutation):
