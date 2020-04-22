@@ -173,24 +173,19 @@ public class ProfileActivity extends Activity {
                         mThread.start();
 
                         Button btn_name = (Button)findViewById(R.id.button_to_username);
-                        btn_name.setTextColor(Color.WHITE);
                         btn_name.setText(response.data().users().get(0).name);
 
                         Button btn_posts = (Button)findViewById(R.id.user_posts);
                         btn_posts.setText(String.valueOf(post_cnt)+"\n게시물");
-                        btn_posts.setTextColor(Color.WHITE);
 
                         Button btn_follow = (Button)findViewById(R.id.user_followers);
                         btn_follow.setText(String.valueOf(follower_cnt)+"\n팔로워");
-                        btn_follow.setTextColor(Color.WHITE);
 
                         Button btn_following = (Button)findViewById(R.id.user_followings);
                         btn_following.setText(String.valueOf(following_cnt)+"\n팔로잉");
-                        btn_following.setTextColor(Color.WHITE);
 
                         TextView v_comment = (TextView)findViewById(R.id.user_comment);
                         v_comment.setText(response.data().users().get(0).textComment);
-                        v_comment.setTextColor(Color.WHITE);
 
                     }
 
