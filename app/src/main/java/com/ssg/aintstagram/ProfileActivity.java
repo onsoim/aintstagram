@@ -5,6 +5,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -30,6 +33,11 @@ import com.kakao.usermgmt.response.MeV2Response;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +55,7 @@ public class ProfileActivity extends Activity {
     private int follower_cnt = 0;
     private int following_cnt = 0;
     private boolean is_open = true;
+    Bitmap bitmap;
 
     String[] PERMISSIONS = {
             android.Manifest.permission.CAMERA,
@@ -131,6 +140,37 @@ public class ProfileActivity extends Activity {
                         follower_cnt = response.data().users().get(0).followerCount;
                         following_cnt = response.data().users().get(0).followingCount;
                         is_open = response.data().users().get(0).isOpen;
+                        final String profile_img = getString(R.string.media_url) + response.data().users().get(0).profile;
+
+                        Thread mThread = new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    URL img_url = new URL(profile_img);
+                                    HttpURLConnection conn = (HttpURLConnection) img_url.openConnection();
+                                    conn.setDoInput(true);
+                                    conn.connect();
+
+                                    InputStream is = conn.getInputStream();
+                                    bitmap = BitmapFactory.decodeStream(is);
+
+                                    runOnUiThread(new Runnable(){
+                                        public void run(){
+                                            ImageView v_profile = (ImageView)findViewById(R.id.user_profile);
+                                            v_profile.setImageBitmap(bitmap);
+                                        }
+                                    });
+                                } catch(
+                                MalformedURLException e) {
+                                    e.printStackTrace();
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        };
+
+                        mThread.start();
 
                         Button btn_name = (Button)findViewById(R.id.button_to_username);
                         btn_name.setTextColor(Color.WHITE);
@@ -138,15 +178,20 @@ public class ProfileActivity extends Activity {
 
                         Button btn_posts = (Button)findViewById(R.id.user_posts);
                         btn_posts.setText(String.valueOf(post_cnt)+"\n게시물");
+                        btn_posts.setTextColor(Color.WHITE);
 
                         Button btn_follow = (Button)findViewById(R.id.user_followers);
                         btn_follow.setText(String.valueOf(follower_cnt)+"\n팔로워");
+                        btn_follow.setTextColor(Color.WHITE);
 
                         Button btn_following = (Button)findViewById(R.id.user_followings);
                         btn_following.setText(String.valueOf(following_cnt)+"\n팔로잉");
+                        btn_following.setTextColor(Color.WHITE);
 
                         TextView v_comment = (TextView)findViewById(R.id.user_comment);
                         v_comment.setText(response.data().users().get(0).textComment);
+                        v_comment.setTextColor(Color.WHITE);
+
                     }
 
                     @Override

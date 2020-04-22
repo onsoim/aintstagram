@@ -19,6 +19,9 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 secret_file = os.path.join(BASE_DIR, 'backend_aintstagram/secret.json')
 
 with open(secret_file) as f:

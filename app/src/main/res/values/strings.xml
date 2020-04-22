@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">aintstagram</string>
-    <string name="comment">%s</string>
+    <string name="media_url">http://10.0.2.2:8000/media/</string>
 </resources>
