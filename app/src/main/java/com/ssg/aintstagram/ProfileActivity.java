@@ -48,6 +48,7 @@ public class ProfileActivity extends Activity {
     private static final int REQUEST_TAKE_ALBUM = 2;
     private ImageButton btn_add;
     private ImageButton btn_profile;
+    private ImageButton btn_home;
 
     private StringBuilder username = new StringBuilder("");
     private StringBuilder text_comment = new StringBuilder("");
@@ -82,18 +83,25 @@ public class ProfileActivity extends Activity {
     public void setBtn() {
         btn_add = (ImageButton) findViewById(R.id.button_to_add);
         btn_profile = (ImageButton) findViewById(R.id.button_to_info);
+        btn_home = (ImageButton) findViewById(R.id.button_to_home);
 
         View.OnClickListener Listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int permissionCheck;
+                Intent intent = new Intent();
                 switch (v.getId()) {
+                    case R.id.button_to_home:
+                        intent = new Intent(ProfileActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
+                        break;
+
                     case R.id.button_to_add:
                         permissionCheck = ContextCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
                         if (permissionCheck == PackageManager.PERMISSION_DENIED) {
                             ActivityCompat.requestPermissions(ProfileActivity.this, PERMISSIONS, 0);
                         } else {
-                            Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_GET_CONTENT);
                             intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                             intent.setType("image/*");
@@ -102,13 +110,16 @@ public class ProfileActivity extends Activity {
                         break;
 
                     case R.id.button_to_info:
-                        Intent intent = new Intent(ProfileActivity.this, ProfileActivity.class);
+                        intent = new Intent(ProfileActivity.this, ProfileActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
+                        break;
                 }
             }
         };
         btn_add.setOnClickListener(Listener);
         btn_profile.setOnClickListener(Listener);
+        btn_home.setOnClickListener(Listener);
     }
 
     public void getUserProfile(){
