@@ -2,9 +2,12 @@ package com.ssg.aintstagram;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 
 import com.apollographql.apollo.ApolloCall;
@@ -21,6 +24,8 @@ import com.kakao.usermgmt.callback.MeResponseCallback;
 import com.kakao.usermgmt.callback.MeV2ResponseCallback;
 import com.kakao.usermgmt.response.MeV2Response;
 import com.kakao.util.exception.KakaoException;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -53,6 +58,7 @@ public class LoginActivity extends Activity {
 
         Session.getCurrentSession().addCallback(sessionCallback);
     }
+
 
     @Override
     protected void onDestroy() {
@@ -91,19 +97,28 @@ public class LoginActivity extends Activity {
                 OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
                 ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
 
-                final Create_userMutation userCreation = Create_userMutation.builder().name(Nickname).kakaoID(kakaoID).build();
+                String Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+                final Create_userMutation userCreation = Create_userMutation.builder().name(Nickname).kakaoID(kakaoID).accessToken(Token).build();
 
                 apolloClient.mutate(userCreation).enqueue(new ApolloCall.Callback<Create_userMutation.Data>() {
                     @Override
-                    public void onResponse(Response<Create_userMutation.Data> response) {
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-
+                    public void onResponse(@NotNull Response<Create_userMutation.Data> response) {
+                        if (response.data().createUser().success){
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                        } else {
+                            UserManagement.getInstance().requestLogout(new LogoutResponseCallback() {
+                                @Override
+                                public void onCompleteLogout() {
+                                    Toast.makeText(getApplicationContext(), "잘못된 접근입니다.", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
                     }
 
                     @Override
                     public void onFailure(ApolloException e) {
-                        Log.e("grapql", e.getLocalizedMessage());
+                        Log.e("LOG ", e.getLocalizedMessage());
                     }
                 });
             }

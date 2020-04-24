@@ -27,6 +27,7 @@ import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.FileUpload;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.kakao.auth.Session;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -71,15 +72,11 @@ public class MainActivity extends AppCompatActivity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_IMAGE_CAPTURE) {
-//            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-
             OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
             ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
 
-            // bitmap 처리 부분
-            final Upload_profileMutation uploadProfile = Upload_profileMutation.builder().img(new FileUpload("image/jpg", new File(imageFilePath))).kakaoID(1234).build();
-            Log.e("FilePath ", imageFilePath);
-            Log.e("LOG", uploadProfile.toString());
+            String Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+            final Upload_profileMutation uploadProfile = Upload_profileMutation.builder().img(new FileUpload("image/jpg", new File(imageFilePath))).kakaoID(1234).accessToken(Token).build();
             apolloClient.mutate(uploadProfile).enqueue(new ApolloCall.Callback<Upload_profileMutation.Data>() {
                 @Override
                 public void onResponse(@NotNull Response<Upload_profileMutation.Data> response) {

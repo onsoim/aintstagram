@@ -1,10 +1,9 @@
 import graphene
 from graphene_django import DjangoObjectType
 from graphene_file_upload.scalars import Upload
-from django.conf import settings
-
-
 from api.models import UserModel
+from api.token import verify_kakaoToken
+from graphql import GraphQLError
 
 
 class UserType(DjangoObjectType):
@@ -32,25 +31,22 @@ class Query(graphene.ObjectType):
 
 
 class CreateUser(graphene.Mutation):
-    name = graphene.String()
-    kakaoID = graphene.Int()
-    date = graphene.DateTime()
+    success = graphene.Boolean()
 
     class Arguments:
         name = graphene.String(required=True)
         kakaoID = graphene.Int(required=True)
+        accessToken = graphene.String(required=True)
 
-    def mutate(self, info, name, kakaoID):
-        try:
-            user = UserModel.objects.get(kakaoID=kakaoID)
-        except:
-            user = UserModel(name=name, kakaoID=kakaoID)
-            user.save()
-        return CreateUser(
-            name=user.name,
-            kakaoID=user.kakaoID,
-            date=user.date
-        )
+    def mutate(self, info, name, kakaoID, accessToken):
+        if verify_kakaoToken(accessToken, kakaoID):
+            try:
+                user = UserModel.objects.get(kakaoID=kakaoID)
+            except:
+                user = UserModel(name=name, kakaoID=kakaoID)
+                user.save()
+            return CreateUser(success=True)
+        return CreateUser(success=False)
 
 
 class UploadProfile(graphene.Mutation):
@@ -59,8 +55,12 @@ class UploadProfile(graphene.Mutation):
     class Arguments:
         kakaoID = graphene.Int(required=True)
         img = Upload(required=True)
+        accessToken = graphene.String(required=True)
 
-    def mutate(self, info, kakaoID, img):
+    def mutate(self, info, kakaoID, img, accessToken):
+        if not verify_kakaoToken(accessToken, kakaoID):
+            return UploadProfile(success=False)
+
         User = UserModel.objects.get(kakaoID=kakaoID)
         img.name = str(kakaoID) + "_" + img.name
         User.profile.delete()
