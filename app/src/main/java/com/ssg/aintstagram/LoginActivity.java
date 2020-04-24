@@ -88,9 +88,8 @@ public class LoginActivity extends Activity {
                 String Nickname = result.getNickname();
                 int kakaoID = (int) result.getId();
 
-                String base_URL = "http://10.0.2.2:8000/graphql/";
                 OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-                ApolloClient apolloClient = ApolloClient.builder().serverUrl(base_URL).okHttpClient(okHttpClient).build();
+                ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
 
                 final Create_userMutation userCreation = Create_userMutation.builder().name(Nickname).kakaoID(kakaoID).build();
 

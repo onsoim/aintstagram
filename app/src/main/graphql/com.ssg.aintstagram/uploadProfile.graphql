@@ -1,0 +1,5 @@
+mutation upload_profile($img:Upload!, $kakaoID:Int!){
+    uploadProfile (img: $img, kakaoID: $kakaoID){
+        success
+    }
+}

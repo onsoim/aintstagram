@@ -22,12 +22,22 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.apollographql.apollo.ApolloCall;
+import com.apollographql.apollo.ApolloClient;
+import com.apollographql.apollo.api.FileUpload;
+import com.apollographql.apollo.api.Response;
+import com.apollographql.apollo.exception.ApolloException;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import okhttp3.OkHttpClient;
 
 
 public class MainActivity extends AppCompatActivity{
@@ -60,11 +70,28 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data.hasExtra("data")) {
-            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+        if(requestCode == REQUEST_IMAGE_CAPTURE) {
+//            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+
+            OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+            ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
 
             // bitmap 처리 부분
+            final Upload_profileMutation uploadProfile = Upload_profileMutation.builder().img(new FileUpload("image/jpg", new File(imageFilePath))).kakaoID(1234).build();
+            Log.e("FilePath ", imageFilePath);
+            Log.e("LOG", uploadProfile.toString());
+            apolloClient.mutate(uploadProfile).enqueue(new ApolloCall.Callback<Upload_profileMutation.Data>() {
+                @Override
+                public void onResponse(@NotNull Response<Upload_profileMutation.Data> response) {
+                    Log.e("HEY", "WORLD");
+                }
 
+                @Override
+                public void onFailure(@NotNull ApolloException e) {
+                    e.printStackTrace();
+                    Log.e("HEY", "WORLD2");
+                }
+            });
         }
     }
 
