@@ -50,6 +50,7 @@ public class ProfileActivity extends Activity {
     private ImageButton btn_add;
     private ImageButton btn_profile;
     private ImageButton btn_home;
+    private Button btn_edit_profile;
 
     private StringBuilder username = new StringBuilder("");
     private StringBuilder text_comment = new StringBuilder("");
@@ -85,6 +86,7 @@ public class ProfileActivity extends Activity {
         btn_add = (ImageButton) findViewById(R.id.button_to_add);
         btn_profile = (ImageButton) findViewById(R.id.button_to_info);
         btn_home = (ImageButton) findViewById(R.id.button_to_home);
+        btn_edit_profile = (Button) findViewById(R.id.button_edit_profile);
 
         View.OnClickListener Listener = new View.OnClickListener() {
             @Override
@@ -114,6 +116,12 @@ public class ProfileActivity extends Activity {
                         intent = new Intent(ProfileActivity.this, ProfileActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
+                         break;
+
+                    case R.id.button_edit_profile:
+                        intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
                         break;
                 }
             }
@@ -121,6 +129,7 @@ public class ProfileActivity extends Activity {
         btn_add.setOnClickListener(Listener);
         btn_profile.setOnClickListener(Listener);
         btn_home.setOnClickListener(Listener);
+        btn_edit_profile.setOnClickListener(Listener);
     }
 
     public void getUserProfile(){
@@ -139,9 +148,8 @@ public class ProfileActivity extends Activity {
                 String Nickname = result.getNickname();
                 int kakaoID = (int) result.getId();
 
-                String base_URL = "http://10.0.2.2:8000/graphql/";
                 OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-                ApolloClient apolloClient = ApolloClient.builder().serverUrl(base_URL).okHttpClient(okHttpClient).build();
+                ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
 
                 final UserTypeQuery u = UserTypeQuery.builder().kakaoID(kakaoID).build();
 
@@ -173,7 +181,7 @@ public class ProfileActivity extends Activity {
                                         }
                                     });
                                 } catch(
-                                MalformedURLException e) {
+                                        MalformedURLException e) {
                                     e.printStackTrace();
 
                                 } catch (IOException e) {

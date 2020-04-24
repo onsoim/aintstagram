@@ -26,6 +26,7 @@
         <activity android:name=".MainActivity">
         </activity>
         <activity android:name=".ProfileActivity" />
+        <activity android:name=".EditProfileActivity"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.ssg.aintstagram.fileprovider"

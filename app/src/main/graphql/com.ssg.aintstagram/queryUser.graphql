@@ -1,5 +1,5 @@
-query userType($name:String, $kakaoID:Int){
-    users (username: $name, kakaoID: $kakaoID){
+query userType($name:String, $kakaoID:Int, $accessToken:String){
+    users (username: $name, kakaoID: $kakaoID, accessToken: $accessToken){
         name
         kakaoID
         textComment
