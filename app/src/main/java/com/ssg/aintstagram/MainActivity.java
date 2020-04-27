@@ -90,28 +90,12 @@ public class MainActivity extends AppCompatActivity{
             } catch (Exception e) {
             }
         }
-//        if(requestCode == REQUEST_IMAGE_CAPTURE) {
-//            User user = new User();
-//            String Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
-//            user.Token = Token;
-//            user = user.uploadProfile(user, getString(R.string.api_url), imageFilePath);
-////
-////            OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-////            ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
-////
-////
-////            final Upload_profileMutation uploadProfile = Upload_profileMutation.builder().img(new FileUpload("image/jpg", new File(imageFilePath))).accessToken(Token).build();
-////            apolloClient.mutate(uploadProfile).enqueue(new ApolloCall.Callback<Upload_profileMutation.Data>() {
-////                @Override
-////                public void onResponse(@NotNull Response<Upload_profileMutation.Data> response) {
-////                }
-////
-////                @Override
-////                public void onFailure(@NotNull ApolloException e) {
-////                    e.printStackTrace();
-////                }
-////            });
-//        }
+
+        else if(requestCode == REQUEST_IMAGE_CAPTURE) {
+            Intent intent = new Intent(MainActivity.this, AddPostActivity.class);
+            intent.putExtra("imgpath", imageFilePath);
+            startActivity(intent);
+        }
     }
 
     public void setBtn() {
@@ -139,7 +123,6 @@ public class MainActivity extends AppCompatActivity{
                                 }
 
                                 if(photoFile != null){
-//                                    Uri photoUri = FileProvider.getUriForFile(MainActivity.this, "com.ssg.aintstagram.fileprovider", photoFile);
                                     intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     Uri photoUri = Uri.fromFile(photoFile);
                                     intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
@@ -182,7 +165,6 @@ public class MainActivity extends AppCompatActivity{
                 new SimpleDateFormat("yyyyMMdd_HHmmss",
                         Locale.getDefault()).format(new Date());
         String imageFileName = "IMG_" + timeStamp + "_";
-//        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         File storageDir  = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "aintstagram");
         if(!storageDir.exists()) storageDir.mkdirs();

@@ -1,7 +1,7 @@
 import graphene
 from graphene_django import DjangoObjectType
 from graphene_file_upload.scalars import Upload
-from api.models import UserModel
+from api.models import *
 from api.token import *
 from graphql import GraphQLError
 
@@ -11,12 +11,23 @@ class UserType(DjangoObjectType):
         model = UserModel
 
 
+class PostType(DjangoObjectType):
+    class Meta:
+        model = PostModel
+
+
 class Query(graphene.ObjectType):
     users = graphene.List(UserType,
                           kakaoID=graphene.Int(),
                           username=graphene.String(),
                           accessToken=graphene.String(),
                           )
+
+    posts = graphene.List(PostType,
+                          username=graphene.String(),
+                          accessToken=graphene.String(required=True),
+                          )
+
 
     def resolve_users(self, info, kakaoID=None, username=None, accessToken=None):
         query = UserModel.objects.all()
@@ -31,9 +42,23 @@ class Query(graphene.ObjectType):
             kakaoID = get_kakaoID(accessToken)
             if kakaoID is not None:
                 return UserModel.objects.filter(kakaoID=kakaoID)
-
         else:
             return query
+
+
+    def resolve_posts(self, info, username, accessToken):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            return EditProfile(success=False)
+
+        if username:
+            user = UserModel.objects.get(name=username)
+            return PostModel.objects.filter(user=user)
+
+        else:
+            user = UserModel.objects.get(kakaoID=kakaoID)
+            return PostModel.objects.filter(user=user)
 
 
 class CreateUser(graphene.Mutation):
@@ -112,10 +137,49 @@ class EditProfile(graphene.Mutation):
             return EditProfile(success=False)
 
 
+class AddPost(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        img = Upload(required=True)
+        place = graphene.String()
+        hashtag = graphene.String()
+        allow_comment = graphene.Boolean()
+        comment = graphene.String()
+
+    def mutate(self, info, accessToken, img=None, place="", allow_comment=True, comment="", hashtag=None):
+        if not img:
+            return AddPost(success=False)
+
+        kakaoID = get_kakaoID(accessToken)
+        if kakaoID is None:
+            return AddPost(success=False)
+
+        user = UserModel.objects.get(kakaoID=kakaoID)
+
+        post = PostModel(user=user, allow_comment=allow_comment, place=place, like_count=0, text_comment=comment)
+        post.save()
+        record_id = post.post_id
+
+        pic = PictureModel(pic=Upload, type='P', record_id=record_id)
+        pic.save()
+
+        user.post_count = user.post_count + 1
+        user.save()
+
+        if hashtag is not None:
+            hash = HashtagModel(tag_name=hashtag, type='P', record_id=record_id)
+            hash.save()
+
+        return AddPost(success=True)
+
+
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     upload_profile = UploadProfile.Field()
     edit_profile = EditProfile.Field()
+    add_post = AddPost.Field()
 
 
 schema = graphene.Schema(

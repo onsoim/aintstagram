@@ -44,6 +44,5 @@ public class AddPostActivity extends Activity {
             ImageView v_img = (ImageView) findViewById(R.id.post_pic);
             v_img.setImageBitmap(img);
         }
-
     }
 }
