@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -71,23 +72,46 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_IMAGE_CAPTURE) {
-            OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-            ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
 
-            String Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
-            final Upload_profileMutation uploadProfile = Upload_profileMutation.builder().img(new FileUpload("image/jpg", new File(imageFilePath))).accessToken(Token).build();
-            apolloClient.mutate(uploadProfile).enqueue(new ApolloCall.Callback<Upload_profileMutation.Data>() {
-                @Override
-                public void onResponse(@NotNull Response<Upload_profileMutation.Data> response) {
-                }
+        if (requestCode == REQUEST_TAKE_ALBUM && resultCode == RESULT_OK) {
+            try {
+                InputStream in = getContentResolver().openInputStream(data.getData());
 
-                @Override
-                public void onFailure(@NotNull ApolloException e) {
-                    e.printStackTrace();
-                }
-            });
+                Bitmap img = BitmapFactory.decodeStream(in);
+                in.close();
+
+                Uri uri = data.getData();
+                String newProfile = PathUtils.getPath(this, uri);
+
+                Intent intent = new Intent(MainActivity.this, AddPostActivity.class);
+                intent.putExtra("imgpath", newProfile);
+                startActivity(intent);
+
+            } catch (Exception e) {
+            }
         }
+//        if(requestCode == REQUEST_IMAGE_CAPTURE) {
+//            User user = new User();
+//            String Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+//            user.Token = Token;
+//            user = user.uploadProfile(user, getString(R.string.api_url), imageFilePath);
+////
+////            OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+////            ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+////
+////
+////            final Upload_profileMutation uploadProfile = Upload_profileMutation.builder().img(new FileUpload("image/jpg", new File(imageFilePath))).accessToken(Token).build();
+////            apolloClient.mutate(uploadProfile).enqueue(new ApolloCall.Callback<Upload_profileMutation.Data>() {
+////                @Override
+////                public void onResponse(@NotNull Response<Upload_profileMutation.Data> response) {
+////                }
+////
+////                @Override
+////                public void onFailure(@NotNull ApolloException e) {
+////                    e.printStackTrace();
+////                }
+////            });
+//        }
     }
 
     public void setBtn() {
@@ -132,7 +156,6 @@ public class MainActivity extends AppCompatActivity{
                         } else {
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_GET_CONTENT);
-//                            intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                             intent.setData(MediaStore.Images.Media.INTERNAL_CONTENT_URI);
                             intent.setType("image/*");
                             startActivityForResult(intent, REQUEST_TAKE_ALBUM);
