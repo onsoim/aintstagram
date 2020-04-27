@@ -116,7 +116,7 @@ public class ProfileActivity extends Activity {
                         intent = new Intent(ProfileActivity.this, ProfileActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
-                         break;
+                        break;
 
                     case R.id.button_edit_profile:
                         intent = new Intent(ProfileActivity.this, EditProfileActivity.class);

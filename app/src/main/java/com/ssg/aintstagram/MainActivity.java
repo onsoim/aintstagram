@@ -76,17 +76,15 @@ public class MainActivity extends AppCompatActivity{
             ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
 
             String Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
-            final Upload_profileMutation uploadProfile = Upload_profileMutation.builder().img(new FileUpload("image/jpg", new File(imageFilePath))).kakaoID(1234).accessToken(Token).build();
+            final Upload_profileMutation uploadProfile = Upload_profileMutation.builder().img(new FileUpload("image/jpg", new File(imageFilePath))).accessToken(Token).build();
             apolloClient.mutate(uploadProfile).enqueue(new ApolloCall.Callback<Upload_profileMutation.Data>() {
                 @Override
                 public void onResponse(@NotNull Response<Upload_profileMutation.Data> response) {
-                    Log.e("HEY", "WORLD");
                 }
 
                 @Override
                 public void onFailure(@NotNull ApolloException e) {
                     e.printStackTrace();
-                    Log.e("HEY", "WORLD2");
                 }
             });
         }
@@ -173,7 +171,6 @@ public class MainActivity extends AppCompatActivity{
         );
 
         imageFilePath = mFile.getAbsolutePath();
-        Log.e("PATH", imageFilePath);
         return mFile;
     }
 

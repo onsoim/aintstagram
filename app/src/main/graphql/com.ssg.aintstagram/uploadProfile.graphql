@@ -1,5 +1,5 @@
-mutation upload_profile($img:Upload!, $kakaoID:Int!, $accessToken:String!){
-    uploadProfile (img: $img, kakaoID: $kakaoID, accessToken: $accessToken){
+mutation upload_profile($img:Upload!, $accessToken:String!){
+    uploadProfile (img: $img, accessToken: $accessToken){
         success
     }
 }

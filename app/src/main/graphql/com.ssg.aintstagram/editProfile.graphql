@@ -1,0 +1,5 @@
+mutation edit_profile($img:Upload, $accessToken:String!, $name:String, $textComment:String, $isOpen:Boolean){
+    editProfile (img: $img, accessToken: $accessToken, name: $name, textComment: $textComment, isOpen: $isOpen){
+        success
+    }
+}

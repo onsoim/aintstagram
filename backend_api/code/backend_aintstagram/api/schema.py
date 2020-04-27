@@ -59,12 +59,13 @@ class UploadProfile(graphene.Mutation):
     success = graphene.Boolean()
 
     class Arguments:
-        kakaoID = graphene.Int(required=True)
         img = Upload(required=True)
         accessToken = graphene.String(required=True)
 
-    def mutate(self, info, kakaoID, img, accessToken):
-        if not verify_kakaoToken(accessToken, kakaoID):
+    def mutate(self, info, img, accessToken):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
             return UploadProfile(success=False)
 
         User = UserModel.objects.get(kakaoID=kakaoID)
