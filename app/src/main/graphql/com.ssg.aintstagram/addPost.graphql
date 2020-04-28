@@ -1,0 +1,5 @@
+mutation add_post($img:Upload!, $place:String, $hashtag:String, $allowComment:Boolean, $comment:String, $accessToken:String!){
+    addPost (accessToken:$accessToken, img:$img, place:$place, hashtag:$hashtag, allowComment:$allowComment, comment:$comment){
+        success
+    }
+}

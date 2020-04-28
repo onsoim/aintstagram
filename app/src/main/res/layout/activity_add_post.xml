@@ -113,6 +113,10 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@id/button_place"
+        android:background="@android:color/background_dark"
+        android:text="태그 추가하기"
+        android:textAlignment="textStart"
+        android:layout_marginLeft="20dp"
         android:textColor="@android:color/white" />
 
     <Button
@@ -124,6 +128,10 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@id/button_comment"
+        android:background="@android:color/background_dark"
+        android:text="장소 추가하기"
+        android:textAlignment="textStart"
+        android:layout_marginLeft="20dp"
         android:textColor="@android:color/white"  />
 
     <Button
@@ -134,6 +142,10 @@
         app:layout_constraintTop_toBottomOf="@id/button_place"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:background="@android:color/background_dark"
+        android:text="댓글 허용여부"
+        android:textAlignment="textStart"
+        android:layout_marginLeft="20dp"
         android:textColor="@android:color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

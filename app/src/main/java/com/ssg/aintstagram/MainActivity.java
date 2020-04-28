@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity{
             }
         }
 
-        else if(requestCode == REQUEST_IMAGE_CAPTURE) {
+        else if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Intent intent = new Intent(MainActivity.this, AddPostActivity.class);
             intent.putExtra("imgpath", imageFilePath);
             startActivity(intent);

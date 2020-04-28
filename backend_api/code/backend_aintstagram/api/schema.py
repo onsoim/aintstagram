@@ -148,7 +148,7 @@ class AddPost(graphene.Mutation):
         allow_comment = graphene.Boolean()
         comment = graphene.String()
 
-    def mutate(self, info, accessToken, img=None, place="", allow_comment=True, comment="", hashtag=None):
+    def mutate(self, info, accessToken, img, place="", allow_comment=True, comment="", hashtag=None):
         if not img:
             return AddPost(success=False)
 
@@ -162,7 +162,7 @@ class AddPost(graphene.Mutation):
         post.save()
         record_id = post.post_id
 
-        pic = PictureModel(pic=Upload, type='P', record_id=record_id)
+        pic = PictureModel(pic=img, type='P', record_id=record_id, pic_idx=0)
         pic.save()
 
         user.post_count = user.post_count + 1
