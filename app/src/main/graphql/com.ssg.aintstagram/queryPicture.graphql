@@ -1,0 +1,6 @@
+query pictureType($record:Int!, $accessToken:String!){
+    pics (record: $record, accessToken: $accessToken){
+        pic
+        picIdx
+    }
+}

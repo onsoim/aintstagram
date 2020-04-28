@@ -15,11 +15,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
@@ -45,12 +51,19 @@ import java.util.List;
 import okhttp3.OkHttpClient;
 
 
-public class ProfileActivity extends Activity {
+public class ProfileActivity extends FragmentActivity {
     private static final int REQUEST_TAKE_ALBUM = 2;
     private ImageButton btn_add;
     private ImageButton btn_profile;
     private ImageButton btn_home;
     private Button btn_edit_profile;
+
+    private FragmentManager fragmentManager;
+    private ProfileFragment fragmentA;
+    private FragmentTransaction transaction;
+
+    private RecyclerView v_recycle;
+    private ProfileRecyclerAdapter adapter;
 
     private StringBuilder username = new StringBuilder("");
     private StringBuilder text_comment = new StringBuilder("");
@@ -58,6 +71,8 @@ public class ProfileActivity extends Activity {
     private int follower_cnt = 0;
     private int following_cnt = 0;
     private boolean is_open = true;
+
+    String Token;
     Bitmap bitmap;
 
     String[] PERMISSIONS = {
@@ -73,6 +88,12 @@ public class ProfileActivity extends Activity {
         setContentView(R.layout.activity_profile);
 
         setBtn();
+
+        fragmentManager = getSupportFragmentManager();
+        fragmentA = new ProfileFragment();
+        transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.frame_A, fragmentA).commitAllowingStateLoss();
+
 
     }
 
@@ -148,8 +169,8 @@ public class ProfileActivity extends Activity {
                 String Nickname = result.getNickname();
                 int kakaoID = (int) result.getId();
 
-                OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-                ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+                final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
 
                 final UserTypeQuery u = UserTypeQuery.builder().kakaoID(kakaoID).build();
 
@@ -214,6 +235,7 @@ public class ProfileActivity extends Activity {
 
                     }
                 });
+
             }
 
         });

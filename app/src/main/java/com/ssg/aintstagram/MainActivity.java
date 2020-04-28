@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -45,6 +46,7 @@ import okhttp3.OkHttpClient;
 public class MainActivity extends AppCompatActivity{
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_TAKE_ALBUM = 2;
+
     private ImageButton btn_camera;
     private ImageButton btn_add;
     private ImageButton btn_profile;

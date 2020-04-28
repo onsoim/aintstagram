@@ -1,0 +1,11 @@
+query postType($name:String, $accessToken:String!){
+    posts (username: $name, accessToken: $accessToken){
+        postId
+        allowComment
+        place
+        textComment
+        user{
+            name
+        }
+    }
+}

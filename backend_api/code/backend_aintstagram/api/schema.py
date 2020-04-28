@@ -3,6 +3,7 @@ from graphene_django import DjangoObjectType
 from graphene_file_upload.scalars import Upload
 from api.models import *
 from api.token import *
+from graphene import relay, Node
 from graphql import GraphQLError
 
 
@@ -15,6 +16,9 @@ class PostType(DjangoObjectType):
     class Meta:
         model = PostModel
 
+class PictureType(DjangoObjectType):
+    class Meta:
+        model = PictureModel
 
 class Query(graphene.ObjectType):
     users = graphene.List(UserType,
@@ -27,6 +31,11 @@ class Query(graphene.ObjectType):
                           username=graphene.String(),
                           accessToken=graphene.String(required=True),
                           )
+
+    pics = graphene.List(PictureType,
+                         record=graphene.Int(required=True),
+                         accessToken=graphene.String(required=True),
+                         )
 
 
     def resolve_users(self, info, kakaoID=None, username=None, accessToken=None):
@@ -46,7 +55,7 @@ class Query(graphene.ObjectType):
             return query
 
 
-    def resolve_posts(self, info, username, accessToken):
+    def resolve_posts(self, info, username=None, accessToken=None):
         kakaoID = get_kakaoID(accessToken)
 
         if kakaoID is None:
@@ -54,11 +63,16 @@ class Query(graphene.ObjectType):
 
         if username:
             user = UserModel.objects.get(name=username)
-            return PostModel.objects.filter(user=user)
+            posts = PostModel.objects.filter(user=user)
+            return posts
 
         else:
             user = UserModel.objects.get(kakaoID=kakaoID)
             return PostModel.objects.filter(user=user)
+
+
+    def resolve_pics(self, info, record, accessToken):
+        return PictureModel.objects.filter(record_id=record)
 
 
 class CreateUser(graphene.Mutation):
