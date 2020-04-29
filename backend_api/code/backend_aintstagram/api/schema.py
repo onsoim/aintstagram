@@ -16,9 +16,11 @@ class PostType(DjangoObjectType):
     class Meta:
         model = PostModel
 
+
 class PictureType(DjangoObjectType):
     class Meta:
         model = PictureModel
+
 
 class Query(graphene.ObjectType):
     users = graphene.List(UserType,
@@ -33,7 +35,8 @@ class Query(graphene.ObjectType):
                           )
 
     pics = graphene.List(PictureType,
-                         record=graphene.Int(required=True),
+                         record=graphene.Int(),
+                         username=graphene.String(),
                          accessToken=graphene.String(required=True),
                          )
 
@@ -59,20 +62,29 @@ class Query(graphene.ObjectType):
         kakaoID = get_kakaoID(accessToken)
 
         if kakaoID is None:
-            return EditProfile(success=False)
+            raise GraphQLError("Not Permitted")
 
         if username:
-            user = UserModel.objects.get(name=username)
-            posts = PostModel.objects.filter(user=user)
+            posts = PostModel.objects.filter(user__name=username)
             return posts
 
         else:
-            user = UserModel.objects.get(kakaoID=kakaoID)
-            return PostModel.objects.filter(user=user)
+            return PostModel.objects.filter(user__kakaoID=kakaoID)
 
 
-    def resolve_pics(self, info, record, accessToken):
-        return PictureModel.objects.filter(record_id=record)
+    def resolve_pics(self, info, username=None, record=None, accessToken=None):
+        if record:
+            return PictureModel.objects.filter(record_id=record)
+
+        elif username:
+            return PictureModel.objects.filter(record_id__in=PostModel.objects.filter(user__name=username).values('post_id'))
+
+        else:
+            kakaoID = get_kakaoID(accessToken)
+            if kakaoID is None:
+                raise GraphQLError("Not Permitted")
+
+            return PictureModel.objects.filter(record_id__in=PostModel.objects.filter(user__kakaoID=kakaoID).values('post_id'))
 
 
 class CreateUser(graphene.Mutation):

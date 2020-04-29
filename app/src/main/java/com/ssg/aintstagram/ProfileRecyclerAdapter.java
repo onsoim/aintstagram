@@ -52,4 +52,5 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
     public void setItems(ArrayList<Album> albums){
         this.albums = albums;
     }
+
 }
