@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -56,9 +57,9 @@ public class ProfileFragment extends Fragment {
 
         v_recycle = (RecyclerView) view.findViewById(R.id.recycle_pic);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager linearLayoutManager = new GridLayoutManager(getActivity(), 4);
         v_recycle.setLayoutManager(linearLayoutManager);
-
+        
         album_urls = new ArrayList<>();
 
         final OkHttpClient okHttpClient2 = new OkHttpClient.Builder().build();
