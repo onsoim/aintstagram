@@ -56,7 +56,7 @@ public class ProfileFragment extends Fragment {
 
         v_recycle = (RecyclerView) view.findViewById(R.id.recycle_pic);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         v_recycle.setLayoutManager(linearLayoutManager);
 
         album_urls = new ArrayList<>();
@@ -65,58 +65,49 @@ public class ProfileFragment extends Fragment {
         ApolloClient apolloClient2 = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient2).build();
 
         Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
-        final PostTypeQuery p = PostTypeQuery.builder().accessToken(Token).build();
+        final PictureTypeQuery p = PictureTypeQuery.builder().accessToken(Token).build();
 
-        apolloClient2.query(p).enqueue(new ApolloCall.Callback<PostTypeQuery.Data>() {
+        apolloClient2.query(p).enqueue(new ApolloCall.Callback<PictureTypeQuery.Data>() {
             @Override
-            public void onResponse(@NotNull Response<PostTypeQuery.Data> response) {
-                cnt = response.data().posts.size();
+            public void onResponse(@NotNull Response<PictureTypeQuery.Data> response) {
+                cnt = response.data().pics().size();
 
                 for (int i = 0; i < cnt; i++) {
-                    int record_no = Integer.parseInt(response.data().posts().get(i).postId);
-
-                    OkHttpClient okHttpClient3 = new OkHttpClient.Builder().build();
-                    ApolloClient apolloClient3 = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient3).build();
-
-                    PictureTypeQuery c = PictureTypeQuery.builder().accessToken(Token).record(record_no).build();
-                    apolloClient3.query(c).enqueue(new ApolloCall.Callback<PictureTypeQuery.Data>() {
-                        @Override
-                        public void onResponse(@NotNull Response<PictureTypeQuery.Data> response) {
-                            String album_url = getString(R.string.media_url) + response.data().pics().get(0).pic;
-                            album_urls.add(album_url);
-
-                            Log.e("DEBUG PIC", response.data().pics().get(0).pic);
-                        }
-
-                        @Override
-                        public void onFailure(@NotNull ApolloException e) {
-
-                        }
-                    });
+                    String album_url = getString(R.string.media_url) + response.data().pics().get(0).pic;
+                    album_urls.add(album_url);
                 }
+
+                try {
+                    addAlbum();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                Thread mThread = new Thread() {
+                    public void run() {
+                        try {
+                            getActivity().runOnUiThread(new Runnable() {
+                                public void run() {
+                                    adapter = new ProfileRecyclerAdapter(albums, getContext());
+                                    v_recycle.setAdapter(adapter);
+                                }
+                            });
+                        } catch (Exception e) {
+                        }
+                    }
+                };
+
+                mThread.start();
             }
+
 
             @Override
             public void onFailure(@NotNull ApolloException e) {
 
             }
         });
-
-
-        try {
-            Log.e("ALBUM", String.valueOf(cnt));
-            addAlbum();
-            Log.e("ALBUM", String.valueOf(albums.size()));
-            adapter = new ProfileRecyclerAdapter(albums, getContext());
-            v_recycle.setAdapter(adapter);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-//        adapter.setItems(albums);
-
     }
 
     @Override
@@ -141,9 +132,7 @@ public class ProfileFragment extends Fragment {
                     .with(getActivity())
                     .asBitmap()
                     .load(album_url)
-                    .override(100,100)
                     .submit().get();
-            Log.e("LOG", "GLIDE~");
             albums.add(new Album(bitmap));
         }
     }

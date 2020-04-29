@@ -1,5 +1,5 @@
-query pictureType($record:Int!, $accessToken:String!){
-    pics (record: $record, accessToken: $accessToken){
+query pictureType($record:Int, $username:String, $accessToken:String!){
+    pics (record: $record, accessToken: $accessToken, username: $username){
         pic
         picIdx
     }
