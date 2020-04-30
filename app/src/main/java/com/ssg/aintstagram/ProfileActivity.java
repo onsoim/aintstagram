@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -19,6 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -56,6 +59,7 @@ public class ProfileActivity extends FragmentActivity {
     private ImageButton btn_add;
     private ImageButton btn_profile;
     private ImageButton btn_home;
+    private ImageButton btn_search;
     private Button btn_edit_profile;
 
     private FragmentManager fragmentManager;
@@ -94,7 +98,6 @@ public class ProfileActivity extends FragmentActivity {
         transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.frame_A, fragmentA).commitAllowingStateLoss();
 
-
     }
 
     @Override
@@ -108,6 +111,7 @@ public class ProfileActivity extends FragmentActivity {
         btn_profile = (ImageButton) findViewById(R.id.button_to_info);
         btn_home = (ImageButton) findViewById(R.id.button_to_home);
         btn_edit_profile = (Button) findViewById(R.id.button_edit_profile);
+        btn_search = (ImageButton) findViewById(R.id.button_to_search);
 
         View.OnClickListener Listener = new View.OnClickListener() {
             @Override
@@ -121,28 +125,29 @@ public class ProfileActivity extends FragmentActivity {
                         startActivity(intent);
                         break;
 
+                    case R.id.button_to_search:
+                        Intent searchintent = new Intent(ProfileActivity.this, SearchActivity.class);
+                        searchintent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(searchintent);
+                        break;
+
                     case R.id.button_to_add:
                         permissionCheck = ContextCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
                         if (permissionCheck == PackageManager.PERMISSION_DENIED) {
                             ActivityCompat.requestPermissions(ProfileActivity.this, PERMISSIONS, 0);
                         } else {
-                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                            intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            intent.setType("image/*");
-                            startActivityForResult(intent, REQUEST_TAKE_ALBUM);
+                            Intent addintent = new Intent();
+                            addintent.setAction(Intent.ACTION_GET_CONTENT);
+                            addintent.setData(MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                            addintent.setType("image/*");
+                            startActivityForResult(addintent, REQUEST_TAKE_ALBUM);
                         }
                         break;
 
                     case R.id.button_to_info:
-                        intent = new Intent(ProfileActivity.this, ProfileActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
-                        break;
-
-                    case R.id.button_edit_profile:
-                        intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
+                        Intent infointent = new Intent(ProfileActivity.this, ProfileActivity.class);
+                        infointent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(infointent);
                         break;
                 }
             }
@@ -151,6 +156,7 @@ public class ProfileActivity extends FragmentActivity {
         btn_profile.setOnClickListener(Listener);
         btn_home.setOnClickListener(Listener);
         btn_edit_profile.setOnClickListener(Listener);
+        btn_search.setOnClickListener(Listener);
     }
 
     public void getUserProfile(){
@@ -241,4 +247,26 @@ public class ProfileActivity extends FragmentActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_TAKE_ALBUM && resultCode == RESULT_OK) {
+            try {
+                InputStream in = getContentResolver().openInputStream(data.getData());
+
+                Bitmap img = BitmapFactory.decodeStream(in);
+                in.close();
+
+                Uri uri = data.getData();
+                String newProfile = PathUtils.getPath(this, uri);
+
+                Intent intent = new Intent(ProfileActivity.this, AddPostActivity.class);
+                intent.putExtra("imgpath", newProfile);
+                startActivity(intent);
+
+            } catch (Exception e) {
+            }
+        }
+    }
 }

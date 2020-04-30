@@ -28,6 +28,7 @@
         <activity android:name=".ProfileActivity" />
         <activity android:name=".EditProfileActivity"/>
         <activity android:name=".AddPostActivity"/>
+        <activity android:name=".SearchActivity"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.ssg.aintstagram.fileprovider"

@@ -59,7 +59,7 @@ public class ProfileFragment extends Fragment {
 
         LinearLayoutManager linearLayoutManager = new GridLayoutManager(getActivity(), 4);
         v_recycle.setLayoutManager(linearLayoutManager);
-        
+
         album_urls = new ArrayList<>();
 
         final OkHttpClient okHttpClient2 = new OkHttpClient.Builder().build();
@@ -74,7 +74,7 @@ public class ProfileFragment extends Fragment {
                 cnt = response.data().pics().size();
 
                 for (int i = 0; i < cnt; i++) {
-                    String album_url = getString(R.string.media_url) + response.data().pics().get(0).pic;
+                    String album_url = getString(R.string.media_url) + response.data().pics().get(i).pic;
                     album_urls.add(album_url);
                 }
 

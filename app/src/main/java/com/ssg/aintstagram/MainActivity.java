@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity{
     private ImageButton btn_camera;
     private ImageButton btn_add;
     private ImageButton btn_profile;
+    private ImageButton btn_search;
     private URI mImageUri;
 
     String[] PERMISSIONS = {
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity{
         btn_camera = (ImageButton) findViewById(R.id.button_to_camera);
         btn_add = (ImageButton) findViewById(R.id.button_to_add);
         btn_profile = (ImageButton) findViewById(R.id.button_to_info);
+        btn_search = (ImageButton) findViewById(R.id.button_to_search);
 
         View.OnClickListener Listener = new View.OnClickListener() {
             @Override
@@ -134,6 +136,12 @@ public class MainActivity extends AppCompatActivity{
                         }
                         break;
 
+                    case R.id.button_to_search:
+                        Intent searchintent = new Intent(MainActivity.this, SearchActivity.class);
+                        searchintent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(searchintent);
+                        break;
+
                     case R.id.button_to_add:
                         permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
                         if (permissionCheck == PackageManager.PERMISSION_DENIED) {
@@ -151,6 +159,7 @@ public class MainActivity extends AppCompatActivity{
                         Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
+                        break;
                 }
             }
         };
@@ -158,6 +167,7 @@ public class MainActivity extends AppCompatActivity{
         btn_camera.setOnClickListener(Listener);
         btn_add.setOnClickListener(Listener);
         btn_profile.setOnClickListener(Listener);
+        btn_search.setOnClickListener(Listener);
     }
 
     String imageFilePath;

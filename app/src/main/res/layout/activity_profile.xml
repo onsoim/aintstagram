@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_dark"
+    android:id="@+id/profile"
     >
 
     <androidx.constraintlayout.widget.Guideline
@@ -27,6 +28,20 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintGuide_end="60dp"/>
 
+    <ImageButton
+        android:id="@+id/button_back"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/guideline_top_menu"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/button_to_username"
+        android:scaleType="fitCenter"
+        android:background="@android:color/background_dark"
+        tools:ignore="MissingConstraints" />
+
     <Button
         android:id="@+id/button_to_username"
         android:layout_width="0dp"
@@ -36,7 +51,7 @@
         app:layout_constraintHorizontal_weight="5"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/guideline_top_menu"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/button_back"
         app:layout_constraintRight_toLeftOf="@id/button_to_option"
         android:background="@android:color/background_dark"
         android:textStyle="bold"
@@ -137,6 +152,30 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
+    <Button
+        android:id="@+id/button_follow"
+        android:layout_height="40dp"
+        android:layout_width="0dp"
+        android:text="팔로우"
+        android:visibility="gone"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toBottomOf="@id/user_comment"
+        app:layout_constraintBottom_toTopOf="@id/my_pics"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/button_message" />
+
+    <Button
+        android:id="@+id/button_message"
+        android:layout_height="40dp"
+        android:layout_width="0dp"
+        app:layout_constraintHorizontal_weight="1"
+        android:text="메시지"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/user_comment"
+        app:layout_constraintBottom_toTopOf="@id/others_pics"
+        app:layout_constraintLeft_toRightOf="@id/button_follow"
+        app:layout_constraintRight_toRightOf="parent" />
+
     <ImageButton
         android:id="@+id/my_pics"
         android:layout_height="40dp"
@@ -151,7 +190,6 @@
         android:layout_height="40dp"
         android:layout_width="0dp"
         app:layout_constraintHorizontal_weight="1"
-        android:text="프로필 수정"
         app:layout_constraintTop_toBottomOf="@id/button_edit_profile"
         app:layout_constraintLeft_toRightOf="@id/my_pics"
         app:layout_constraintRight_toRightOf="parent" />
