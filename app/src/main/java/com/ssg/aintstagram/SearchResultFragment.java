@@ -1,5 +1,6 @@
 package com.ssg.aintstagram;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,10 +28,11 @@ import java.util.concurrent.ExecutionException;
 
 import okhttp3.OkHttpClient;
 
-public class SearchResultFragment extends Fragment {
+public class SearchResultFragment extends Fragment implements SearchRecyclerAdapter.OnCardListener {
     RecyclerView v_recycle;
-    SearchRecyclerAdapter adapter;
-    ArrayList<SearchCard> cards = new ArrayList<>();
+    private SearchRecyclerAdapter adapter;
+    private ArrayList<SearchCard> cards = new ArrayList<>();
+    private SearchRecyclerAdapter.OnCardListener onCardListener;
     private String Token;
     private int cnt;
 
@@ -46,6 +48,7 @@ public class SearchResultFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         v_recycle = (RecyclerView) view.findViewById(R.id.recycle_card);
+
     }
 
     public void RenewView(String input){
@@ -63,8 +66,6 @@ public class SearchResultFragment extends Fragment {
             @Override
             public void onResponse(@NotNull Response<UserTypeQuery.Data> response) {
                 cnt = response.data().users().size();
-
-                Log.e("FRAGMENT", String.valueOf(cnt));
 
                 for (int i = 0; i < cnt; i++) {
                     String profile_url = getString(R.string.media_url) + response.data().users().get(i).profile;
@@ -91,9 +92,20 @@ public class SearchResultFragment extends Fragment {
                         try {
                             getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    adapter = new SearchRecyclerAdapter(cards, getContext());
+                                    SearchRecyclerAdapter.OnCardListener mCardListener = new SearchRecyclerAdapter.OnCardListener() {
+                                        @Override
+                                        public void onCardClick(int pos) {
+                                            String name = cards.get(pos).getName();
+
+                                            Intent profileIntent = new Intent(getContext().getApplicationContext(), SearchResultProfileActivity.class);
+                                            profileIntent.putExtra("username", name);
+                                            startActivity(profileIntent);
+
+                                        }
+                                    };
+
+                                    adapter = new SearchRecyclerAdapter(cards, getContext(), mCardListener);
                                     v_recycle.setAdapter(adapter);
-                                    Log.e("LOG", String.valueOf(cards.size()));
                                 }
                             });
                         } catch (Exception e) {
@@ -112,4 +124,8 @@ public class SearchResultFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onCardClick(int pos) {
+
+    }
 }
