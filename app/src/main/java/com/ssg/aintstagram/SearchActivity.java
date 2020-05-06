@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -16,13 +18,14 @@ import android.widget.ImageButton;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static android.view.View.VISIBLE;
 
-public class SearchActivity extends Activity {
+public class SearchActivity extends FragmentActivity {
     private static final int REQUEST_TAKE_ALBUM = 2;
     private ImageButton btn_add;
     private ImageButton btn_profile;
@@ -30,6 +33,11 @@ public class SearchActivity extends Activity {
     private ImageButton btn_search;
     private Button btn_cancel;
     private EditText searchBar;
+
+    private FragmentManager fragmentManager;
+    private SearchResultFragment fragmentB;
+    private FragmentTransaction transaction;
+
 
     String[] PERMISSIONS = {
             android.Manifest.permission.CAMERA,
@@ -41,6 +49,11 @@ public class SearchActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        fragmentManager = getSupportFragmentManager();
+        fragmentB = new SearchResultFragment();
+        transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.frame_search, fragmentB).commitAllowingStateLoss();
 
         searchBar = (EditText) findViewById(R.id.search_bar);
         searchBar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -54,6 +67,25 @@ public class SearchActivity extends Activity {
                     Log.e("LOG", "AINT FOCUS");
                     cancel.setVisibility(View.INVISIBLE);
                 }
+            }
+        });
+
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // 입력 전
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.e("LOG", "HERE");
+                fragmentB.RenewView(s.toString());
+                // 입력되는 중
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // 입력 완료
             }
         });
 
@@ -107,6 +139,7 @@ public class SearchActivity extends Activity {
                     case R.id.button_cancel:
                         if(btn_cancel.getVisibility() == VISIBLE) {
                             searchBar.clearFocus();
+                            searchBar.getText().clear();
                             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(searchBar.getWindowToken(), 0);
                         }
@@ -120,4 +153,5 @@ public class SearchActivity extends Activity {
         btn_search.setOnClickListener(Listener);
         btn_cancel.setOnClickListener(Listener);
     }
+
 }

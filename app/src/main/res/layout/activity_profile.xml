@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_dark"
-    android:id="@+id/profile"
-    >
+    android:id="@+id/profile" >
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_top_menu"

@@ -149,6 +149,12 @@ public class ProfileActivity extends FragmentActivity {
                         infointent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(infointent);
                         break;
+
+                    case R.id.button_edit_profile:
+                        intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
+                        break;
                 }
             }
         };

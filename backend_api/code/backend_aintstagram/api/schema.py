@@ -27,6 +27,7 @@ class Query(graphene.ObjectType):
                           kakaoID=graphene.Int(),
                           username=graphene.String(),
                           accessToken=graphene.String(),
+                          search=graphene.Int(),
                           )
 
     posts = graphene.List(PostType,
@@ -41,11 +42,14 @@ class Query(graphene.ObjectType):
                          )
 
 
-    def resolve_users(self, info, kakaoID=None, username=None, accessToken=None):
+    def resolve_users(self, info, kakaoID=None, username=None, accessToken=None, search=None):
         query = UserModel.objects.all()
 
         if kakaoID:
             return UserModel.objects.filter(kakaoID=kakaoID)
+
+        if search == 1:
+            return UserModel.objects.filter(name__icontains=username)
 
         elif username:
             return UserModel.objects.filter(name=username)
