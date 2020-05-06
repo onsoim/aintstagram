@@ -60,6 +60,7 @@ public class SearchResultProfileActivity extends FragmentActivity {
     private ImageButton btn_profile;
     private ImageButton btn_home;
     private ImageButton btn_search;
+    private Button btn_edit_profile;
 
     private FragmentManager fragmentManager;
     private SearchProfileFragment fragmentA;
@@ -76,6 +77,9 @@ public class SearchResultProfileActivity extends FragmentActivity {
     private boolean is_open = true;
 
     private String name;
+
+    private int myKakaoId;
+    private int searchKakaoId;
 
     String Token;
     Bitmap bitmap;
@@ -115,19 +119,6 @@ public class SearchResultProfileActivity extends FragmentActivity {
         transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.frame_A, fragmentA).commitAllowingStateLoss();
 
-        Button follow = (Button) findViewById(R.id.button_follow);
-        follow.setVisibility(View.VISIBLE);
-        Button msg = (Button) findViewById(R.id.button_message);
-        msg.setVisibility(View.VISIBLE);
-        Button edit = (Button) findViewById(R.id.button_edit_profile);
-        edit.setVisibility(View.GONE);
-        ConstraintSet constraintSet = new ConstraintSet();
-        ConstraintLayout constraintLayout = findViewById(R.id.profile);
-        constraintSet.clone(constraintLayout);
-        constraintSet.connect(R.id.my_pics,ConstraintSet.TOP,R.id.button_follow,ConstraintSet.BOTTOM,0);
-        constraintSet.connect(R.id.others_pics,ConstraintSet.TOP,R.id.button_message,ConstraintSet.BOTTOM,0);
-        constraintSet.applyTo(constraintLayout);
-
     }
 
     @Override
@@ -141,6 +132,7 @@ public class SearchResultProfileActivity extends FragmentActivity {
         btn_profile = (ImageButton) findViewById(R.id.button_to_info);
         btn_home = (ImageButton) findViewById(R.id.button_to_home);
         btn_search = (ImageButton) findViewById(R.id.button_to_search);
+        btn_edit_profile = (Button) findViewById(R.id.button_edit_profile);
 
         View.OnClickListener Listener = new View.OnClickListener() {
             @Override
@@ -178,6 +170,13 @@ public class SearchResultProfileActivity extends FragmentActivity {
                         infointent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(infointent);
                         break;
+
+
+                    case R.id.button_edit_profile:
+                        intent = new Intent(SearchResultProfileActivity.this, EditProfileActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
+                        break;
                 }
             }
         };
@@ -185,6 +184,7 @@ public class SearchResultProfileActivity extends FragmentActivity {
         btn_profile.setOnClickListener(Listener);
         btn_home.setOnClickListener(Listener);
         btn_search.setOnClickListener(Listener);
+        btn_edit_profile.setOnClickListener(Listener);
     }
 
     public void getUserProfile(){
@@ -201,7 +201,7 @@ public class SearchResultProfileActivity extends FragmentActivity {
             @Override
             public void onSuccess(MeV2Response result) {
                 String Nickname = result.getNickname();
-                int kakaoID = (int) result.getId();
+                myKakaoId = (int) result.getId();
 
                 final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
                 final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
@@ -215,6 +215,7 @@ public class SearchResultProfileActivity extends FragmentActivity {
                         follower_cnt = response.data().users().get(0).followerCount;
                         following_cnt = response.data().users().get(0).followingCount;
                         is_open = response.data().users().get(0).isOpen;
+                        searchKakaoId = response.data().users().get(0).kakaoID;
                         final String profile_img = getString(R.string.media_url) + response.data().users().get(0).profile;
 
                         Thread mThread = new Thread() {
@@ -233,6 +234,22 @@ public class SearchResultProfileActivity extends FragmentActivity {
                                         public void run(){
                                             ImageView v_profile = (ImageView)findViewById(R.id.user_profile);
                                             v_profile.setImageBitmap(bitmap);
+
+                                            if(myKakaoId != searchKakaoId) {
+                                                Button follow = (Button) findViewById(R.id.button_follow);
+                                                follow.setVisibility(View.VISIBLE);
+                                                Button msg = (Button) findViewById(R.id.button_message);
+                                                msg.setVisibility(View.VISIBLE);
+                                                Button edit = (Button) findViewById(R.id.button_edit_profile);
+                                                edit.setVisibility(View.GONE);
+                                                ConstraintSet constraintSet = new ConstraintSet();
+                                                ConstraintLayout constraintLayout = findViewById(R.id.profile);
+                                                constraintSet.clone(constraintLayout);
+                                                constraintSet.connect(R.id.my_pics, ConstraintSet.TOP, R.id.button_follow, ConstraintSet.BOTTOM, 0);
+                                                constraintSet.connect(R.id.others_pics, ConstraintSet.TOP, R.id.button_message, ConstraintSet.BOTTOM, 0);
+                                                constraintSet.applyTo(constraintLayout);
+                                            }
+
                                         }
                                     });
                                 } catch(

@@ -61,10 +61,8 @@ public class SearchActivity extends FragmentActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 Button cancel = (Button) findViewById(R.id.button_cancel);
                 if(hasFocus){
-                    Log.e("LOG", "FOCUS");
                     cancel.setVisibility(VISIBLE);
                 } else {
-                    Log.e("LOG", "AINT FOCUS");
                     cancel.setVisibility(View.INVISIBLE);
                 }
             }
@@ -78,7 +76,6 @@ public class SearchActivity extends FragmentActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.e("LOG", "HERE");
                 fragmentB.RenewView(s.toString());
                 // 입력되는 중
             }
