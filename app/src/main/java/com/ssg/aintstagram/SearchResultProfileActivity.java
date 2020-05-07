@@ -49,6 +49,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -249,6 +250,8 @@ public class SearchResultProfileActivity extends FragmentActivity {
                                                 constraintSet.connect(R.id.my_pics, ConstraintSet.TOP, R.id.button_follow, ConstraintSet.BOTTOM, 0);
                                                 constraintSet.connect(R.id.others_pics, ConstraintSet.TOP, R.id.button_message, ConstraintSet.BOTTOM, 0);
                                                 constraintSet.applyTo(constraintLayout);
+
+                                                getFollowInfo();
                                             }
 
                                         }
@@ -292,4 +295,31 @@ public class SearchResultProfileActivity extends FragmentActivity {
 
         });
     }
+
+    public void getFollowInfo(){
+        Log.e("LOG", "GetFollowInfo");
+        if(myKakaoId == searchKakaoId) return;
+
+        Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+
+        final OkHttpClient okHttpClient2 = new OkHttpClient.Builder().build();
+        final ApolloClient apolloClient2 = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient2).build();
+
+        final FollowTypeQuery q = FollowTypeQuery.builder().accessToken(Token).username(name).build();
+
+        apolloClient2.query(q).enqueue(new ApolloCall.Callback<FollowTypeQuery.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<FollowTypeQuery.Data> response) {
+                if (response.data().follows().size() == 1){
+                    Button follow = (Button) findViewById(R.id.button_follow);
+                    follow.setText("팔로잉");
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+
+            }
+        });
+    };
 }

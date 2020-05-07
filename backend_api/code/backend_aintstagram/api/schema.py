@@ -234,7 +234,7 @@ class addFollow(graphene.Mutation):
         kakaoID = get_kakaoID(accessToken)
         if kakaoID is None:
             return addFollow(success=False)
-        
+
         if kakaoID == fkakaoID:
             return addFollow(success=False)
 
@@ -260,6 +260,41 @@ class addFollow(graphene.Mutation):
             return addFollow(success=True)
 
 
+class unFollow(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        fkakaoID = graphene.Int(required=True)
+
+    def mutate(self, info, accessToken, fkakaoID):
+        kakaoID = get_kakaoID(accessToken)
+        if kakaoID is None:
+            return addFollow(success=False)
+
+        if kakaoID == fkakaoID:
+            return addFollow(success=False)
+
+        try:
+            user_from = UserModel.objects.get(kakaoID=kakaoID)
+            user_to = UserModel.objects.get(kakaoID=fkakaoID)
+        except:
+            return addFollow(success=False)
+
+        history = FollowModel.objects.filter(user_from__kakaoID=kakaoID, user_to__kakaoID=fkakaoID)
+        if not history.exists():
+            return addFollow(success=False)
+
+        else:
+            history.delete()
+
+            user_to.follower_count -= 1
+            user_to.save()
+
+            user_from.following_count -= 1
+            user_from.save()
+            return addFollow(success=True)
+
 
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
@@ -267,7 +302,7 @@ class Mutation(graphene.ObjectType):
     edit_profile = EditProfile.Field()
     add_post = AddPost.Field()
     add_follow = addFollow.Field()
-
+    un_follow = unFollow.Field()
 
 schema = graphene.Schema(
     query=Query,
