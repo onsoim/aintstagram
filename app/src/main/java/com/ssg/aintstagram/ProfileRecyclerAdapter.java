@@ -14,26 +14,39 @@ import java.util.ArrayList;
 public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecyclerAdapter.ItemViewHolder>  {
     private Context context;
     private ArrayList<Album> albums;
+    private OnPostListener onPostListener;
     private int lastPosition = -1;
 
-    public ProfileRecyclerAdapter(ArrayList<Album> albums, Context context){
+    public ProfileRecyclerAdapter(ArrayList<Album> albums, Context context, OnPostListener onPostListener){
         this.albums = albums;
         this.context = context;
+        this.onPostListener = onPostListener;
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView imageView;
 
-        public ItemViewHolder(View itemView){
+        OnPostListener onPostListener;
+
+        public ItemViewHolder(View itemView, OnPostListener onPostListener){
             super(itemView);
 
             imageView = (ImageView) itemView.findViewById(R.id.imgview_picture);
+
+            this.onPostListener = onPostListener;
+            itemView.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            onPostListener.onPostClick(getAdapterPosition());
         }
     }
 
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_post_img,parent,false);
-        return new ItemViewHolder(view);
+        return new ItemViewHolder(view, onPostListener);
     }
 
     @Override
@@ -50,4 +63,7 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
         this.albums = albums;
     }
 
+    public interface OnPostListener{
+        void onPostClick(int pos);
+    }
 }

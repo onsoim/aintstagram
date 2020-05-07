@@ -35,15 +35,16 @@ import java.util.concurrent.ExecutionException;
 
 import okhttp3.OkHttpClient;
 
-public class SearchProfileFragment extends Fragment {
+public class SearchProfileFragment extends Fragment implements ProfileRecyclerAdapter.OnPostListener {
     RecyclerView v_recycle;
-    ProfileRecyclerAdapter adapter;
-    ArrayList<Album> albums = new ArrayList<>();
-    ArrayList<String> album_urls = new ArrayList<>();
-    ArrayList<Integer> records = new ArrayList<>();
+    private ProfileRecyclerAdapter adapter;
+    private ArrayList<Album> albums = new ArrayList<>();
+    private ArrayList<String> album_urls = new ArrayList<>();
+    private ArrayList<Integer> records = new ArrayList<>();
+    private ProfileRecyclerAdapter.OnPostListener onPostListener;
     private String Token;
     private String name;
-    int cnt;
+    private int cnt;
 
     @Nullable
     @Override
@@ -96,7 +97,15 @@ public class SearchProfileFragment extends Fragment {
                         try {
                             getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    adapter = new ProfileRecyclerAdapter(albums, getContext());
+                                    ProfileRecyclerAdapter.OnPostListener mPostListener = new ProfileRecyclerAdapter.OnPostListener() {
+                                        @Override
+                                        public void onPostClick(int pos) {
+                                            Integer record = albums.get(pos).getRecord();
+                                            Log.e("POSTCLICK", String.valueOf(record));
+                                        }
+                                    };
+
+                                    adapter = new ProfileRecyclerAdapter(albums, getContext(), mPostListener);
                                     v_recycle.setAdapter(adapter);
                                 }
                             });
@@ -145,5 +154,10 @@ public class SearchProfileFragment extends Fragment {
 
     public void setName(String name){
         this.name = name;
+    }
+
+    @Override
+    public void onPostClick(int pos) {
+
     }
 }

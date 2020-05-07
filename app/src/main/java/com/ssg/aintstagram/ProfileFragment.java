@@ -94,7 +94,15 @@ public class ProfileFragment extends Fragment {
                         try {
                             getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    adapter = new ProfileRecyclerAdapter(albums, getContext());
+                                    ProfileRecyclerAdapter.OnPostListener mPostListener = new ProfileRecyclerAdapter.OnPostListener() {
+                                        @Override
+                                        public void onPostClick(int pos) {
+                                            Integer record = albums.get(pos).getRecord();
+                                            Log.e("POSTCLICK2", String.valueOf(record));
+                                        }
+                                    };
+
+                                    adapter = new ProfileRecyclerAdapter(albums, getContext(), mPostListener);
                                     v_recycle.setAdapter(adapter);
                                 }
                             });
