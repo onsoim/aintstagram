@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -62,6 +63,9 @@ public class SearchResultProfileActivity extends FragmentActivity {
     private ImageButton btn_home;
     private ImageButton btn_search;
     private Button btn_edit_profile;
+    private Button btn_follow;
+    private Button btn_msg;
+    private Button btn_edit;
 
     private FragmentManager fragmentManager;
     private SearchProfileFragment fragmentA;
@@ -189,6 +193,61 @@ public class SearchResultProfileActivity extends FragmentActivity {
         btn_edit_profile.setOnClickListener(Listener);
     }
 
+    public void setRenewedButton(){
+        View.OnClickListener mListener = new View.OnClickListener() {
+            @SuppressLint("IntentReset")
+            @Override
+            public void onClick(View v) {
+                switch(v.getId()){
+                    case R.id.button_follow:
+                        if(btn_follow.getText() == "팔로우"){
+                            final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                            final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+                            final Add_followMutation f = Add_followMutation.builder().accessToken(Token).fkakaoID(searchKakaoId).build();
+                            apolloClient.mutate(f).enqueue(new ApolloCall.Callback<Add_followMutation.Data>() {
+                                @Override
+                                public void onResponse(@NotNull Response<Add_followMutation.Data> response) {
+                                    getUserProfile();
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            Toast.makeText(getApplicationContext(), "팔로우 취소를 완료하였습니다.", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onFailure(@NotNull ApolloException e) {
+
+                                }
+                            });
+                        } else {
+                            final OkHttpClient okHttpClient2 = new OkHttpClient.Builder().build();
+                            final ApolloClient apolloClient2 = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient2).build();
+                            final Un_followMutation u = Un_followMutation.builder().accessToken(Token).fkakaoID(searchKakaoId).build();
+                            apolloClient2.mutate(u).enqueue(new ApolloCall.Callback<Un_followMutation.Data>() {
+                                @Override
+                                public void onResponse(@NotNull Response<Un_followMutation.Data> response) {
+                                    getUserProfile();
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            Toast.makeText(getApplicationContext(), "팔로우를 완료하였습니다.", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onFailure(@NotNull ApolloException e) {
+
+                                }
+                            });
+                        }
+                        break;
+                }
+            }
+        };
+        btn_follow.setOnClickListener(mListener);
+    };
+
     public void getUserProfile(){
         List<String> keys = new ArrayList<>();
         keys.add("properties.nickname");
@@ -238,12 +297,12 @@ public class SearchResultProfileActivity extends FragmentActivity {
                                             v_profile.setImageBitmap(bitmap);
 
                                             if(myKakaoId != searchKakaoId) {
-                                                Button follow = (Button) findViewById(R.id.button_follow);
-                                                follow.setVisibility(View.VISIBLE);
-                                                Button msg = (Button) findViewById(R.id.button_message);
-                                                msg.setVisibility(View.VISIBLE);
-                                                Button edit = (Button) findViewById(R.id.button_edit_profile);
-                                                edit.setVisibility(View.GONE);
+                                                btn_follow = (Button) findViewById(R.id.button_follow);
+                                                btn_follow.setVisibility(View.VISIBLE);
+                                                btn_msg = (Button) findViewById(R.id.button_message);
+                                                btn_msg.setVisibility(View.VISIBLE);
+                                                btn_edit = (Button) findViewById(R.id.button_edit_profile);
+                                                btn_edit.setVisibility(View.GONE);
                                                 ConstraintSet constraintSet = new ConstraintSet();
                                                 ConstraintLayout constraintLayout = findViewById(R.id.profile);
                                                 constraintSet.clone(constraintLayout);
@@ -251,6 +310,7 @@ public class SearchResultProfileActivity extends FragmentActivity {
                                                 constraintSet.connect(R.id.others_pics, ConstraintSet.TOP, R.id.button_message, ConstraintSet.BOTTOM, 0);
                                                 constraintSet.applyTo(constraintLayout);
 
+                                                setRenewedButton();
                                                 getFollowInfo();
                                             }
 
@@ -311,8 +371,11 @@ public class SearchResultProfileActivity extends FragmentActivity {
             @Override
             public void onResponse(@NotNull Response<FollowTypeQuery.Data> response) {
                 if (response.data().follows().size() == 1){
-                    Button follow = (Button) findViewById(R.id.button_follow);
-                    follow.setText("팔로잉");
+                    btn_follow = (Button) findViewById(R.id.button_follow);
+                    btn_follow.setText("팔로잉");
+                } else {
+                    btn_follow = (Button) findViewById(R.id.button_follow);
+                    btn_follow.setText("팔로우");
                 }
             }
 
@@ -322,4 +385,6 @@ public class SearchResultProfileActivity extends FragmentActivity {
             }
         });
     };
+
+
 }

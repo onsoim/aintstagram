@@ -1,0 +1,5 @@
+mutation un_follow($fkakaoID:Int!, $accessToken:String!){
+    unFollow (fkakaoID:$fkakaoID, accessToken:$accessToken){
+        success
+    }
+}

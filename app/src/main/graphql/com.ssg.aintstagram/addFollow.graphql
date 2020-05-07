@@ -1,0 +1,5 @@
+mutation add_follow($fkakaoID:Int!, $accessToken:String!){
+    addFollow (fkakaoID:$fkakaoID, accessToken:$accessToken){
+        success
+    }
+}
