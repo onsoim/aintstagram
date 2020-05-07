@@ -40,6 +40,7 @@ public class ProfileFragment extends Fragment {
     ProfileRecyclerAdapter adapter;
     ArrayList<Album> albums = new ArrayList<>();
     ArrayList<String> album_urls = new ArrayList<>();
+    ArrayList<Integer> records = new ArrayList<>();
     private String Token;
     int cnt;
 
@@ -75,7 +76,9 @@ public class ProfileFragment extends Fragment {
 
                 for (int i = 0; i < cnt; i++) {
                     String album_url = getString(R.string.media_url) + response.data().pics().get(i).pic;
+                    Integer record_idx = response.data().pics().get(i).recordId;
                     album_urls.add(album_url);
+                    records.add(record_idx);
                 }
 
                 try {
@@ -134,7 +137,7 @@ public class ProfileFragment extends Fragment {
                     .asBitmap()
                     .load(album_url)
                     .submit().get();
-            albums.add(new Album(bitmap));
+            albums.add(new Album(bitmap, records.get(i)));
         }
     }
 }
