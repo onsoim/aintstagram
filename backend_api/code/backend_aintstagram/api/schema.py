@@ -22,6 +22,11 @@ class PictureType(DjangoObjectType):
         model = PictureModel
 
 
+class FollowType(DjangoObjectType):
+    class Meta:
+        model = FollowModel
+
+
 class Query(graphene.ObjectType):
     users = graphene.List(UserType,
                           kakaoID=graphene.Int(),
@@ -41,6 +46,10 @@ class Query(graphene.ObjectType):
                          accessToken=graphene.String(required=True),
                          )
 
+    follows = graphene.List(FollowType,
+                            accessToken=graphene.String(required=True),
+                            username=graphene.String(required=True),
+                            )
 
     def resolve_users(self, info, kakaoID=None, username=None, accessToken=None, search=None):
         query = UserModel.objects.all()
@@ -61,7 +70,6 @@ class Query(graphene.ObjectType):
         else:
             return query
 
-
     def resolve_posts(self, info, username=None, accessToken=None):
         kakaoID = get_kakaoID(accessToken)
 
@@ -75,20 +83,30 @@ class Query(graphene.ObjectType):
         else:
             return PostModel.objects.filter(user__kakaoID=kakaoID)
 
-
     def resolve_pics(self, info, username=None, record=None, accessToken=None):
         if record:
             return PictureModel.objects.filter(record_id=record)
 
         elif username:
-            return PictureModel.objects.filter(record_id__in=PostModel.objects.filter(user__name=username).values('post_id'))
+            return PictureModel.objects.filter(
+                record_id__in=PostModel.objects.filter(user__name=username).values('post_id'))
 
         else:
             kakaoID = get_kakaoID(accessToken)
             if kakaoID is None:
                 raise GraphQLError("Not Permitted")
 
-            return PictureModel.objects.filter(record_id__in=PostModel.objects.filter(user__kakaoID=kakaoID).values('post_id'))
+            return PictureModel.objects.filter(
+                record_id__in=PostModel.objects.filter(user__kakaoID=kakaoID).values('post_id'))
+
+    def resolve_follows(self, info, accessToken, username):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            raise GraphQLError("Not Permitted")
+
+        follow = FollowModel.objects.filter(user_from__kakaoID=kakaoID, user_to__name=username)
+        return follow
 
 
 class CreateUser(graphene.Mutation):
@@ -205,11 +223,50 @@ class AddPost(graphene.Mutation):
         return AddPost(success=True)
 
 
+class addFollow(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        fkakaoID = graphene.Int(required=True)
+
+    def mutate(self, info, accessToken, fkakaoID):
+        kakaoID = get_kakaoID(accessToken)
+        if kakaoID is None:
+            return addFollow(success=False)
+        
+        if kakaoID == fkakaoID:
+            return addFollow(success=False)
+
+        try:
+            user_from = UserModel.objects.get(kakaoID=kakaoID)
+            user_to = UserModel.objects.get(kakaoID=fkakaoID)
+        except:
+            return addFollow(success=False)
+
+        history = FollowModel.objects.filter(user_from__kakaoID=kakaoID, user_to__kakaoID=fkakaoID)
+        if history.exists():
+            return addFollow(success=False)
+
+        else:
+            follow = FollowModel(user_from=user_from, user_to=user_to)
+            follow.save()
+
+            user_to.follower_count += 1
+            user_to.save()
+
+            user_from.following_count += 1
+            user_from.save()
+            return addFollow(success=True)
+
+
+
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     upload_profile = UploadProfile.Field()
     edit_profile = EditProfile.Field()
     add_post = AddPost.Field()
+    add_follow = addFollow.Field()
 
 
 schema = graphene.Schema(

@@ -135,6 +135,7 @@ public class SearchResultProfileActivity extends FragmentActivity {
         btn_edit_profile = (Button) findViewById(R.id.button_edit_profile);
 
         View.OnClickListener Listener = new View.OnClickListener() {
+            @SuppressLint("IntentReset")
             @Override
             public void onClick(View v) {
                 int permissionCheck;
