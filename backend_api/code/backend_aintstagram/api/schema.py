@@ -48,7 +48,8 @@ class Query(graphene.ObjectType):
 
     follows = graphene.List(FollowType,
                             accessToken=graphene.String(required=True),
-                            username=graphene.String(required=True),
+                            username=graphene.String(),
+                            choice=graphene.Int(),
                             )
 
     def resolve_users(self, info, kakaoID=None, username=None, accessToken=None, search=None):
@@ -99,15 +100,24 @@ class Query(graphene.ObjectType):
             return PictureModel.objects.filter(
                 record_id__in=PostModel.objects.filter(user__kakaoID=kakaoID).values('post_id'))
 
-    def resolve_follows(self, info, accessToken, username):
+
+    def resolve_follows(self, info, accessToken, username=None, choice=None):
         kakaoID = get_kakaoID(accessToken)
 
         if kakaoID is None:
             raise GraphQLError("Not Permitted")
 
-        follow = FollowModel.objects.filter(user_from__kakaoID=kakaoID, user_to__name=username)
-        return follow
+        if username is not None:
+            follow = FollowModel.objects.filter(user_from__kakaoID=kakaoID, user_to__name=username)
+            return follow
 
+        else:
+            if choice == 1:
+                return FollowModel.objects.filter(user_to__kakaoID=kakaoID)
+            elif choice == 2:
+                return FollowModel.objects.filter(user_from__kakaoID=kakaoID)
+            else:
+                raise GraphQLError("Error")
 
 class CreateUser(graphene.Mutation):
     success = graphene.Boolean()

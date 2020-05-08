@@ -1,5 +1,14 @@
-query followType($username:String!, $accessToken:String!){
-    follows (username: $username, accessToken: $accessToken){
-        date
+query followType($username:String, $accessToken:String!, $choice:Int){
+    follows (username: $username, accessToken: $accessToken, choice: $choice){
+        userTo{
+            name
+            profile
+            textComment
+        }
+        userFrom{
+            name
+            profile
+            textComment
+        }
     }
 }

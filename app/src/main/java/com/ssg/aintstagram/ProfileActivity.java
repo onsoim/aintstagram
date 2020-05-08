@@ -61,6 +61,9 @@ public class ProfileActivity extends FragmentActivity {
     private ImageButton btn_home;
     private ImageButton btn_search;
     private Button btn_edit_profile;
+    private Button btn_follow;
+    private Button btn_following;
+    private Button btn_posts;
 
     private FragmentManager fragmentManager;
     private ProfileFragment fragmentA;
@@ -112,23 +115,25 @@ public class ProfileActivity extends FragmentActivity {
         btn_home = (ImageButton) findViewById(R.id.button_to_home);
         btn_edit_profile = (Button) findViewById(R.id.button_edit_profile);
         btn_search = (ImageButton) findViewById(R.id.button_to_search);
+        btn_follow = (Button)findViewById(R.id.user_followers);
+        btn_following = (Button)findViewById(R.id.user_followings);
+        btn_posts = (Button)findViewById(R.id.user_posts);
 
         View.OnClickListener Listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int permissionCheck;
-                Intent intent = new Intent();
                 switch (v.getId()) {
                     case R.id.button_to_home:
-                        intent = new Intent(ProfileActivity.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
+                        Intent homeIntent = new Intent(ProfileActivity.this, MainActivity.class);
+                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(homeIntent);
                         break;
 
                     case R.id.button_to_search:
-                        Intent searchintent = new Intent(ProfileActivity.this, SearchActivity.class);
-                        searchintent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(searchintent);
+                        Intent searchIntent = new Intent(ProfileActivity.this, SearchActivity.class);
+                        searchIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(searchIntent);
                         break;
 
                     case R.id.button_to_add:
@@ -136,24 +141,38 @@ public class ProfileActivity extends FragmentActivity {
                         if (permissionCheck == PackageManager.PERMISSION_DENIED) {
                             ActivityCompat.requestPermissions(ProfileActivity.this, PERMISSIONS, 0);
                         } else {
-                            Intent addintent = new Intent();
-                            addintent.setAction(Intent.ACTION_GET_CONTENT);
-                            addintent.setData(MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                            addintent.setType("image/*");
-                            startActivityForResult(addintent, REQUEST_TAKE_ALBUM);
+                            Intent addIntent = new Intent();
+                            addIntent.setAction(Intent.ACTION_GET_CONTENT);
+                            addIntent.setData(MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                            addIntent.setType("image/*");
+                            startActivityForResult(addIntent, REQUEST_TAKE_ALBUM);
                         }
                         break;
 
                     case R.id.button_to_info:
-                        Intent infointent = new Intent(ProfileActivity.this, ProfileActivity.class);
-                        infointent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(infointent);
+                        Intent infoIntent = new Intent(ProfileActivity.this, ProfileActivity.class);
+                        infoIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(infoIntent);
                         break;
 
                     case R.id.button_edit_profile:
-                        intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
+                        Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+                        editIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(editIntent);
+                        break;
+
+                    case R.id.user_followers:
+                        Intent followIntent = new Intent(ProfileActivity.this, FollowActivity.class);
+                        followIntent.putExtra("choice", 1);
+                        followIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(followIntent);
+                        break;
+
+                    case R.id.user_followings:
+                        Intent followingIntent = new Intent(ProfileActivity.this, FollowActivity.class);
+                        followingIntent.putExtra("choice", 2);
+                        followingIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(followingIntent);
                         break;
                 }
             }
@@ -163,6 +182,8 @@ public class ProfileActivity extends FragmentActivity {
         btn_home.setOnClickListener(Listener);
         btn_edit_profile.setOnClickListener(Listener);
         btn_search.setOnClickListener(Listener);
+        btn_follow.setOnClickListener(Listener);
+        btn_following.setOnClickListener(Listener);
     }
 
     public void getUserProfile(){
@@ -228,13 +249,8 @@ public class ProfileActivity extends FragmentActivity {
                         Button btn_name = (Button)findViewById(R.id.button_to_username);
                         btn_name.setText(response.data().users().get(0).name);
 
-                        Button btn_posts = (Button)findViewById(R.id.user_posts);
                         btn_posts.setText(String.valueOf(post_cnt)+"\n게시물");
-
-                        Button btn_follow = (Button)findViewById(R.id.user_followers);
                         btn_follow.setText(String.valueOf(follower_cnt)+"\n팔로워");
-
-                        Button btn_following = (Button)findViewById(R.id.user_followings);
                         btn_following.setText(String.valueOf(following_cnt)+"\n팔로잉");
 
                         TextView v_comment = (TextView)findViewById(R.id.user_comment);

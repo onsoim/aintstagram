@@ -30,6 +30,7 @@
         <activity android:name=".AddPostActivity"/>
         <activity android:name=".SearchActivity"/>
         <activity android:name=".SearchResultProfileActivity"/>
+        <activity android:name=".FollowActivity"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.ssg.aintstagram.fileprovider"
