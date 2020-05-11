@@ -168,5 +168,9 @@ public class FollowerFragment extends Fragment {
         });
     }
 
+    public void filterSeq(CharSequence charsequence){
+        adapter.getFilter().filter(charsequence);
+
+    }
 
 }

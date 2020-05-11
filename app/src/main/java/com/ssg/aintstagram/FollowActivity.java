@@ -5,17 +5,23 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import static android.view.View.VISIBLE;
 
 public class FollowActivity extends FragmentActivity {
     private static final int REQUEST_TAKE_ALBUM = 2;
@@ -36,6 +42,8 @@ public class FollowActivity extends FragmentActivity {
 
     private Button btn_follower;
     private Button btn_following;
+
+    private EditText searchBar;
 
     String[] PERMISSIONS = {
             android.Manifest.permission.CAMERA,
@@ -72,6 +80,32 @@ public class FollowActivity extends FragmentActivity {
         transaction.add(R.id.follow_frame, followerFragment);
         transaction.add(R.id.follow_frame, followingFragment);
         setFragment(choice);
+
+        searchBar = (EditText) findViewById(R.id.search_bar);
+
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // 입력 전
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                switch(choice){
+                    case 1:
+                        followerFragment.filterSeq(s);
+                        break;
+                    case 2:
+                        followingFragment.filterSeq(s);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // 입력 완료
+            }
+        });
 
     }
 
