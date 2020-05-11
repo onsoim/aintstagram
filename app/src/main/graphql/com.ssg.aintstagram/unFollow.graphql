@@ -1,5 +1,5 @@
-mutation un_follow($fkakaoID:Int!, $accessToken:String!){
-    unFollow (fkakaoID:$fkakaoID, accessToken:$accessToken){
+mutation un_follow($fkakaoID:Int!, $accessToken:String!, $choice:Int){
+    unFollow (fkakaoID:$fkakaoID, accessToken:$accessToken, choice:$choice){
         success
     }
 }

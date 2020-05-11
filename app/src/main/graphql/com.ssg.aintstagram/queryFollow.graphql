@@ -4,11 +4,13 @@ query followType($username:String, $accessToken:String!, $choice:Int){
             name
             profile
             textComment
+            kakaoID
         }
         userFrom{
             name
             profile
             textComment
+            kakaoID
         }
     }
 }

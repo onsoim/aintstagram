@@ -1,11 +1,14 @@
 package com.ssg.aintstagram;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +33,7 @@ import okhttp3.OkHttpClient;
 public class FollowerFragment extends Fragment {
     private FollowerRecyclerAdapter adapter;
     private ArrayList<FollowCard> cards = new ArrayList<>();
+    private ArrayList<Boolean> mutuality = new ArrayList<>();
 
     RecyclerView v_recycle;
     private String Token;
@@ -50,14 +54,20 @@ public class FollowerFragment extends Fragment {
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        getFollowerList();
+    }
+
     public void getFollowerList(){
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);;
         v_recycle.setLayoutManager(linearLayoutManager);
 
         cards.clear();
 
-        final OkHttpClient okHttpClient2 = new OkHttpClient.Builder().build();
-        ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient2).build();
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
         Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
         final FollowTypeQuery p = FollowTypeQuery.builder().accessToken(Token).choice(1).build();
 
@@ -71,6 +81,7 @@ public class FollowerFragment extends Fragment {
                     String profile_url = getString(R.string.media_url) + response.data().follows().get(i).userFrom().profile;
                     String name = response.data().follows().get(i).userFrom().name;
                     String comment = response.data().follows().get(i).userFrom().textComment;
+                    Integer kakaoID = response.data().follows().get(i).userFrom().kakaoID;
 
                     try {
                         Bitmap bitmap = Glide
@@ -79,13 +90,15 @@ public class FollowerFragment extends Fragment {
                                 .load(profile_url)
                                 .submit().get();
 
-                        cards.add(new FollowCard(bitmap, name, comment));
+                        cards.add(new FollowCard(bitmap, name, comment, kakaoID, false));
+
                     } catch (ExecutionException e) {
-                        cards.add(new FollowCard(name, comment));
+                        cards.add(new FollowCard(name, comment, kakaoID, false));
                         e.printStackTrace();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+
                 }
 
                 Thread mThread = new Thread() {
@@ -93,7 +106,46 @@ public class FollowerFragment extends Fragment {
                         try {
                             getActivity().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    adapter = new FollowerRecyclerAdapter(cards, getContext());
+                                    FollowerRecyclerAdapter.OnCardListener mOnCardListener = new FollowerRecyclerAdapter.OnCardListener(){
+                                        @Override
+                                        public void onCardClick(int pos, int choice) {
+                                            switch(choice){
+                                                case 1:
+                                                    String record = cards.get(pos).getName();
+                                                    Intent profileIntent = new Intent(getContext().getApplicationContext(), SearchResultProfileActivity.class);
+                                                    profileIntent.putExtra("username", record);
+                                                    startActivity(profileIntent);
+                                                    break;
+                                                case 2:
+                                                    Integer record2 = cards.get(pos).getKakaoID();
+                                                    final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                                                    final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+                                                    final Un_followMutation f = Un_followMutation.builder().accessToken(Token).fkakaoID(record2).choice(1).build();
+                                                    apolloClient.mutate(f).enqueue(new ApolloCall.Callback<Un_followMutation.Data>() {
+                                                        @Override
+                                                        public void onResponse(@NotNull Response<Un_followMutation.Data> response) {
+                                                            getActivity().runOnUiThread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    Toast.makeText(getContext(), "팔로우 취소를 완료하였습니다.", Toast.LENGTH_LONG).show();
+                                                                    getFollowerList();
+                                                                }
+                                                            });
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(@NotNull ApolloException e) {
+
+                                                        }
+                                                    });
+                                                    break;
+                                                case 3:
+                                                    break;
+                                            }
+                                        }
+                                    };
+
+                                    adapter = new FollowerRecyclerAdapter(cards, getContext(), mOnCardListener);
                                     v_recycle.setAdapter(adapter);
                                     Button btn_follower = ((FollowActivity) getActivity()).findViewById(R.id.btn_follower);
                                     btn_follower.setText(String.valueOf(cnt) + " 팔로워");
@@ -115,5 +167,6 @@ public class FollowerFragment extends Fragment {
             }
         });
     }
+
 
 }

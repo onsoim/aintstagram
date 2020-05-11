@@ -101,7 +101,6 @@ public class SearchProfileFragment extends Fragment implements ProfileRecyclerAd
                                         @Override
                                         public void onPostClick(int pos) {
                                             Integer record = albums.get(pos).getRecord();
-                                            Log.e("POSTCLICK", String.valueOf(record));
                                         }
                                     };
 

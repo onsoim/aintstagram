@@ -1139,6 +1139,16 @@
                 "defaultValue": null
               },
               {
+                "name": "choice",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
                 "name": "fkakaoID",
                 "description": null,
                 "type": {

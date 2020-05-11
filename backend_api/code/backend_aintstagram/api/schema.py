@@ -276,8 +276,9 @@ class unFollow(graphene.Mutation):
     class Arguments:
         accessToken = graphene.String(required=True)
         fkakaoID = graphene.Int(required=True)
+        choice = graphene.Int()
 
-    def mutate(self, info, accessToken, fkakaoID):
+    def mutate(self, info, accessToken, fkakaoID, choice=None):
         kakaoID = get_kakaoID(accessToken)
         if kakaoID is None:
             return addFollow(success=False)
@@ -286,13 +287,19 @@ class unFollow(graphene.Mutation):
             return addFollow(success=False)
 
         try:
-            user_from = UserModel.objects.get(kakaoID=kakaoID)
-            user_to = UserModel.objects.get(kakaoID=fkakaoID)
+            if choice == None:
+                user_from = UserModel.objects.get(kakaoID=kakaoID)
+                user_to = UserModel.objects.get(kakaoID=fkakaoID)
+                history = FollowModel.objects.filter(user_from__kakaoID=kakaoID, user_to__kakaoID=fkakaoID)
+                if not history.exists():
+                    return addFollow(success=False)
+            else:
+                user_from = UserModel.objects.get(kakaoID=fkakaoID)
+                user_to = UserModel.objects.get(kakaoID=kakaoID)
+                history = FollowModel.objects.filter(user_from__kakaoID=fkakaoID, user_to__kakaoID=kakaoID)
+                if not history.exists():
+                    return addFollow(success=False)
         except:
-            return addFollow(success=False)
-
-        history = FollowModel.objects.filter(user_from__kakaoID=kakaoID, user_to__kakaoID=fkakaoID)
-        if not history.exists():
             return addFollow(success=False)
 
         else:

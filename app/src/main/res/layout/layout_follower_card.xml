@@ -43,18 +43,26 @@
                 android:textStyle="bold"
                 android:text="팔로우"/>
 
-            <Button
+            <TextView
                 android:layout_weight="20"
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:background="@android:color/black"
+                android:textColor="@android:color/white"
+                />
+
+
+            <Button
+                android:layout_weight="1"
                 android:id="@+id/btn_remove"
                 android:layout_height="match_parent"
                 android:layout_width="wrap_content"
                 android:background="@android:color/black"
                 android:textColor="@android:color/white"
                 android:textAlignment="textEnd"
-                android:layout_marginRight="10dp"
-                android:layout_gravity="right"
                 android:textStyle="bold"
                 android:text="삭제"
+                android:layout_marginRight="10dp"
                 tools:ignore="RtlCompat" />
         </TableRow>
 

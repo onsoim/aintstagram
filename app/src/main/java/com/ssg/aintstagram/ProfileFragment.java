@@ -98,7 +98,6 @@ public class ProfileFragment extends Fragment {
                                         @Override
                                         public void onPostClick(int pos) {
                                             Integer record = albums.get(pos).getRecord();
-                                            Log.e("POSTCLICK2", String.valueOf(record));
                                         }
                                     };
 

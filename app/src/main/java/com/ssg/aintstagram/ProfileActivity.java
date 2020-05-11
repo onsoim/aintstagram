@@ -164,6 +164,8 @@ public class ProfileActivity extends FragmentActivity {
                     case R.id.user_followers:
                         Intent followIntent = new Intent(ProfileActivity.this, FollowActivity.class);
                         followIntent.putExtra("choice", 1);
+                        followIntent.putExtra("follower", follower_cnt);
+                        followIntent.putExtra("following", following_cnt);
                         followIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(followIntent);
                         break;
@@ -171,6 +173,8 @@ public class ProfileActivity extends FragmentActivity {
                     case R.id.user_followings:
                         Intent followingIntent = new Intent(ProfileActivity.this, FollowActivity.class);
                         followingIntent.putExtra("choice", 2);
+                        followingIntent.putExtra("follower", follower_cnt);
+                        followingIntent.putExtra("following", following_cnt);
                         followingIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(followingIntent);
                         break;

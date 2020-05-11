@@ -1,7 +1,6 @@
 package com.ssg.aintstagram;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,19 +11,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.apollographql.apollo.ApolloClient;
-import com.kakao.auth.Session;
-
 import java.util.ArrayList;
 
-import okhttp3.OkHttpClient;
-
-public class FollowerRecyclerAdapter extends RecyclerView.Adapter<FollowerRecyclerAdapter.ItemViewHolder> {
+public class FollowingRecyclerAdapter extends RecyclerView.Adapter<FollowingRecyclerAdapter.ItemViewHolder> {
     private Context context;
     private ArrayList<FollowCard> cards;
     private OnCardListener onCardListener;
 
-    public FollowerRecyclerAdapter(ArrayList<FollowCard> cards, Context context, OnCardListener onCardListener){
+    public FollowingRecyclerAdapter(ArrayList<FollowCard> cards, Context context, OnCardListener onCardListener){
         this.cards = cards;
         this.context = context;
         this.onCardListener = onCardListener;
@@ -34,7 +28,7 @@ public class FollowerRecyclerAdapter extends RecyclerView.Adapter<FollowerRecycl
         ImageView imageView;
         TextView name;
         TextView comment;
-        Button btn_mutual;
+        Button mutual;
         Button btn_remove;
 
         OnCardListener onCardListener;
@@ -45,7 +39,7 @@ public class FollowerRecyclerAdapter extends RecyclerView.Adapter<FollowerRecycl
             imageView = (ImageView) itemView.findViewById(R.id.user_profile);
             name = (TextView) itemView.findViewById(R.id.user_name);
             comment = (TextView) itemView.findViewById(R.id.user_comment);
-            btn_mutual = (Button) itemView.findViewById(R.id.btn_follow);
+            mutual = (Button) itemView.findViewById(R.id.btn_follow);
             btn_remove = (Button) itemView.findViewById(R.id.btn_remove);
 
             this.onCardListener = onCardListener;
@@ -58,9 +52,6 @@ public class FollowerRecyclerAdapter extends RecyclerView.Adapter<FollowerRecycl
                         case R.id.btn_remove:
                             onCardListener.onCardClick(getAdapterPosition(), 2);
                             break;
-                        case R.id.btn_follow:
-                            onCardListener.onCardClick(getAdapterPosition(), 3);
-                            break;
                         default:
                             throw new IllegalStateException("Unexpected value: " + v.getId());
                     }
@@ -68,7 +59,6 @@ public class FollowerRecyclerAdapter extends RecyclerView.Adapter<FollowerRecycl
             };
 
             btn_remove.setOnClickListener(Listener);
-            btn_mutual.setOnClickListener(Listener);
         }
 
         @Override
@@ -80,7 +70,7 @@ public class FollowerRecyclerAdapter extends RecyclerView.Adapter<FollowerRecycl
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_follower_card, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_following_card, parent, false);
         return new ItemViewHolder(view, onCardListener);
     }
 
@@ -89,7 +79,6 @@ public class FollowerRecyclerAdapter extends RecyclerView.Adapter<FollowerRecycl
         holder.imageView.setImageBitmap(cards.get(position).getImg());
         holder.name.setText(cards.get(position).getName());
         holder.comment.setText(cards.get(position).getComment());
-        Log.e("CALLED", String.valueOf(cards.get(position).getIsMutual()));
     }
 
     @Override
@@ -99,7 +88,7 @@ public class FollowerRecyclerAdapter extends RecyclerView.Adapter<FollowerRecycl
 
     public void setItem(ArrayList<FollowCard> cards){ this.cards = cards; }
 
-    public interface OnCardListener{
+    public interface OnCardListener {
         void onCardClick(int pos, int choice);
     }
 }
