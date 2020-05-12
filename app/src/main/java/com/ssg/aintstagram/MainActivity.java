@@ -4,10 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -37,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -46,12 +51,18 @@ import okhttp3.OkHttpClient;
 public class MainActivity extends AppCompatActivity{
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_TAKE_ALBUM = 2;
+    private String Token;
+
+    RecyclerView v_recycle;
+    PostRecyclerAdapter adapter;
 
     private ImageButton btn_camera;
     private ImageButton btn_add;
     private ImageButton btn_profile;
     private ImageButton btn_search;
     private URI mImageUri;
+
+    private ArrayList<Post> posts;
 
     String[] PERMISSIONS = {
             android.Manifest.permission.CAMERA,
@@ -67,10 +78,21 @@ public class MainActivity extends AppCompatActivity{
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
+        v_recycle = (RecyclerView) findViewById(R.id.scroll);
+
         this.setBtn();
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);;
+        v_recycle.setLayoutManager(linearLayoutManager);
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        getPosts();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -189,6 +211,50 @@ public class MainActivity extends AppCompatActivity{
 
         imageFilePath = mFile.getAbsolutePath();
         return mFile;
+    }
+
+    public void getPosts(){
+        posts = new ArrayList<>();
+
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+        Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+
+        final PostTypeQuery q = PostTypeQuery.builder().accessToken(Token).build();
+
+        apolloClient.query(q).enqueue(new ApolloCall.Callback<PostTypeQuery.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<PostTypeQuery.Data> response) {
+                int cnt = response.data().posts().size();
+
+                for(int i=0; i<cnt; i++){
+                    posts.add(new Post(response.data().posts().get(i).user().name, response.data().posts().get(i).place, Integer.parseInt(response.data().posts().get(i).postId), response.data().posts().get(i).textComment));
+                }
+
+                Thread mThread = new Thread() {
+                    public void run() {
+                        try {
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    adapter = new PostRecyclerAdapter(posts, getApplicationContext());
+                                    v_recycle.setAdapter(adapter);
+                                }
+                            });
+                        } catch (Exception e) {
+                        }
+                    }
+                };
+
+                mThread.start();
+
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+
+            }
+        });
+
     }
 
 }

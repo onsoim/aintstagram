@@ -40,6 +40,18 @@ public class Post {
         this.date = date;
     }
 
+    public Post(String name, String place, Integer post_id, String text_comment){
+        this.profile_img = null;
+        this.post_img = null;
+        this.name = name;
+        this.place = place;
+        this.post_id = post_id;
+        this.likes = 0;
+        this.allow_comment = null;
+        this.text_comment = text_comment;
+        this.date = null;
+    }
+
     public Bitmap get_profile_img(){
         return profile_img;
     }
