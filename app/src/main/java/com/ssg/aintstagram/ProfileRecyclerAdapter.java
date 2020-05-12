@@ -15,7 +15,6 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
     private Context context;
     private ArrayList<Album> albums;
     private OnPostListener onPostListener;
-    private int lastPosition = -1;
 
     public ProfileRecyclerAdapter(ArrayList<Album> albums, Context context, OnPostListener onPostListener){
         this.albums = albums;

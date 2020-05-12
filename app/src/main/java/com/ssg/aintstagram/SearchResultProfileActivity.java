@@ -210,7 +210,7 @@ public class SearchResultProfileActivity extends FragmentActivity {
                                     getUserProfile();
                                     runOnUiThread(new Runnable() {
                                         public void run() {
-                                            Toast.makeText(getApplicationContext(), "팔로우 취소를 완료하였습니다.", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getApplicationContext(), "요청을 완료하였습니다.", Toast.LENGTH_LONG).show();
                                         }
                                     });
                                 }
@@ -230,7 +230,7 @@ public class SearchResultProfileActivity extends FragmentActivity {
                                     getUserProfile();
                                     runOnUiThread(new Runnable() {
                                         public void run() {
-                                            Toast.makeText(getApplicationContext(), "팔로우를 완료하였습니다.", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getApplicationContext(), "요청을 완료하였습니다.", Toast.LENGTH_LONG).show();
                                         }
                                     });
                                 }

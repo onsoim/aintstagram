@@ -109,7 +109,6 @@ public class FollowerRecyclerAdapter extends RecyclerView.Adapter<FollowerRecycl
         void onCardClick(int pos, int choice);
     }
 
-
     @Override
     public Filter getFilter() {
         return new Filter() {
@@ -140,5 +139,6 @@ public class FollowerRecyclerAdapter extends RecyclerView.Adapter<FollowerRecycl
             }
         };
     }
+
 
 }

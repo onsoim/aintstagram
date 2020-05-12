@@ -33,7 +33,7 @@ android:columnCount="1">
         <TableRow
             android:layout_weight="1">
             <TextView
-                android:id="@+id/user_comment"
+                android:id="@+id/place"
                 android:layout_marginLeft="5dp"
                 android:textColor="@android:color/white"
                 android:textStyle="bold" />
@@ -43,6 +43,7 @@ android:columnCount="1">
 </LinearLayout>
 
 <ImageView
+    android:id="@+id/post_img"
     android:layout_width="match_parent"
     android:layout_height="400dp"/>
 
@@ -89,19 +90,11 @@ android:columnCount="1">
     android:background="@android:color/black">
 
     <TextView
+        android:id="@+id/likes"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="좋아요 " />
+        android:text="좋아요 0개" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="0"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="개"/>
 </LinearLayout>
 
 <LinearLayout
@@ -111,11 +104,13 @@ android:columnCount="1">
     android:background="@android:color/black">
 
     <TextView
+        android:id="@+id/user_name_comment"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:text="wizley"/>
 
     <TextView
+        android:id="@+id/user_comment"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:text="helloworld"/>
@@ -128,19 +123,11 @@ android:columnCount="1">
     android:background="@android:color/black">
 
     <TextView
+        android:id="@+id/comments"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="댓글 " />
+        android:text="댓글 0개 모두 보기" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="0"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="개 모두 보기"/>
 </LinearLayout>
 
 <LinearLayout
@@ -150,10 +137,12 @@ android:columnCount="1">
     android:background="@android:color/black">
 
     <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/viewer_profile_img"
         android:layout_height="30dp"
         android:layout_width="30dp" />
 
     <EditText
+        android:id="@+id/viewer_comment"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:text="댓글 달기..."/>
@@ -166,6 +155,7 @@ android:columnCount="1">
     android:background="@android:color/black">
 
     <TextView
+        android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
         android:text="3 일"/>
