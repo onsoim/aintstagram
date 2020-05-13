@@ -32,6 +32,7 @@ import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.FileUpload;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.bumptech.glide.Glide;
 import com.kakao.auth.Session;
 
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import okhttp3.OkHttpClient;
 
@@ -82,8 +84,7 @@ public class MainActivity extends AppCompatActivity{
 
         this.setBtn();
 
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);;
-        GridLayoutManager linearLayoutManager = new GridLayoutManager(this, 1);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);;
         v_recycle.setLayoutManager(linearLayoutManager);
 
     }
@@ -236,8 +237,10 @@ public class MainActivity extends AppCompatActivity{
 
                     posts.add(new Post(name, place, postId, textComment));
 
-                    Log.e("DEBUG", textComment);
 
+                    // FIXME :: It should be run after setAdapter, unless null deref
+                    ImgUrlThread imgThread = new ImgUrlThread(i, postId);
+                    imgThread.run();
                 }
 
                 Thread mThread = new Thread() {
@@ -266,5 +269,75 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
+    public class ImgUrlThread implements Runnable {
+        private String url;
+        private int idx;
+        private Integer record;
+
+        public ImgUrlThread(int idx, Integer record){
+            this.idx = idx;
+            this.record = record;
+        }
+
+        @Override
+        public void run() {
+            Log.e("CALLED", "THREAD_RUN");
+            getImageUrl(record);
+        }
+
+        private void getImageUrl(int record) {
+            Log.e("CALLED", "GET_IMAGE_URL");
+            final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+            final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+
+            final PictureTypeQuery q = PictureTypeQuery.builder().accessToken(Token).record(record).build();
+
+            apolloClient.query(q).enqueue(new ApolloCall.Callback<PictureTypeQuery.Data>() {
+                @Override
+                public void onResponse(@NotNull Response<PictureTypeQuery.Data> response) {
+                    url = "http://10.0.2.2:8000/media/" + response.data().pics().get(0).pic;
+                    try {
+                        addAlbum(url, idx);
+
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull ApolloException e) {
+
+                }
+            });
+        }
+
+        private void addAlbum(String url, int idx) throws ExecutionException, InterruptedException {
+            Bitmap bitmap = Glide
+                    .with(getApplicationContext())
+                    .asBitmap()
+                    .load(url)
+                    .submit().get();
+
+            posts.get(idx).set_post_img(bitmap);
+
+            NotifyRunnable runnable = new NotifyRunnable();
+            runnable.setIdx(idx);
+            runOnUiThread(runnable);
+        }
+    }
+
+    public class NotifyRunnable implements Runnable {
+        private int idx;
+        public void setIdx(int idx) {
+            this.idx = idx;
+        }
+
+        public void run() {
+            if(adapter.getItemCount()>=idx)
+                adapter.notifyItemChanged(idx);
+        }
+    }
 }
 

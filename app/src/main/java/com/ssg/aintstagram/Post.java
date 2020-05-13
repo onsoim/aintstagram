@@ -2,6 +2,7 @@ package com.ssg.aintstagram;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import java.util.Date;
 
@@ -50,6 +51,14 @@ public class Post {
         this.allow_comment = null;
         this.text_comment = text_comment;
         this.date = null;
+    }
+
+    public void set_post_img(Bitmap img){
+        this.post_img = img;
+    }
+
+    public void set_profile_img(Bitmap img){
+        this.profile_img = img;
     }
 
     public Bitmap get_profile_img(){

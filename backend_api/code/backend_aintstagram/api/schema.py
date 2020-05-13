@@ -78,11 +78,11 @@ class Query(graphene.ObjectType):
             raise GraphQLError("Not Permitted")
 
         if username:
-            posts = PostModel.objects.filter(user__name=username)
+            posts = PostModel.objects.filter(user__name=username).order_by('date').reverse()
             return posts
 
         else:
-            return PostModel.objects.filter(user__kakaoID=kakaoID)
+            return PostModel.objects.filter(user__kakaoID=kakaoID).order_by('date').reverse()
 
     def resolve_pics(self, info, username=None, record=None, accessToken=None):
         if record:
