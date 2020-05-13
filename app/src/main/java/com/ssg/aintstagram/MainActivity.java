@@ -82,7 +82,8 @@ public class MainActivity extends AppCompatActivity{
 
         this.setBtn();
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);;
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);;
+        GridLayoutManager linearLayoutManager = new GridLayoutManager(this, 1);
         v_recycle.setLayoutManager(linearLayoutManager);
 
     }
@@ -228,7 +229,15 @@ public class MainActivity extends AppCompatActivity{
                 int cnt = response.data().posts().size();
 
                 for(int i=0; i<cnt; i++){
-                    posts.add(new Post(response.data().posts().get(i).user().name, response.data().posts().get(i).place, Integer.parseInt(response.data().posts().get(i).postId), response.data().posts().get(i).textComment));
+                    String name = response.data().posts().get(i).user().name;
+                    String place = response.data().posts().get(i).place;
+                    Integer postId = Integer.parseInt(response.data().posts().get(i).postId);
+                    String textComment = response.data().posts().get(i).textComment;
+
+                    posts.add(new Post(name, place, postId, textComment));
+
+                    Log.e("DEBUG", textComment);
+
                 }
 
                 Thread mThread = new Thread() {

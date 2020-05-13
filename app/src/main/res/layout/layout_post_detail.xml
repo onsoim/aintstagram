@@ -1,164 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_height="match_parent"
-android:layout_width="match_parent"
-android:orientation="horizontal"
-android:background="@android:color/black"
-android:columnCount="1">
-
-<LinearLayout
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
     android:orientation="horizontal"
-    android:background="@android:color/black">
+    android:columnCount="1">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/user_profile"
-        android:layout_height="50dp"
-        android:layout_width="50dp" />
-
-    <TableLayout
-        android:layout_height="match_parent"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_marginLeft="5dp">
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:background="@android:color/black">
 
-        <TableRow
-            android:layout_weight="1">
-            <TextView
-                android:id="@+id/user_name"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
-        </TableRow>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_profile"
+            android:layout_height="50dp"
+            android:layout_width="50dp" />
 
-        <TableRow
-            android:layout_weight="1">
-            <TextView
-                android:id="@+id/place"
-                android:layout_marginLeft="5dp"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
-        </TableRow>
+        <TableLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="5dp">
 
-    </TableLayout>
-</LinearLayout>
+            <TableRow
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/user_name"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+            </TableRow>
 
-<ImageView
-    android:id="@+id/post_img"
-    android:layout_width="match_parent"
-    android:layout_height="400dp"/>
+            <TableRow
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/place"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+            </TableRow>
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="40dp"
-    android:orientation="horizontal"
-    android:background="@android:color/black">
+        </TableLayout>
+    </LinearLayout>
 
-    <ImageButton
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
-    <ImageButton
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
-    <ImageButton
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="2"/>
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="3"/>
-    <ImageButton
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
-</LinearLayout>
+    <ImageView
+        android:id="@+id/post_img"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"/>
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="25dp"
-    android:orientation="horizontal"
-    android:background="@android:color/black">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:background="@android:color/black">
 
-    <TextView
-        android:id="@+id/likes"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="좋아요 0개" />
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"/>
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+    </LinearLayout>
 
-</LinearLayout>
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="25dp"
-    android:orientation="horizontal"
-    android:background="@android:color/black">
-
-    <TextView
-        android:id="@+id/user_name_comment"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="wizley"/>
-
-    <TextView
-        android:id="@+id/user_comment"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="helloworld"/>
-</LinearLayout>
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="25dp"
-    android:orientation="horizontal"
-    android:background="@android:color/black">
-
-    <TextView
-        android:id="@+id/comments"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="댓글 0개 모두 보기" />
-
-</LinearLayout>
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="30dp"
-    android:orientation="horizontal"
-    android:background="@android:color/black">
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/viewer_profile_img"
-        android:layout_height="30dp"
-        android:layout_width="30dp" />
-
-    <EditText
-        android:id="@+id/viewer_comment"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="댓글 달기..."/>
-</LinearLayout>
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="20dp"
-    android:orientation="horizontal"
-    android:background="@android:color/black">
-
-    <TextView
-        android:id="@+id/date"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="25dp"
-        android:text="3 일"/>
-</LinearLayout>
+        android:orientation="horizontal"
+        android:background="@android:color/black">
+
+        <TextView
+            android:id="@+id/likes"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@android:color/white"
+            android:text="좋아요 0개" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:orientation="horizontal"
+        android:background="@android:color/black">
+
+        <TextView
+            android:id="@+id/user_name_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:text="wizley"/>
+
+        <TextView
+            android:id="@+id/user_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:textColor="@android:color/white"
+            android:text="helloworld"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:orientation="horizontal"
+        android:background="@android:color/black">
+
+        <TextView
+            android:id="@+id/comments"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@android:color/white"
+            android:text="댓글 0개 모두 보기" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal"
+        android:background="@android:color/black">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/viewer_profile_img"
+            android:layout_height="match_parent"
+            android:layout_width="30dp" />
+
+        <EditText
+            android:id="@+id/viewer_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@android:color/white"
+            android:textSize="10dp"
+            android:text="댓글 달기..."/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:orientation="horizontal"
+        android:background="@android:color/black">
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:textColor="@android:color/white"
+            android:text="3 일"/>
+    </LinearLayout>
 </GridLayout>
 

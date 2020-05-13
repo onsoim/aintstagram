@@ -85,12 +85,14 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/scroll"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/story"
         app:layout_constraintBottom_toBottomOf="@id/guideline_bottom_menu"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="10dp"
         android:scrollbars="vertical"/>
 
     <ImageButton
