@@ -102,7 +102,8 @@ class Query(graphene.ObjectType):
 
         elif username:
             return PictureModel.objects.filter(
-                record_id__in=PostModel.objects.filter(user__name=username).values('post_id')).order_by('pic_id').reverse()
+                record_id__in=PostModel.objects.filter(user__name=username).values('post_id')).order_by(
+                'pic_id').reverse()
 
         else:
             kakaoID = get_kakaoID(accessToken)
@@ -110,8 +111,8 @@ class Query(graphene.ObjectType):
                 raise GraphQLError("Not Permitted")
 
             return PictureModel.objects.filter(
-                record_id__in=PostModel.objects.filter(user__kakaoID=kakaoID).values('post_id')).order_by('pic_id').reverse()
-
+                record_id__in=PostModel.objects.filter(user__kakaoID=kakaoID).values('post_id')).order_by(
+                'pic_id').reverse()
 
     def resolve_follows(self, info, accessToken, username=None, choice=None):
         kakaoID = get_kakaoID(accessToken)
@@ -137,7 +138,7 @@ class Query(graphene.ObjectType):
         if kakaoID is None:
             raise GraphQLError("Not permitted")
 
-        likes = LikeModel.objects.filter(type=typeinfo, record=record, user_from__kakaoID=kakaoID)
+        likes = LikeModel.objects.filter(type=typeinfo, record_id=record, user_from__kakaoID=kakaoID)
         return likes
 
 
@@ -335,6 +336,47 @@ class unFollow(graphene.Mutation):
             return addFollow(success=True)
 
 
+class addLike(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        typeinfo = graphene.String(required=True)
+        record = graphene.Int(required=True)
+
+    def mutate(self, info, accessToken, typeinfo, record):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            return addLike(success=False)
+
+        elif typeinfo != 'P' and typeinfo != 'C':
+            return addLike(success=False)
+
+        try:
+            post = PostModel.objects.get(post_id=record)
+            user_to = post.user
+            user_from = UserModel.objects.get(kakaoID=kakaoID)
+
+        except:
+            return addLike(success=False)
+
+        history = LikeModel.objects.filter(user_from=user_from, user_to=user_to)
+        if history.exists():
+            return addLike(success=False)
+
+        else:
+            like = LikeModel(user_from=user_from, user_to=user_to, type=typeinfo, record_id=record)
+            like.save()
+
+            post.like_count += 1
+            post.save()
+
+            return addLike(success=True)
+
+
+
+
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     upload_profile = UploadProfile.Field()
@@ -342,6 +384,7 @@ class Mutation(graphene.ObjectType):
     add_post = AddPost.Field()
     add_follow = addFollow.Field()
     un_follow = unFollow.Field()
+    add_like = addLike.Field()
 
 schema = graphene.Schema(
     query=Query,

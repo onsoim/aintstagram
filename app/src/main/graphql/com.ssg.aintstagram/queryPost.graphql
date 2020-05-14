@@ -4,6 +4,7 @@ query postType($name:String, $accessToken:String!){
         allowComment
         place
         textComment
+        likeCount
         user{
             name
             profile

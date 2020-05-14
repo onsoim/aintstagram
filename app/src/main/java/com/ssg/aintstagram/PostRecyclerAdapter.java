@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapter.ItemViewHolder> {
@@ -123,6 +124,13 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         holder.user_name_comment.setText(posts.get(position).getName());
         holder.user_comment.setText(posts.get(position).get_text_comment());
         holder.viewer_profile_img.setImageBitmap(posts.get(position).get_profile_img());
+
+        if(posts.get(position).get_like_status()){
+            holder.btn_heart.setImageResource(R.drawable.heartfull);
+        } else {
+            holder.btn_heart.setImageResource(R.drawable.heart);
+        }
+
         // date
     }
 

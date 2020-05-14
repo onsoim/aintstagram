@@ -1,0 +1,11 @@
+query likeType($typeinfo:String!, $accessToken:String!, $record:Int!, $username:String){
+    likes (typeinfo:$typeinfo, accessToken: $accessToken, record:$record, username:$username){
+        recordId
+        userFrom{
+            name
+        }
+        userTo{
+            name
+        }
+    }
+}

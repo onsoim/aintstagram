@@ -14,11 +14,12 @@ public class Post {
     private String place;
     private String text_comment;
     private Integer post_id;
-    private Integer likes;
+    private int likes;
     private Boolean allow_comment;
     private Date date;
+    private Boolean like_status;
 
-    public Post(Bitmap profile_img, Bitmap post_img, String name, String place, Integer post_id, Integer likes, Boolean allow_comment, String text_comment, Date date){
+    public Post(Bitmap profile_img, Bitmap post_img, String name, String place, Integer post_id, int likes, Boolean allow_comment, String text_comment, Date date){
         this.profile_img = profile_img;
         this.post_img = post_img;
         this.name = name;
@@ -28,9 +29,10 @@ public class Post {
         this.allow_comment = allow_comment;
         this.text_comment = text_comment;
         this.date = date;
+        this.like_status = false;
     }
 
-    public Post(Bitmap post_img, String name, String place, Integer post_id, Integer likes, Boolean allow_comment, String text_comment, Date date){
+    public Post(Bitmap post_img, String name, String place, Integer post_id, int likes, Boolean allow_comment, String text_comment, Date date){
         this.profile_img = null;
         this.post_img = post_img;
         this.name = name;
@@ -40,9 +42,10 @@ public class Post {
         this.allow_comment = allow_comment;
         this.text_comment = text_comment;
         this.date = date;
+        this.like_status = true;
     }
 
-    public Post(String name, String place, Integer post_id, String text_comment){
+    public Post(String name, String place, Integer post_id, String text_comment, int likes){
         this.profile_img = null;
         this.post_img = null;
         this.name = name;
@@ -52,6 +55,8 @@ public class Post {
         this.allow_comment = null;
         this.text_comment = text_comment;
         this.date = null;
+        this.likes = likes;
+        this.like_status = false;
     }
 
     public void set_post_img(Bitmap img){
@@ -62,6 +67,13 @@ public class Post {
         this.comment_img = img;
     }
 
+    public Boolean get_like_status(){
+        return like_status;
+    }
+
+    public void set_like_status(Boolean like_status){
+        this.like_status = like_status;
+    }
 
     public void set_profile_img(Bitmap img){
         this.profile_img = img;

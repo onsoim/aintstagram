@@ -240,9 +240,10 @@ public class MainActivity extends AppCompatActivity{
                     String place = response.data().posts().get(i).place;
                     String profile = getString(R.string.media_url) + response.data().posts().get(i).user().profile;
                     Integer postId = Integer.parseInt(response.data().posts().get(i).postId);
+                    int likes = response.data().posts().get(i).likeCount;
                     String textComment = response.data().posts().get(i).textComment;
 
-                    posts.add(new Post(name, place, postId, textComment));
+                    posts.add(new Post(name, place, postId, textComment, likes));
 
                     threads.add(new ImgUrlThread(i, postId, profile));
                 }
@@ -376,6 +377,8 @@ public class MainActivity extends AppCompatActivity{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+            checkLike();
         }
 
         private void getImageUrl(int record) {
@@ -431,6 +434,34 @@ public class MainActivity extends AppCompatActivity{
             NotifyRunnable runnable = new NotifyRunnable();
             runnable.setIdx(idx);
             runOnUiThread(runnable);
+        }
+
+        private void checkLike() {
+            final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+            final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+
+            final LikeTypeQuery l = LikeTypeQuery.builder().accessToken(Token).typeinfo("P").record(record).build();
+            apolloClient.query(l).enqueue(new ApolloCall.Callback<LikeTypeQuery.Data>() {
+                @Override
+                public void onResponse(@NotNull Response<LikeTypeQuery.Data> response) {
+                    if(response.data().likes().size() == 1) {
+                        posts.get(idx).set_like_status(true);
+                    } else {
+                        posts.get(idx).set_like_status(false);
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyItemChanged(idx);
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(@NotNull ApolloException e) {
+
+                }
+            });
         }
     }
 
