@@ -90,7 +90,7 @@ class Query(graphene.ObjectType):
 
         elif username:
             return PictureModel.objects.filter(
-                record_id__in=PostModel.objects.filter(user__name=username).values('post_id'))
+                record_id__in=PostModel.objects.filter(user__name=username).values('post_id')).order_by('pic_id').reverse()
 
         else:
             kakaoID = get_kakaoID(accessToken)
@@ -98,7 +98,7 @@ class Query(graphene.ObjectType):
                 raise GraphQLError("Not Permitted")
 
             return PictureModel.objects.filter(
-                record_id__in=PostModel.objects.filter(user__kakaoID=kakaoID).values('post_id'))
+                record_id__in=PostModel.objects.filter(user__kakaoID=kakaoID).values('post_id')).order_by('pic_id').reverse()
 
 
     def resolve_follows(self, info, accessToken, username=None, choice=None):

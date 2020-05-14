@@ -1,11 +1,13 @@
 package com.ssg.aintstagram;
 
 import android.content.Context;
+import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +28,10 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
+        ImageButton btn_edit_post;
+        ImageButton btn_heart;
+        ImageButton btn_comment;
+        ImageButton btn_message;
         ImageView user_profile;
         ImageView post_img;
         TextView user_name;
@@ -42,6 +48,10 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         public ItemViewHolder(View itemView){
             super(itemView);
 
+            btn_edit_post = (ImageButton) itemView.findViewById(R.id.btn_edit_post);
+            btn_heart = (ImageButton) itemView.findViewById(R.id.btn_heart);
+            btn_comment = (ImageButton) itemView.findViewById(R.id.btn_comment);
+            btn_message = (ImageButton) itemView.findViewById(R.id.btn_message);
             user_profile = (ImageView) itemView.findViewById(R.id.user_profile);
             post_img = (ImageView) itemView.findViewById(R.id.post_img);
             user_name = (TextView) itemView.findViewById(R.id.user_name);
@@ -70,7 +80,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         holder.post_img.setImageBitmap(posts.get(position).get_post_img());
         holder.user_name.setText(posts.get(position).getName());
         holder.place.setText(posts.get(position).getPlace());
-        holder.likes.setText(String.valueOf(posts.get(position).getLikes()));
+        holder.likes.setText("좋아요 " + String.valueOf(posts.get(position).getLikes()) + "개");
         holder.user_name_comment.setText(posts.get(position).getName());
         holder.user_comment.setText(posts.get(position).get_text_comment());
         holder.viewer_profile_img.setImageBitmap(posts.get(position).get_profile_img());

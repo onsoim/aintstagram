@@ -19,7 +19,8 @@
 
         <TableLayout
             android:layout_height="match_parent"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="10"
             android:layout_marginLeft="5dp">
 
             <TableRow
@@ -40,6 +41,16 @@
             </TableRow>
 
         </TableLayout>
+
+        <ImageButton
+            android:id="@+id/btn_edit_post"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:src="@drawable/moreoption"
+            android:background="@android:color/black" />
+
     </LinearLayout>
 
     <ImageView
@@ -49,37 +60,61 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="30dp"
         android:orientation="horizontal"
         android:background="@android:color/black">
 
         <ImageButton
+            android:id="@+id/btn_heart"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:scaleType="fitEnd"
+            android:src="@drawable/heart"
+            android:background="@android:color/black"
             android:layout_weight="1"/>
+
         <ImageButton
+            android:id="@+id/btn_comment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:background="@android:color/black"
+            android:src="@drawable/comment"
+            android:scaleType="fitCenter"
             android:layout_weight="1"/>
+
         <ImageButton
+            android:id="@+id/btn_message"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:background="@android:color/black"
+            android:src="@drawable/sms"
+            android:scaleType="fitCenter"
             android:layout_weight="1"/>
+
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:background="@android:color/black"
             android:layout_weight="1"/>
+
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:background="@android:color/black"
             android:layout_weight="2"/>
+
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:background="@android:color/black"
             android:layout_weight="3"/>
+
         <ImageButton
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:src="@drawable/pin"
+            android:scaleType="fitCenter"
+            android:background="@android:color/black"
             android:layout_weight="1"/>
     </LinearLayout>
 
