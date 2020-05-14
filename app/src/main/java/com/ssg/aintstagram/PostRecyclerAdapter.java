@@ -73,6 +73,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         holder.likes.setText(String.valueOf(posts.get(position).getLikes()));
         holder.user_name_comment.setText(posts.get(position).getName());
         holder.user_comment.setText(posts.get(position).get_text_comment());
+        holder.viewer_profile_img.setImageBitmap(posts.get(position).get_profile_img());
         // date
     }
 

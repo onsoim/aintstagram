@@ -9,6 +9,7 @@ import java.util.Date;
 public class Post {
     private Bitmap profile_img;
     private Bitmap post_img;
+    private Bitmap comment_img;
     private String name;
     private String place;
     private String text_comment;
@@ -57,6 +58,11 @@ public class Post {
         this.post_img = img;
     }
 
+    public void set_comment_img(Bitmap img){
+        this.comment_img = img;
+    }
+
+
     public void set_profile_img(Bitmap img){
         this.profile_img = img;
     }
@@ -67,6 +73,10 @@ public class Post {
 
     public Bitmap get_post_img(){
         return post_img;
+    }
+
+    public Bitmap get_comment_img(){
+        return comment_img;
     }
 
     public String getName(){

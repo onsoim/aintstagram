@@ -40,7 +40,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity{
     private static final int REQUEST_TAKE_ALBUM = 2;
     private String Token;
 
+    private ArrayList<ImgUrlThread> threads;
     RecyclerView v_recycle;
     PostRecyclerAdapter adapter;
 
@@ -94,6 +98,7 @@ public class MainActivity extends AppCompatActivity{
         super.onStart();
 
         getPosts();
+        setUserProfile();
     }
 
     @Override
@@ -217,6 +222,7 @@ public class MainActivity extends AppCompatActivity{
 
     public void getPosts(){
         posts = new ArrayList<>();
+        threads = new ArrayList<>();
 
         final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
         final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
@@ -232,15 +238,13 @@ public class MainActivity extends AppCompatActivity{
                 for(int i=0; i<cnt; i++){
                     String name = response.data().posts().get(i).user().name;
                     String place = response.data().posts().get(i).place;
+                    String profile = getString(R.string.media_url) + response.data().posts().get(i).user().profile;
                     Integer postId = Integer.parseInt(response.data().posts().get(i).postId);
                     String textComment = response.data().posts().get(i).textComment;
 
                     posts.add(new Post(name, place, postId, textComment));
 
-
-                    // FIXME :: It should be run after setAdapter, unless null deref
-                    ImgUrlThread imgThread = new ImgUrlThread(i, postId);
-                    imgThread.run();
+                    threads.add(new ImgUrlThread(i, postId, profile));
                 }
 
                 Thread mThread = new Thread() {
@@ -259,6 +263,10 @@ public class MainActivity extends AppCompatActivity{
 
                 mThread.start();
 
+                for(ImgUrlThread thread : threads){
+                    thread.run();
+                }
+
             }
 
             @Override
@@ -269,24 +277,82 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
+    public void setUserProfile(){
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+
+        Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+
+        final UserTypeQuery u = UserTypeQuery.builder().accessToken(Token).build();
+
+        apolloClient.query(u).enqueue(new ApolloCall.Callback<UserTypeQuery.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<UserTypeQuery.Data> response) {
+                final String url = getString(R.string.media_url) + response.data().users().get(0).profile;
+
+                Thread mThread = new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            final Bitmap bitmap = Glide
+                                    .with(getApplicationContext())
+                                    .asBitmap()
+                                    .load(url)
+                                    .submit().get();
+
+                            runOnUiThread(new Runnable(){
+                                public void run(){
+                                    for(int idx=0; idx<posts.size(); idx++) {
+                                        posts.get(idx).set_comment_img(bitmap);
+                                        adapter.notifyItemChanged(idx);
+                                    }
+                                }
+                            });
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+
+                mThread.start();
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+
+            }
+        });
+    }
+
+
     public class ImgUrlThread implements Runnable {
         private String url;
+        private String profile_url;
         private int idx;
         private Integer record;
 
-        public ImgUrlThread(int idx, Integer record){
+        public ImgUrlThread(int idx, Integer record, String profile_url){
             this.idx = idx;
             this.record = record;
+            this.profile_url = profile_url;
         }
 
         @Override
         public void run() {
-            Log.e("CALLED", "THREAD_RUN");
             getImageUrl(record);
+
+            try {
+                addPostProfileImage(profile_url);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         private void getImageUrl(int record) {
-            Log.e("CALLED", "GET_IMAGE_URL");
             final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
             final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
 
@@ -297,7 +363,7 @@ public class MainActivity extends AppCompatActivity{
                 public void onResponse(@NotNull Response<PictureTypeQuery.Data> response) {
                     url = "http://10.0.2.2:8000/media/" + response.data().pics().get(0).pic;
                     try {
-                        addAlbum(url, idx);
+                        addPostImage(url);
 
                     } catch (ExecutionException e) {
                         e.printStackTrace();
@@ -313,7 +379,7 @@ public class MainActivity extends AppCompatActivity{
             });
         }
 
-        private void addAlbum(String url, int idx) throws ExecutionException, InterruptedException {
+        private void addPostImage(String url) throws ExecutionException, InterruptedException {
             Bitmap bitmap = Glide
                     .with(getApplicationContext())
                     .asBitmap()
@@ -321,6 +387,20 @@ public class MainActivity extends AppCompatActivity{
                     .submit().get();
 
             posts.get(idx).set_post_img(bitmap);
+
+            NotifyRunnable runnable = new NotifyRunnable();
+            runnable.setIdx(idx);
+            runOnUiThread(runnable);
+        }
+
+        private void addPostProfileImage(String url) throws ExecutionException, InterruptedException {
+            Bitmap bitmap = Glide
+                    .with(getApplicationContext())
+                    .asBitmap()
+                    .load(url)
+                    .submit().get();
+
+            posts.get(idx).set_profile_img(bitmap);
 
             NotifyRunnable runnable = new NotifyRunnable();
             runnable.setIdx(idx);

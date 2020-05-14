@@ -6,6 +6,7 @@ query postType($name:String, $accessToken:String!){
         textComment
         user{
             name
+            profile
         }
     }
 }
