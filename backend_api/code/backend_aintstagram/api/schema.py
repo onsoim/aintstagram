@@ -27,6 +27,11 @@ class FollowType(DjangoObjectType):
         model = FollowModel
 
 
+class LikeType(DjangoObjectType):
+    class Meta:
+        model = LikeModel
+
+
 class Query(graphene.ObjectType):
     users = graphene.List(UserType,
                           kakaoID=graphene.Int(),
@@ -51,6 +56,13 @@ class Query(graphene.ObjectType):
                             username=graphene.String(),
                             choice=graphene.Int(),
                             )
+
+    likes = graphene.List(LikeType,
+                          accessToken=graphene.String(required=True),
+                          typeinfo=graphene.String(required=True),
+                          record=graphene.Int(required=True),
+                          username=graphene.String(),
+                          )
 
     def resolve_users(self, info, kakaoID=None, username=None, accessToken=None, search=None):
         query = UserModel.objects.all()
@@ -118,6 +130,16 @@ class Query(graphene.ObjectType):
                 return FollowModel.objects.filter(user_from__kakaoID=kakaoID)
             else:
                 raise GraphQLError("Error")
+
+    def resolve_likes(self, info, accessToken, typeinfo, record, username=None):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            raise GraphQLError("Not permitted")
+
+        likes = LikeModel.objects.filter(type=typeinfo, record=record, user_from__kakaoID=kakaoID)
+        return likes
+
 
 class CreateUser(graphene.Mutation):
     success = graphene.Boolean()

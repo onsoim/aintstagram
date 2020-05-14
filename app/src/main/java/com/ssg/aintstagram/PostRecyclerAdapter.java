@@ -21,13 +21,15 @@ import java.util.ArrayList;
 public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapter.ItemViewHolder> {
     private Context context;
     private ArrayList<Post> posts;
+    private OnPostListener onPostListener;
 
-    PostRecyclerAdapter(ArrayList<Post> posts, Context context){
+    PostRecyclerAdapter(ArrayList<Post> posts, Context context, OnPostListener onPostListener){
         this.posts = posts;
         this.context = context;
+        this.onPostListener = onPostListener;
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageButton btn_edit_post;
         ImageButton btn_heart;
         ImageButton btn_comment;
@@ -44,8 +46,9 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         EditText viewer_comment;
         TextView date;
 
+        OnPostListener onPostListener;
 
-        public ItemViewHolder(View itemView){
+        public ItemViewHolder(View itemView, final OnPostListener onPostListener){
             super(itemView);
 
             btn_edit_post = (ImageButton) itemView.findViewById(R.id.btn_edit_post);
@@ -63,15 +66,51 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             viewer_comment = (EditText) itemView.findViewById(R.id.viewer_comment);
             viewer_profile_img = (ImageView) itemView.findViewById(R.id.viewer_profile_img);
             date = (TextView) itemView.findViewById(R.id.date);
+
+            this.onPostListener = onPostListener;
+            itemView.setOnClickListener(this);
+
+            View.OnClickListener listener = new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    switch (v.getId()){
+                        case R.id.btn_edit_post:
+                            onPostListener.onPostClick(getAdapterPosition(), 1);
+                            break;
+                        case R.id.btn_heart:
+                            onPostListener.onPostClick(getAdapterPosition(), 2);
+                            break;
+                        case R.id.btn_comment:
+                            onPostListener.onPostClick(getAdapterPosition(), 3);
+                            break;
+                        case R.id.btn_message:
+                            onPostListener.onPostClick(getAdapterPosition(), 4);
+                            break;
+                        case R.id.post_img:
+                            onPostListener.onPostClick(getAdapterPosition(), 5);
+                    }
+                }
+            };
+
+            btn_edit_post.setOnClickListener(listener);
+            btn_heart.setOnClickListener(listener);
+            btn_comment.setOnClickListener(listener);
+            btn_message.setOnClickListener(listener);
+            post_img.setOnClickListener(listener);
         }
 
+
+        @Override
+        public void onClick(View v) {
+            onPostListener.onPostClick(getAdapterPosition(), 0);
+        }
     }
 
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_post_detail,parent,false);
-        return new ItemViewHolder(view);
+        return new ItemViewHolder(view, onPostListener);
     }
 
     @Override
@@ -90,5 +129,9 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
     @Override
     public int getItemCount() {
         return posts.size();
+    }
+
+    public interface OnPostListener{
+        void onPostClick(int pos, int choice);
     }
 }

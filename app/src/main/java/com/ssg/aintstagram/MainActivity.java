@@ -252,7 +252,33 @@ public class MainActivity extends AppCompatActivity{
                         try {
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    adapter = new PostRecyclerAdapter(posts, getApplicationContext());
+                                    PostRecyclerAdapter.OnPostListener onPostListener = new PostRecyclerAdapter.OnPostListener() {
+                                        @Override
+                                        public void onPostClick(int pos, int choice) {
+                                            switch(choice){
+                                                case 0:
+                                                    String name = posts.get(pos).getName();
+                                                    Intent profileIntent = new Intent(getApplicationContext(), SearchResultProfileActivity.class);
+                                                    profileIntent.putExtra("username", name);
+                                                    startActivity(profileIntent);
+                                                    break;
+                                                case 1:
+                                                    break;
+                                                case 2:
+                                                    break;
+                                                case 3:
+                                                    break;
+                                                case 4:
+                                                    break;
+                                                case 5:
+                                                    break;
+                                                default:
+                                                    throw new IllegalStateException("Unexpected value: " + choice);
+                                            }
+                                        }
+                                    };
+
+                                    adapter = new PostRecyclerAdapter(posts, getApplicationContext(), onPostListener);
                                     v_recycle.setAdapter(adapter);
                                 }
                             });
