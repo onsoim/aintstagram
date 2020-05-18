@@ -84,7 +84,6 @@ public class AddPostActivity extends Activity {
 
                         String Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
                         String text_comment = v_comment.getText().toString();
-                        Log.e("DEBUG", text_comment);
                         final Add_postMutation addPost = Add_postMutation.builder().img(new FileUpload("image/jpg", new File(postimg.getAbsolutePath()))).accessToken(Token).comment(text_comment).build();
 
                         apolloClient.mutate(addPost).enqueue(new ApolloCall.Callback<Add_postMutation.Data>() {

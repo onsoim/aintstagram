@@ -1,0 +1,5 @@
+mutation remove_post($accessToken:String!, $record:Int!){
+    removePost (accessToken:$accessToken, record:$record){
+        success
+    }
+}

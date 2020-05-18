@@ -256,6 +256,52 @@ class AddPost(graphene.Mutation):
         return AddPost(success=True)
 
 
+class RemovePost(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        record = graphene.Int(required=True)
+
+    def mutate(self, info, accessToken, record):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            return RemovePost(success=False)
+
+        user = UserModel.objects.get(kakaoID=kakaoID)
+        try:
+            post = PostModel.objects.get(user=user, post_id=record)
+        except:
+            return RemovePost(success=False)
+
+        try:
+            PictureModel.objects.get(record_id=record, type='P').delete()
+        except:
+            pass
+
+        try:
+            comments = CommentModel.objects.filter(post_id=record)
+            try:
+                likes = LikeModel.objects.filter(record_id__in=comments, type='C').delete()
+            except:
+                pass
+            comments.delete()
+        except:
+            pass
+
+        try:
+            LikeModel.objects.filter(record_id=record, type='P').delete()
+        except:
+            pass
+
+        post.delete()
+
+        user.post_count -= 1
+        user.save()
+        return RemovePost(success=True)
+
+
 class addFollow(graphene.Mutation):
     success = graphene.Boolean()
 
@@ -375,8 +421,6 @@ class addLike(graphene.Mutation):
             return addLike(success=True)
 
 
-
-
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     upload_profile = UploadProfile.Field()
@@ -385,6 +429,8 @@ class Mutation(graphene.ObjectType):
     add_follow = addFollow.Field()
     un_follow = unFollow.Field()
     add_like = addLike.Field()
+    remove_post = RemovePost.Field()
+
 
 schema = graphene.Schema(
     query=Query,

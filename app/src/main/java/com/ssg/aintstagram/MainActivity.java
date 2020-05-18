@@ -1,6 +1,7 @@
 package com.ssg.aintstagram;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -275,7 +277,7 @@ public class MainActivity extends AppCompatActivity{
                                 public void run() {
                                     PostRecyclerAdapter.OnPostListener onPostListener = new PostRecyclerAdapter.OnPostListener() {
                                         @Override
-                                        public void onPostClick(int pos, int choice) {
+                                        public void onPostClick(final int pos, int choice) {
                                             switch(choice){
                                                 case 0:
                                                     String name = posts.get(pos).getName();
@@ -284,6 +286,44 @@ public class MainActivity extends AppCompatActivity{
                                                     startActivity(profileIntent);
                                                     break;
                                                 case 1:
+                                                    final int record = posts.get(pos).get_post_id();
+                                                    final String[] items = new String[]{"글 수정", "글 삭제"};
+                                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                                    builder.setTitle("옵션을 선택하세요.").setItems(items, new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            switch(which){
+                                                                case 0:
+                                                                    break;
+                                                                case 1:
+                                                                    final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                                                                    final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+
+                                                                    final Remove_postMutation q = Remove_postMutation.builder().accessToken(Token).record(record).build();
+                                                                    apolloClient.mutate(q).enqueue(new ApolloCall.Callback<Remove_postMutation.Data>() {
+                                                                        @Override
+                                                                        public void onResponse(@NotNull Response<Remove_postMutation.Data> response) {
+                                                                            if(response.data().removePost().success){
+                                                                                runOnUiThread(new Runnable() {
+                                                                                    @Override
+                                                                                    public void run() {
+                                                                                        Toast.makeText(getApplicationContext(), "게시물 삭제가 완료되었습니다.", Toast.LENGTH_LONG).show();
+                                                                                        adapter.notifyItemRemoved(pos);
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                        }
+                                                                        @Override
+                                                                        public void onFailure(@NotNull ApolloException e) {
+
+                                                                        }
+                                                                    });
+                                                                    break;
+                                                            }
+                                                        }
+                                                    });
+                                                    AlertDialog dialog = builder.create();
+                                                    dialog.show();
                                                     break;
                                                 case 2:
                                                     break;
