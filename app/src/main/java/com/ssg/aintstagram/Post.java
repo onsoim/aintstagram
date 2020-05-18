@@ -111,6 +111,8 @@ public class Post {
         return post_id;
     }
 
+    public void setLikes(int likes){ this.likes = likes; }
+
     public Integer getLikes(){
         return likes;
     }

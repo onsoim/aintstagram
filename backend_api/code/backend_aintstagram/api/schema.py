@@ -418,6 +418,7 @@ class unFollow(graphene.Mutation):
 
 class addLike(graphene.Mutation):
     success = graphene.Boolean()
+    likes = graphene.Int()
 
     class Arguments:
         accessToken = graphene.String(required=True)
@@ -452,11 +453,12 @@ class addLike(graphene.Mutation):
             post.like_count += 1
             post.save()
 
-            return addLike(success=True)
+            return addLike(success=True, likes=post.like_count)
 
 
 class unLike(graphene.Mutation):
     success = graphene.Boolean()
+    likes = graphene.Int()
 
     class Arguments:
         accessToken = graphene.String(required=True)
@@ -490,7 +492,7 @@ class unLike(graphene.Mutation):
         post.like_count -= 1
         post.save()
 
-        return unLike(success=True)
+        return unLike(success=True, likes=post.like_count)
 
 
 class Mutation(graphene.ObjectType):

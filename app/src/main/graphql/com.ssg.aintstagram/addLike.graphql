@@ -1,5 +1,6 @@
 mutation add_like($accessToken:String!, $typeinfo:String!, $record:Int!){
     addLike (accessToken: $accessToken, typeinfo:$typeinfo, record:$record){
         success
+        likes
     }
 }

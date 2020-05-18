@@ -355,6 +355,8 @@ public class MainActivity extends AppCompatActivity{
                                                             @Override
                                                             public void onResponse(@NotNull Response<Un_likeMutation.Data> response) {
                                                                 if(response.data().unLike().success){
+                                                                    posts.get(pos).set_like_status(false);
+                                                                    posts.get(pos).setLikes(response.data().unLike().likes);
                                                                     runOnUiThread(new Runnable() {
                                                                         @Override
                                                                         public void run() {
@@ -376,10 +378,11 @@ public class MainActivity extends AppCompatActivity{
                                                             @Override
                                                             public void onResponse(@NotNull Response<Add_likeMutation.Data> response) {
                                                                 if(response.data().addLike().success){
+                                                                    posts.get(pos).set_like_status(true);
+                                                                    posts.get(pos).setLikes(response.data().addLike().likes);
                                                                     runOnUiThread(new Runnable() {
                                                                         @Override
                                                                         public void run() {
-                                                                            posts.get(pos).set_like_status(true);
                                                                             adapter.notifyItemChanged(pos);
                                                                         }
                                                                     });
