@@ -344,6 +344,61 @@ public class MainActivity extends AppCompatActivity{
                                                     dialog.show();
                                                     break;
                                                 case 2:
+                                                    final Boolean status = posts.get(pos).get_like_status();
+                                                    final int rec = posts.get(pos).get_post_id();
+                                                    final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                                                    final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+
+                                                    if(status){
+                                                        Un_likeMutation q = Un_likeMutation.builder().accessToken(Token).record(rec).typeinfo("P").build();
+                                                        apolloClient.mutate(q).enqueue(new ApolloCall.Callback<Un_likeMutation.Data>() {
+                                                            @Override
+                                                            public void onResponse(@NotNull Response<Un_likeMutation.Data> response) {
+                                                                if(response.data().unLike().success){
+                                                                    runOnUiThread(new Runnable() {
+                                                                        @Override
+                                                                        public void run() {
+                                                                            posts.get(pos).set_like_status(false);
+                                                                            adapter.notifyItemChanged(pos);
+                                                                        }
+                                                                    });
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onFailure(@NotNull ApolloException e) {
+
+                                                            }
+                                                        });
+                                                    } else {
+                                                        Add_likeMutation q = Add_likeMutation.builder().accessToken(Token).record(rec).typeinfo("P").build();
+                                                        apolloClient.mutate(q).enqueue(new ApolloCall.Callback<Add_likeMutation.Data>() {
+                                                            @Override
+                                                            public void onResponse(@NotNull Response<Add_likeMutation.Data> response) {
+                                                                if(response.data().addLike().success){
+                                                                    runOnUiThread(new Runnable() {
+                                                                        @Override
+                                                                        public void run() {
+                                                                            posts.get(pos).set_like_status(true);
+                                                                            adapter.notifyItemChanged(pos);
+                                                                        }
+                                                                    });
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onFailure(@NotNull ApolloException e) {
+
+                                                            }
+                                                        });
+
+                                                    }
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            adapter.notifyItemChanged(pos);
+                                                        }
+                                                    });
                                                     break;
                                                 case 3:
                                                     break;

@@ -99,7 +99,10 @@ class Query(graphene.ObjectType):
             return posts
 
         else:
-            return PostModel.objects.filter(user__kakaoID=kakaoID).order_by('date').reverse()
+            posts = PostModel.objects.filter(user__name=UserModel.objects.get(kakaoID=kakaoID))
+            for following in list(FollowModel.objects.filter(user_from__kakaoID=kakaoID).values("user_to_id")):
+                posts |= PostModel.objects.filter(user__name=UserModel.objects.get(user_id=following["user_to_id"]))
+            return posts.order_by('date').reverse()
 
     def resolve_pics(self, info, username=None, record=None, accessToken=None):
         if record:
@@ -452,6 +455,44 @@ class addLike(graphene.Mutation):
             return addLike(success=True)
 
 
+class unLike(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        typeinfo = graphene.String(required=True)
+        record = graphene.Int(required=True)
+
+    def mutate(self, info, accessToken, typeinfo, record):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            return unLike(success=False)
+
+        elif typeinfo != 'P' and typeinfo != 'C':
+            return unLike(success=False)
+
+        try:
+            post = PostModel.objects.get(post_id=record)
+            user_to = post.user
+            user_from = UserModel.objects.get(kakaoID=kakaoID)
+
+        except:
+            return unLike(success=False)
+        #
+        # history = LikeModel.objects.filter(user_from=user_from, user_to=user_to)
+        # if not history.exists():
+        #     return unLike(success=False)
+
+        like = LikeModel.objects.get(user_from=user_from, user_to=user_to, type=typeinfo, record_id=record)
+        like.delete()
+
+        post.like_count -= 1
+        post.save()
+
+        return unLike(success=True)
+
+
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     upload_profile = UploadProfile.Field()
@@ -462,6 +503,7 @@ class Mutation(graphene.ObjectType):
     add_follow = addFollow.Field()
     un_follow = unFollow.Field()
     add_like = addLike.Field()
+    un_like = unLike.Field()
 
 schema = graphene.Schema(
     query=Query,

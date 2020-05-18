@@ -1,0 +1,5 @@
+mutation un_like($accessToken:String!, $typeinfo:String!, $record:Int!){
+    unLike (accessToken: $accessToken, typeinfo:$typeinfo, record:$record){
+        success
+    }
+}
