@@ -16,10 +16,10 @@ public class Post {
     private Integer post_id;
     private int likes;
     private Boolean allow_comment;
-    private Date date;
+    private String date;
     private Boolean like_status;
 
-    public Post(Bitmap profile_img, Bitmap post_img, String name, String place, Integer post_id, int likes, Boolean allow_comment, String text_comment, Date date){
+    public Post(Bitmap profile_img, Bitmap post_img, String name, String place, Integer post_id, int likes, Boolean allow_comment, String text_comment, String date){
         this.profile_img = profile_img;
         this.post_img = post_img;
         this.name = name;
@@ -32,7 +32,7 @@ public class Post {
         this.like_status = false;
     }
 
-    public Post(Bitmap post_img, String name, String place, Integer post_id, int likes, Boolean allow_comment, String text_comment, Date date){
+    public Post(Bitmap post_img, String name, String place, Integer post_id, int likes, Boolean allow_comment, String text_comment, String date){
         this.profile_img = null;
         this.post_img = post_img;
         this.name = name;
@@ -45,7 +45,7 @@ public class Post {
         this.like_status = true;
     }
 
-    public Post(String name, String place, Integer post_id, String text_comment, int likes){
+    public Post(String name, String place, Integer post_id, String text_comment, int likes, String date){
         this.profile_img = null;
         this.post_img = null;
         this.name = name;
@@ -54,7 +54,7 @@ public class Post {
         this.likes = 0;
         this.allow_comment = null;
         this.text_comment = text_comment;
-        this.date = null;
+        this.date = date;
         this.likes = likes;
         this.like_status = false;
     }
@@ -115,7 +115,7 @@ public class Post {
         return get_allow_comment();
     }
 
-    public Date getDate(){
+    public String getDate(){
         return date;
     }
 

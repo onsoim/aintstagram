@@ -5,6 +5,7 @@ query postType($name:String, $accessToken:String!){
         place
         textComment
         likeCount
+        date
         user{
             name
             profile

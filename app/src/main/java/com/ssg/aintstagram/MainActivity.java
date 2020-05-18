@@ -1,5 +1,6 @@
 package com.ssg.aintstagram;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -17,6 +18,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
@@ -45,6 +47,11 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -231,6 +238,7 @@ public class MainActivity extends AppCompatActivity{
         final PostTypeQuery q = PostTypeQuery.builder().accessToken(Token).build();
 
         apolloClient.query(q).enqueue(new ApolloCall.Callback<PostTypeQuery.Data>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(@NotNull Response<PostTypeQuery.Data> response) {
                 int cnt = response.data().posts().size();
@@ -242,8 +250,20 @@ public class MainActivity extends AppCompatActivity{
                     Integer postId = Integer.parseInt(response.data().posts().get(i).postId);
                     int likes = response.data().posts().get(i).likeCount;
                     String textComment = response.data().posts().get(i).textComment;
+                    String dt = response.data().posts().get(i).date.toString();
+                    ZonedDateTime zdt = ZonedDateTime.parse(dt);
+                    ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+                    long days = Duration.between(zdt ,now).toDays();
+                    long hours = Duration.between(zdt, now).toHours();
+                    long mins = Duration.between(zdt, now).toMinutes();
 
-                    posts.add(new Post(name, place, postId, textComment, likes));
+                    if(days>=1) {
+                        posts.add(new Post(name, place, postId, textComment, likes, String.valueOf(days) + " 일"));
+                    } else if(hours>=1){
+                        posts.add(new Post(name, place, postId, textComment, likes, String.valueOf(hours) + " 시간"));
+                    } else {
+                        posts.add(new Post(name, place, postId, textComment, likes, String.valueOf(mins) + " 분"));
+                    }
 
                     threads.add(new ImgUrlThread(i, postId, profile));
                 }
