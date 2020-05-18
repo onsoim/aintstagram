@@ -261,6 +261,32 @@ class AddPost(graphene.Mutation):
         return AddPost(success=True)
 
 
+class EditPost(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        record = graphene.Int(required=True)
+        place = graphene.String()
+        comment = graphene.String()
+
+    def mutate(self, info, accessToken, record, place=None, comment=None):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            return EditPost(success=False)
+
+        user = UserModel.objects.get(kakaoID=kakaoID)
+        try:
+            post = PostModel.objects.get(user=user, post_id=record)
+        except:
+            return EditPost(success=False)
+
+        post.text_comment = comment
+        post.place = place
+        post.save()
+        return EditPost(success=True)
+
 class RemovePost(graphene.Mutation):
     success = graphene.Boolean()
 
@@ -431,11 +457,11 @@ class Mutation(graphene.ObjectType):
     upload_profile = UploadProfile.Field()
     edit_profile = EditProfile.Field()
     add_post = AddPost.Field()
+    edit_post = EditPost.Field()
+    remove_post = RemovePost.Field()
     add_follow = addFollow.Field()
     un_follow = unFollow.Field()
     add_like = addLike.Field()
-    remove_post = RemovePost.Field()
-
 
 schema = graphene.Schema(
     query=Query,

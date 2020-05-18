@@ -1,0 +1,5 @@
+mutation edit_post($accessToken:String!, $record:Int!, $comment:String, $place:String){
+    editPost (accessToken:$accessToken, record:$record, comment:$comment, place:$place){
+        success
+    }
+}

@@ -65,6 +65,9 @@ import okhttp3.OkHttpClient;
 public class MainActivity extends AppCompatActivity{
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_TAKE_ALBUM = 2;
+    private static final int REQUEST_EDIT_POST = 3;
+    private static final int FAIL_EDIT = 5;
+    private static final int SUCCESS_EDIT = 6;
     private String Token;
 
     private ArrayList<ImgUrlThread> threads;
@@ -78,6 +81,7 @@ public class MainActivity extends AppCompatActivity{
     private URI mImageUri;
 
     private ArrayList<Post> posts;
+    private int changed_post_pos;
 
     String[] PERMISSIONS = {
             android.Manifest.permission.CAMERA,
@@ -136,6 +140,15 @@ public class MainActivity extends AppCompatActivity{
             Intent intent = new Intent(MainActivity.this, AddPostActivity.class);
             intent.putExtra("imgpath", imageFilePath);
             startActivity(intent);
+        }
+
+        else if(requestCode == REQUEST_EDIT_POST && resultCode == SUCCESS_EDIT){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.notifyItemChanged(changed_post_pos);
+                }
+            });
         }
     }
 
@@ -295,7 +308,10 @@ public class MainActivity extends AppCompatActivity{
 
                                                             switch(which){
                                                                 case 0:
-
+                                                                    Intent editPostIntent = new Intent(getApplicationContext(), EditPostActivity.class);
+                                                                    changed_post_pos = record;
+                                                                    editPostIntent.putExtra("record", record);
+                                                                    startActivityForResult(editPostIntent, REQUEST_EDIT_POST);
                                                                     break;
                                                                 case 1:
                                                                     final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
