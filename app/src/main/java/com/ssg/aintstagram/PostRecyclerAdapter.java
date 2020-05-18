@@ -131,6 +131,12 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         } else {
             holder.btn_heart.setImageResource(R.drawable.heart);
         }
+
+        if(posts.get(position).getMine()){
+            holder.btn_edit_post.setVisibility(View.VISIBLE);
+        } else {
+            holder.btn_edit_post.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override

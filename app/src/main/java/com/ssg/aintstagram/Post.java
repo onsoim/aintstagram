@@ -18,6 +18,7 @@ public class Post {
     private Boolean allow_comment;
     private String date;
     private Boolean like_status;
+    private Boolean mine;
 
     public Post(Bitmap profile_img, Bitmap post_img, String name, String place, Integer post_id, int likes, Boolean allow_comment, String text_comment, String date){
         this.profile_img = profile_img;
@@ -30,6 +31,7 @@ public class Post {
         this.text_comment = text_comment;
         this.date = date;
         this.like_status = false;
+        this.mine = false;
     }
 
     public Post(Bitmap post_img, String name, String place, Integer post_id, int likes, Boolean allow_comment, String text_comment, String date){
@@ -43,6 +45,7 @@ public class Post {
         this.text_comment = text_comment;
         this.date = date;
         this.like_status = true;
+        this.mine = false;
     }
 
     public Post(String name, String place, Integer post_id, String text_comment, int likes, String date){
@@ -57,6 +60,7 @@ public class Post {
         this.date = date;
         this.likes = likes;
         this.like_status = false;
+        this.mine = false;
     }
 
     public void set_post_img(Bitmap img){
@@ -119,4 +123,9 @@ public class Post {
         return date;
     }
 
+    public boolean getMine() { return mine; }
+
+    public void setMine(Boolean mine){
+        this.mine = mine;
+    }
 }

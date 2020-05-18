@@ -1,5 +1,5 @@
-query postType($name:String, $accessToken:String!){
-    posts (username: $name, accessToken: $accessToken){
+query postType($name:String, $accessToken:String!, $record:Int){
+    posts (username: $name, accessToken: $accessToken, record:$record){
         postId
         allowComment
         place

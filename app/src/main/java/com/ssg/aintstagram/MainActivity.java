@@ -292,8 +292,10 @@ public class MainActivity extends AppCompatActivity{
                                                     builder.setTitle("옵션을 선택하세요.").setItems(items, new DialogInterface.OnClickListener() {
                                                         @Override
                                                         public void onClick(DialogInterface dialog, int which) {
+
                                                             switch(which){
                                                                 case 0:
+
                                                                     break;
                                                                 case 1:
                                                                     final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
@@ -439,6 +441,7 @@ public class MainActivity extends AppCompatActivity{
             }
 
             checkLike();
+            checkPostUser();
         }
 
         private void getImageUrl(int record) {
@@ -508,6 +511,34 @@ public class MainActivity extends AppCompatActivity{
                         posts.get(idx).set_like_status(true);
                     } else {
                         posts.get(idx).set_like_status(false);
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyItemChanged(idx);
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(@NotNull ApolloException e) {
+
+                }
+            });
+        }
+
+        private void checkPostUser(){
+            final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+            final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+
+            final PostTypeQuery p = PostTypeQuery.builder().accessToken(Token).record(record).build();
+            apolloClient.query(p).enqueue(new ApolloCall.Callback<PostTypeQuery.Data>() {
+                @Override
+                public void onResponse(@NotNull Response<PostTypeQuery.Data> response) {
+                    if(response.data().posts().size() >= 1) {
+                        posts.get(idx).setMine(true);
+                    } else {
+                        posts.get(idx).setMine(false);
                     }
                     runOnUiThread(new Runnable() {
                         @Override

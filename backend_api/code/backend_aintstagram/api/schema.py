@@ -43,6 +43,7 @@ class Query(graphene.ObjectType):
     posts = graphene.List(PostType,
                           username=graphene.String(),
                           accessToken=graphene.String(required=True),
+                          record=graphene.Int(),
                           )
 
     pics = graphene.List(PictureType,
@@ -83,11 +84,15 @@ class Query(graphene.ObjectType):
         else:
             return query
 
-    def resolve_posts(self, info, username=None, accessToken=None):
+    def resolve_posts(self, info, username=None, accessToken=None, record=None):
         kakaoID = get_kakaoID(accessToken)
 
         if kakaoID is None:
             raise GraphQLError("Not Permitted")
+
+        if record:
+            posts = PostModel.objects.filter(user__kakaoID=kakaoID, post_id=record)
+            return posts
 
         if username:
             posts = PostModel.objects.filter(user__name=username).order_by('date').reverse()
