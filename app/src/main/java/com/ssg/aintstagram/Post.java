@@ -1,10 +1,7 @@
 package com.ssg.aintstagram;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
 
-import java.util.Date;
 
 public class Post {
     private Bitmap profile_img;

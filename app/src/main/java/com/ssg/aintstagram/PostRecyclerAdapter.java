@@ -82,6 +82,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
                             onPostListener.onPostClick(getAdapterPosition(), 2);
                             break;
                         case R.id.btn_comment:
+                        case R.id.comments:
                             onPostListener.onPostClick(getAdapterPosition(), 3);
                             break;
                         case R.id.btn_message:
@@ -98,6 +99,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             btn_comment.setOnClickListener(listener);
             btn_message.setOnClickListener(listener);
             post_img.setOnClickListener(listener);
+            comments.setOnClickListener(listener);
         }
 
 

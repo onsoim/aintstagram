@@ -1,5 +1,6 @@
 package com.ssg.aintstagram;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -41,6 +43,7 @@ import com.kakao.auth.Session;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -104,12 +107,25 @@ public class MainActivity extends AppCompatActivity{
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);;
         v_recycle.setLayoutManager(linearLayoutManager);
 
+        v_recycle.setOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!v_recycle.canScrollVertically(-1)) {
+                    Log.i("RECYCLERVIEW", "Top of list");
+                } else if (!v_recycle.canScrollVertically(1)) {
+                    Log.i("RECYCLERVIEW", "End of list");
+                } else {
+                    Log.i("RECYCLERVIEW", "idle");
+                }
+            }
+        });
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
         getPosts();
         setUserProfile();
     }
@@ -404,6 +420,15 @@ public class MainActivity extends AppCompatActivity{
                                                     });
                                                     break;
                                                 case 3:
+                                                    Intent commentIntent = new Intent(MainActivity.this, CommentActivity.class);
+                                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                                    posts.get(pos).get_profile_img().compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                                    byte[] bytes = stream.toByteArray();
+                                                    commentIntent.putExtra("p_profile", bytes);
+                                                    commentIntent.putExtra("p_name", posts.get(pos).getName());
+                                                    commentIntent.putExtra("p_comment", posts.get(pos).get_text_comment());
+                                                    commentIntent.putExtra("p_date", posts.get(pos).getDate());
+                                                    startActivity(commentIntent);
                                                     break;
                                                 case 4:
                                                     break;

@@ -32,6 +32,7 @@
         <activity android:name=".SearchResultProfileActivity"/>
         <activity android:name=".FollowActivity"/>
         <activity android:name=".EditPostActivity"/>
+        <activity android:name=".CommentActivity"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.ssg.aintstagram.fileprovider"

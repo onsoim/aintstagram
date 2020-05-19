@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context=".CommentActivity">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintGuide_begin="60dp"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_bottom_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintGuide_end="60dp"/>
+
+    <Button
+        android:id="@+id/button_to_cancel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/guideline_top_menu"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/button_logo"
+        android:scaleType="fitCenter"
+        android:layout_margin="20dp"
+        android:textAlignment="textStart"
+        android:textStyle="bold"
+        android:background="@android:color/background_dark"
+        android:text="뒤로"
+        android:textColor="@android:color/white"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/button_logo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintVertical_weight="3"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/guideline_top_menu"
+        app:layout_constraintLeft_toRightOf="@id/button_to_cancel"
+        app:layout_constraintRight_toLeftOf="@id/button_to_sms"
+        android:text="댓글"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="@android:color/background_dark"
+        tools:ignore="MissingConstraints" />
+
+    <ImageButton
+        android:id="@+id/button_to_sms"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/guideline_top_menu"
+        app:layout_constraintLeft_toRightOf="@id/button_logo"
+        app:layout_constraintRight_toRightOf="parent"
+        android:scaleType="fitCenter"
+        android:layout_margin="10dp"
+        android:textStyle="bold"
+        android:src="@drawable/sms"
+        android:textColor="@android:color/holo_blue_dark"
+        android:background="@android:color/background_dark"
+        tools:ignore="MissingConstraints" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/button_logo"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_bottom_menu"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="10dp"
+        android:scrollbars="vertical"/>
+
+
+    <ImageButton
+        android:id="@+id/my_profile"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toBottomOf="@id/guideline_bottom_menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/new_comment"
+        android:scaleType="fitCenter"
+        android:background="@android:color/background_dark"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/new_comment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintHorizontal_weight="5"
+        app:layout_constraintTop_toBottomOf="@id/guideline_bottom_menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/my_profile"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
