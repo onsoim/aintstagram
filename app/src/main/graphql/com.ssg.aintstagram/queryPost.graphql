@@ -5,6 +5,7 @@ query postType($name:String, $accessToken:String!, $record:Int){
         place
         textComment
         likeCount
+        commentCount
         date
         user{
             name

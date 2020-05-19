@@ -280,6 +280,7 @@ public class MainActivity extends AppCompatActivity{
                     String profile = getString(R.string.media_url) + response.data().posts().get(i).user().profile;
                     Integer postId = Integer.parseInt(response.data().posts().get(i).postId);
                     int likes = response.data().posts().get(i).likeCount;
+                    int comments = response.data().posts().get(i).commentCount;
                     String textComment = response.data().posts().get(i).textComment;
                     String dt = response.data().posts().get(i).date.toString();
                     ZonedDateTime zdt = ZonedDateTime.parse(dt);
@@ -289,11 +290,11 @@ public class MainActivity extends AppCompatActivity{
                     long mins = Duration.between(zdt, now).toMinutes();
 
                     if(days>=1) {
-                        posts.add(new Post(name, place, postId, textComment, likes, String.valueOf(days) + " 일"));
+                        posts.add(new Post(name, place, postId, textComment, likes, String.valueOf(days) + " 일", comments));
                     } else if(hours>=1){
-                        posts.add(new Post(name, place, postId, textComment, likes, String.valueOf(hours) + " 시간"));
+                        posts.add(new Post(name, place, postId, textComment, likes, String.valueOf(hours) + " 시간", comments));
                     } else {
-                        posts.add(new Post(name, place, postId, textComment, likes, String.valueOf(mins) + " 분"));
+                        posts.add(new Post(name, place, postId, textComment, likes, String.valueOf(mins) + " 분", comments));
                     }
 
                     threads.add(new ImgUrlThread(i, postId, profile));

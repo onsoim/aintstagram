@@ -35,7 +35,7 @@ public class CommentActivity extends Activity {
         if(post == null){
             finish();
         }
-        
+
         setBtn();
     }
 

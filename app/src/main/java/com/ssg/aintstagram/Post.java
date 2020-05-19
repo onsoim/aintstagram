@@ -12,12 +12,13 @@ public class Post {
     private String text_comment;
     private Integer post_id;
     private int likes;
+    private int comments;
     private Boolean allow_comment;
     private String date;
     private Boolean like_status;
     private Boolean mine;
 
-    public Post(Bitmap profile_img, Bitmap post_img, String name, String place, Integer post_id, int likes, Boolean allow_comment, String text_comment, String date){
+    public Post(Bitmap profile_img, Bitmap post_img, String name, String place, Integer post_id, int likes, Boolean allow_comment, String text_comment, String date, int comments){
         this.profile_img = profile_img;
         this.post_img = post_img;
         this.name = name;
@@ -29,9 +30,10 @@ public class Post {
         this.date = date;
         this.like_status = false;
         this.mine = false;
+        this.comments = comments;
     }
 
-    public Post(Bitmap post_img, String name, String place, Integer post_id, int likes, Boolean allow_comment, String text_comment, String date){
+    public Post(Bitmap post_img, String name, String place, Integer post_id, int likes, Boolean allow_comment, String text_comment, String date, int comments){
         this.profile_img = null;
         this.post_img = post_img;
         this.name = name;
@@ -43,9 +45,10 @@ public class Post {
         this.date = date;
         this.like_status = true;
         this.mine = false;
+        this.comments = comments;
     }
 
-    public Post(String name, String place, Integer post_id, String text_comment, int likes, String date){
+    public Post(String name, String place, Integer post_id, String text_comment, int likes, String date, int comments){
         this.profile_img = null;
         this.post_img = null;
         this.name = name;
@@ -58,7 +61,12 @@ public class Post {
         this.likes = likes;
         this.like_status = false;
         this.mine = false;
+        this.comments = comments;
     }
+
+    public int get_comments(){return comments;}
+
+    public void set_comment(int comments){this.comments = comments;}
 
     public void set_post_img(Bitmap img){
         this.post_img = img;

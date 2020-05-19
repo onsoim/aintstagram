@@ -127,6 +127,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         holder.user_comment.setText(posts.get(position).get_text_comment());
         holder.viewer_profile_img.setImageBitmap(posts.get(position).get_profile_img());
         holder.date.setText(posts.get(position).getDate());
+        holder.comments.setText("댓글 " + posts.get(position).get_comments() + "개 모두 보기");
 
         if(posts.get(position).get_like_status()){
             holder.btn_heart.setImageResource(R.drawable.heartfull);

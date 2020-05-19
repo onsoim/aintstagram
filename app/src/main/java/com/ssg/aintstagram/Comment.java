@@ -8,7 +8,9 @@ public class Comment {
     private String text_comment;
     private String date;
     private Boolean like_status;
+    private int likes;
     private Boolean mine;
+    private Boolean has_to_block;
 
     public Comment(Bitmap profile_img, String name, String text_comment, String date){
         this.profile_img = profile_img;
@@ -17,6 +19,8 @@ public class Comment {
         this.date = date;
         this.like_status = false;
         this.mine = false;
+        this.likes = 0;
+        this.has_to_block = false;
     }
 
     public Comment(String name, String text_comment, String date){
@@ -26,6 +30,8 @@ public class Comment {
         this.date = date;
         this.like_status = false;
         this.mine = false;
+        this.likes = 0;
+        this.has_to_block = false;
     }
 
     public Bitmap get_profile_img(){
@@ -74,5 +80,21 @@ public class Comment {
 
     public void set_comment(String comment){
         this.text_comment = comment;
+    }
+
+    public int getLikes(){
+        return this.likes;
+    }
+
+    public void setLikes(int likes){
+        this.likes = likes;
+    }
+
+    public Boolean needBlock(){
+        return this.has_to_block;
+    }
+
+    public void setBlock(Boolean status){
+        this.has_to_block = status;
     }
 }

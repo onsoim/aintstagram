@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import IntegerField
 
 
 class UserModel(models.Model):
@@ -105,6 +106,7 @@ class PostModel(models.Model):
     allow_comment = models.BooleanField(default=True, verbose_name="코멘트 활성화여부")
     place = models.CharField(max_length=14, verbose_name="장소")
     like_count = models.IntegerField(default=0, verbose_name="좋아요 개수")
+    comment_count = models.IntegerField(default=0, verbose_name="댓글 개수")
     text_comment = models.CharField(max_length=100, verbose_name="코멘트")
     date = models.DateTimeField(auto_now_add=True, verbose_name="작성일자")
 

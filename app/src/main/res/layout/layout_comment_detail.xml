@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/black">
+
+    <ImageView
+        android:id="@+id/comment_block"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+    <TableLayout
+        android:layout_height="match_parent"
+        android:layout_width="50dp">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_profile"
+                android:layout_height="50dp"
+                android:layout_width="50dp"/>
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="5dp">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/user_comment"
+                android:textColor="@android:color/white"
+                android:text="Wizley TestWorld"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/date"
+                android:text="0 일"
+                android:textColor="@android:color/white"
+                android:textSize="10dp"
+                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content" />
+
+            <TextView
+                android:id="@+id/likes"
+                android:layout_marginLeft="15dp"
+                app:layout_constraintLeft_toRightOf="@id/date"
+                android:text="좋아요 0개"
+                android:textColor="@android:color/white"
+                android:textSize="10dp"
+                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/add_reply"
+                android:layout_marginLeft="15dp"
+                app:layout_constraintLeft_toRightOf="@id/likes"
+                android:text="답글 달기"
+                android:textColor="@android:color/white"
+                android:textSize="10dp"
+                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content" />
+
+            <ImageButton
+                android:id="@+id/btn_heart"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/add_reply"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:scaleType="fitEnd"
+                android:src="@drawable/heart"
+                android:background="@android:color/black" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </TableLayout>
+</LinearLayout>
