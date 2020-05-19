@@ -90,10 +90,12 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
         holder.date.setText(comments.get(position).getDate());
         holder.likes.setText("좋아요 " + comments.get(position).getLikes() + "개");
 
-        if(!comments.get(position).isMine()){
-            holder.btn_heart.setVisibility(View.VISIBLE);
+        if(comments.get(position).isMine()){
+            holder.btn_heart.setVisibility(View.GONE);
+            holder.likes.setVisibility(View.GONE);
+            holder.add_reply.setVisibility(View.GONE);
         } else {
-            holder.btn_heart.setVisibility(View.INVISIBLE);
+            holder.btn_heart.setVisibility(View.VISIBLE);
         }
 
         if(comments.get(position).needBlock()){
