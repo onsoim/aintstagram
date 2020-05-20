@@ -125,16 +125,71 @@ public class CommentActivity extends Activity {
                         @Override
                         public void run() {
                             CommentRecyclerAdapter.OnCommentListener onCommentListener = new CommentRecyclerAdapter.OnCommentListener(){
-
                                 @Override
-                                public void onCommentClick(int pos, int choice) {
+                                public void onCommentClick(final int pos, int choice) {
                                     switch(choice){
                                         case 1:
                                             break;
                                         case 2:
                                             final Boolean status = comments.get(pos).get_like_status();
+                                            final int rec = comments.get(pos).getRecord();
+                                            String Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+                                            final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                                            final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
 
-                                            break;
+                                            if(status){
+                                                Un_likeMutation q = Un_likeMutation.builder().accessToken(Token).record(rec).typeinfo("C").build();
+                                                apolloClient.mutate(q).enqueue(new ApolloCall.Callback<Un_likeMutation.Data>() {
+                                                    @Override
+                                                    public void onResponse(@NotNull Response<Un_likeMutation.Data> response) {
+                                                        if(response.data().unLike().success){
+                                                            comments.get(pos).set_like_status(false);
+                                                            comments.get(pos).setLikes(response.data().unLike().likes);
+                                                            runOnUiThread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    comments.get(pos).set_like_status(false);
+                                                                    adapter.notifyItemChanged(pos);
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(@NotNull ApolloException e) {
+
+                                                    }
+                                                });
+                                            } else {
+                                                Add_likeMutation q = Add_likeMutation.builder().accessToken(Token).record(rec).typeinfo("C").build();
+                                                apolloClient.mutate(q).enqueue(new ApolloCall.Callback<Add_likeMutation.Data>() {
+                                                    @Override
+                                                    public void onResponse(@NotNull Response<Add_likeMutation.Data> response) {
+                                                        if(response.data().addLike().success){
+                                                            comments.get(pos).set_like_status(true);
+                                                            comments.get(pos).setLikes(response.data().addLike().likes);
+                                                            runOnUiThread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    adapter.notifyItemChanged(pos);
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(@NotNull ApolloException e) {
+
+                                                    }
+                                                });
+
+                                            }
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    adapter.notifyItemChanged(pos);
+                                                }
+                                            });
                                     }
                                 }
                             };
