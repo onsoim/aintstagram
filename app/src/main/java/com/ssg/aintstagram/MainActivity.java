@@ -429,6 +429,7 @@ public class MainActivity extends AppCompatActivity{
                                                     commentIntent.putExtra("p_name", posts.get(pos).getName());
                                                     commentIntent.putExtra("p_comment", posts.get(pos).get_text_comment());
                                                     commentIntent.putExtra("p_date", posts.get(pos).getDate());
+                                                    commentIntent.putExtra("p_post_id", posts.get(pos).get_post_id());
                                                     startActivity(commentIntent);
                                                     break;
                                                 case 4:

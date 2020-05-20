@@ -9,10 +9,12 @@ public class Comment {
     private String date;
     private Boolean like_status;
     private int likes;
+    private int post_id;
     private Boolean mine;
     private Boolean has_to_block;
 
-    public Comment(Bitmap profile_img, String name, String text_comment, String date){
+    public Comment(int post_id, Bitmap profile_img, String name, String text_comment, String date, Boolean has_to_block){
+        this.post_id = post_id;
         this.profile_img = profile_img;
         this.name = name;
         this.text_comment = text_comment;
@@ -20,10 +22,11 @@ public class Comment {
         this.like_status = false;
         this.mine = false;
         this.likes = 0;
-        this.has_to_block = false;
+        this.has_to_block = has_to_block;
     }
 
-    public Comment(String name, String text_comment, String date){
+    public Comment(int post_id, String name, String text_comment, String date, Boolean has_to_block){
+        this.post_id = post_id;
         this.profile_img = null;
         this.name = name;
         this.text_comment = text_comment;
@@ -31,7 +34,11 @@ public class Comment {
         this.like_status = false;
         this.mine = false;
         this.likes = 0;
-        this.has_to_block = false;
+        this.has_to_block = has_to_block;
+    }
+
+    public int get_post_id(){
+        return this.post_id;
     }
 
     public Bitmap get_profile_img(){

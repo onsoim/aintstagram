@@ -1,0 +1,13 @@
+query commentType($accessToken:String!, $record:Int!, $parent:Int){
+    comments (accessToken: $accessToken, record:$record, parent:$parent){
+        postId
+        likeCount
+        date
+        textComment
+        parent
+        user{
+            name
+            profile
+        }
+    }
+}

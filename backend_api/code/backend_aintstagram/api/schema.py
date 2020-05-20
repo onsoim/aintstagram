@@ -313,6 +313,7 @@ class EditPost(graphene.Mutation):
         post.save()
         return EditPost(success=True)
 
+
 class RemovePost(graphene.Mutation):
     success = graphene.Boolean()
 
@@ -457,26 +458,39 @@ class addLike(graphene.Mutation):
         elif typeinfo != 'P' and typeinfo != 'C':
             return addLike(success=False)
 
-        try:
-            post = PostModel.objects.get(post_id=record)
-            user_to = post.user
-            user_from = UserModel.objects.get(kakaoID=kakaoID)
+        if typeinfo == 'P':
+            try:
+                post = PostModel.objects.get(post_id=record)
+                user_to = post.user
+                user_from = UserModel.objects.get(kakaoID=kakaoID)
 
-        except:
-            return addLike(success=False)
+                like = LikeModel(user_from=user_from, user_to=user_to, type=typeinfo, record_id=record)
+                like.save()
 
-        history = LikeModel.objects.filter(user_from=user_from, user_to=user_to)
-        if history.exists():
-            return addLike(success=False)
+                post.like_count += 1
+                post.save()
+
+                return addLike(success=True, likes=post.like_count)
+
+            except:
+                return addLike(success=False)
 
         else:
-            like = LikeModel(user_from=user_from, user_to=user_to, type=typeinfo, record_id=record)
-            like.save()
+            try:
+                comment = CommentModel.objects.get(comment_id=record)
+                user_to = comment.user
+                user_from = UserModel.objects.get(kakaoID=kakaoID)
 
-            post.like_count += 1
-            post.save()
+                like = LikeModel(user_from=user_from, user_to=user_to, type=typeinfo, record_id=record)
+                like.save()
 
-            return addLike(success=True, likes=post.like_count)
+                comment.like_count += 1
+                comment.save()
+
+                return addLike(success=True, likes=comment.like_count)
+
+            except:
+                return addLike(success=False)
 
 
 class unLike(graphene.Mutation):
@@ -578,12 +592,16 @@ class removeComment(graphene.Mutation):
             user = UserModel.objects.get(kakaoID=kakaoID)
             comment = CommentModel.objects.get(user=user, comment_id=record)
             comments = CommentModel.objects.filter(parent=comment.comment_id)
+            likes = LikeModel.objects.filter(record_id=record, type='C')
             post = PostModel.objects.get(post_id=comment.post_id)
             total_c = comments.count() + 1
             post.comment_count -= total_c
             post.save()
+            if likes.count():
+                likes.delete()
+            if comments.count():
+                comments.delete()
             comment.delete()
-            comments.delete()
             return removeComment(success=True)
         except:
             return removeComment(success=False)
@@ -602,6 +620,7 @@ class Mutation(graphene.ObjectType):
     un_like = unLike.Field()
     add_comment = addComment.Field()
     remove_comment = removeComment.Field()
+
 
 schema = graphene.Schema(
     query=Query,
