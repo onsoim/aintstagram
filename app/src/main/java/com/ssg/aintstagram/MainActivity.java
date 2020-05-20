@@ -448,15 +448,14 @@ public class MainActivity extends AppCompatActivity{
                             });
                         } catch (Exception e) {
                         }
+
+                        for(ImgUrlThread thread : threads){
+                            thread.run();
+                        }
                     }
                 };
 
                 mThread.start();
-
-                for(ImgUrlThread thread : threads){
-                    thread.run();
-                }
-
             }
 
             @Override

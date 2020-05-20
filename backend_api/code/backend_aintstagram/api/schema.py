@@ -511,25 +511,37 @@ class unLike(graphene.Mutation):
         elif typeinfo != 'P' and typeinfo != 'C':
             return unLike(success=False)
 
-        try:
-            post = PostModel.objects.get(post_id=record)
-            user_to = post.user
-            user_from = UserModel.objects.get(kakaoID=kakaoID)
+        if typeinfo == 'P':
+            try:
+                post = PostModel.objects.get(post_id=record)
+                user_to = post.user
+                user_from = UserModel.objects.get(kakaoID=kakaoID)
 
-        except:
-            return unLike(success=False)
-        #
-        # history = LikeModel.objects.filter(user_from=user_from, user_to=user_to)
-        # if not history.exists():
-        #     return unLike(success=False)
+                like = LikeModel.objects.get(user_from=user_from, user_to=user_to, type=typeinfo, record_id=record)
+                like.delete()
 
-        like = LikeModel.objects.get(user_from=user_from, user_to=user_to, type=typeinfo, record_id=record)
-        like.delete()
+                post.like_count -= 1
+                post.save()
 
-        post.like_count -= 1
-        post.save()
+                return unLike(success=True, likes=post.like_count)
+            except:
+                return unLike(success=False)
 
-        return unLike(success=True, likes=post.like_count)
+        else:
+            try:
+                user_from = UserModel.objects.get(kakaoID=kakaoID)
+
+                like = LikeModel.objects.get(user_from=user_from, type=typeinfo, record_id=record)
+                comment = CommentModel.objects.get(comment_id=like.record_id)
+
+                like.delete()
+
+                comment.like_count -= 1
+                comment.save()
+
+                return unLike(success=True, likes=comment.like_count)
+            except:
+                return unLike(success=False)
 
 
 class addComment(graphene.Mutation):

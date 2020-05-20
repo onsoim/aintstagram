@@ -4,37 +4,62 @@ import android.graphics.Bitmap;
 
 public class Comment {
     private Bitmap profile_img;
+    private String url;
     private String name;
     private String text_comment;
     private String date;
     private Boolean like_status;
     private int likes;
     private int post_id;
+    private int record;
     private Boolean mine;
     private Boolean has_to_block;
+    private Integer parent;
 
-    public Comment(int post_id, Bitmap profile_img, String name, String text_comment, String date, Boolean has_to_block){
+    public Comment(int post_id, int record, Bitmap profile_img, String name, String text_comment, String date, Integer parent, String url, int likes){
         this.post_id = post_id;
+        this.record = record;
         this.profile_img = profile_img;
         this.name = name;
         this.text_comment = text_comment;
         this.date = date;
         this.like_status = false;
         this.mine = false;
-        this.likes = 0;
-        this.has_to_block = has_to_block;
+        this.likes = likes;
+        this.parent = parent;
+        if(this.parent == null){
+            this.has_to_block = false;
+        } else {
+            this.has_to_block = true;
+        }
+        this.url = url;
     }
 
-    public Comment(int post_id, String name, String text_comment, String date, Boolean has_to_block){
+    public Comment(int post_id, int record, String name, String text_comment, String date, Integer parent, String url, int likes){
         this.post_id = post_id;
+        this.record = record;
         this.profile_img = null;
         this.name = name;
         this.text_comment = text_comment;
         this.date = date;
         this.like_status = false;
         this.mine = false;
-        this.likes = 0;
-        this.has_to_block = has_to_block;
+        this.likes = likes;
+        this.parent = parent;
+        this.url = url;
+        if(this.parent == null){
+            this.has_to_block = false;
+        } else {
+            this.has_to_block = true;
+        }
+    }
+
+    public int getRecord(){
+        return this.record;
+    }
+
+    public String getUrl(){
+        return this.url;
     }
 
     public int get_post_id(){

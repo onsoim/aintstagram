@@ -39,6 +39,7 @@ public class CommentActivity extends Activity {
     private RecyclerView v_recycle;
 
     private ArrayList<Comment> comments;
+    private ArrayList<CommentInfoThread> threads;
     CommentRecyclerAdapter adapter;
 
     @Override
@@ -53,7 +54,7 @@ public class CommentActivity extends Activity {
             } else {
                 byte[] bytes = getIntent().getByteArrayExtra("p_profile");
                 Bitmap img = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                post = new Comment(extras.getInt("p_post_id"), img, extras.getString("p_name"), extras.getString("p_comment"), extras.getString("p_date"), false);
+                post = new Comment(extras.getInt("p_post_id"), -1, img, extras.getString("p_name"), extras.getString("p_comment"), extras.getString("p_date"), null, null, 0);
                 post.set_mine(true);
             }
         }
@@ -84,6 +85,8 @@ public class CommentActivity extends Activity {
     public void getCommentsList() {
         getComments();
 
+        threads = new ArrayList<>();
+
         OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
         ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
         String Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
@@ -95,7 +98,10 @@ public class CommentActivity extends Activity {
             public void onResponse(@NotNull Response<CommentTypeQuery.Data> response) {
                 for (int i = 0; i < response.data().comments().size(); i++) {
                     int postId = response.data().comments().get(i).postId;
+                    int record = Integer.parseInt(response.data().comments().get(i).commentId);
                     int likeCount = response.data().comments().get(i).likeCount;
+                    String url = getString(R.string.media_url) + response.data().comments().get(i).user().profile;
+                    Integer parent = response.data().comments().get(i).parent;
                     ZonedDateTime zdt = ZonedDateTime.parse(response.data().comments().get(i).date.toString());
                     ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
                     long days = Duration.between(zdt ,now).toDays();
@@ -105,52 +111,44 @@ public class CommentActivity extends Activity {
                     if(days>=1) {
                         timestamp = String.valueOf(days) + " 일";
                     } else if(hours>=1){
-                        timestamp = String.valueOf(hours) + " 시";
+                        timestamp = String.valueOf(hours) + " 시간";
                     } else {
                         timestamp = String.valueOf(mins) + " 분";
                     }
                     String textComment = response.data().comments().get(i).textComment;
                     String p_name = response.data().comments().get(i).user.name;
 
-                    try {
-                        Bitmap img = Glide
-                                .with(getApplicationContext())
-                                .asBitmap()
-                                .load(response.data().comments().get(i).user.profile)
-                                .submit().get();
+                    comments.add(new Comment(postId, record, p_name, textComment, timestamp, parent, url, likeCount));
+                    threads.add(new CommentInfoThread(i+1));
 
-                        if(response.data().comments().get(i).parent == null) {
-                            comments.add(new Comment(postId, img, p_name, textComment, timestamp, false));
-                        } else {
-                            comments.add(new Comment(postId, img, p_name, textComment, timestamp, false));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            CommentRecyclerAdapter.OnCommentListener onCommentListener = new CommentRecyclerAdapter.OnCommentListener(){
+
+                                @Override
+                                public void onCommentClick(int pos, int choice) {
+                                    switch(choice){
+                                        case 1:
+                                            break;
+                                        case 2:
+                                            final Boolean status = comments.get(pos).get_like_status();
+
+                                            break;
+                                    }
+                                }
+                            };
+                            adapter = new CommentRecyclerAdapter(comments, getApplicationContext(), onCommentListener);
+                            Log.e("DEBUG", String.valueOf(comments.size()));
+                            v_recycle.setAdapter(adapter);
                         }
-                    } catch (ExecutionException e) {
-                        if(response.data().comments().get(i).parent == null) {
-                            comments.add(new Comment(postId, p_name, textComment, timestamp, false));
-                        } else {
-                            comments.add(new Comment(postId, p_name, textComment, timestamp, true));
-                        }
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    });
+
                 }
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        CommentRecyclerAdapter.OnCommentListener onCommentListener = new CommentRecyclerAdapter.OnCommentListener(){
-
-                            @Override
-                            public void onCommentClick(int pos, int choice) {
-
-                            }
-                        };
-                        adapter = new CommentRecyclerAdapter(comments, getApplicationContext(), onCommentListener);
-                        Log.e("DEBUG", String.valueOf(comments.size()));
-                        v_recycle.setAdapter(adapter);
-                    }
-                });
+                for(CommentInfoThread thread : threads){
+                    thread.run();
+                }
 
             }
 
@@ -158,13 +156,10 @@ public class CommentActivity extends Activity {
             public void onFailure(@NotNull ApolloException e) {
 
             }
+
+
         });
-
     }
-
-
-
-
 
     public void setBtn() {
         button_to_cancel = (Button) findViewById(R.id.button_to_cancel);
@@ -185,5 +180,68 @@ public class CommentActivity extends Activity {
 
         button_to_cancel.setOnClickListener(Listener);
         button_to_sms.setOnClickListener(Listener);
+    }
+
+    private class CommentInfoThread implements Runnable{
+        private int idx;
+
+        public CommentInfoThread(int idx){
+            this.idx = idx;
+        }
+
+        @Override
+        public void run() {
+            try {
+                comments.get(idx).set_profile_img(getProfile());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyItemChanged(idx);
+                    }
+                });
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Bitmap getProfile() throws ExecutionException, InterruptedException {
+            final Bitmap bitmap = Glide
+                    .with(getApplicationContext())
+                    .asBitmap()
+                    .load(comments.get(idx).getUrl())
+                    .submit().get();
+
+            return bitmap;
+        };
+
+        private void checkLike(){
+            final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+            final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+            String Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+            final LikeTypeQuery l = LikeTypeQuery.builder().accessToken(Token).typeinfo("C").record(comments.get(idx).getRecord()).build();
+            apolloClient.query(l).enqueue(new ApolloCall.Callback<LikeTypeQuery.Data>() {
+                @Override
+                public void onResponse(@NotNull Response<LikeTypeQuery.Data> response) {
+                    if(response.data().likes().size() == 1) {
+                        comments.get(idx).set_like_status(true);
+                    } else {
+                        comments.get(idx).set_like_status(false);
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyItemChanged(idx);
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(@NotNull ApolloException e) {
+
+                }
+            });
+        }
     }
 }
