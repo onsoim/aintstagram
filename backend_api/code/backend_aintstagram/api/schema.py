@@ -32,6 +32,11 @@ class LikeType(DjangoObjectType):
         model = LikeModel
 
 
+class CommentType(DjangoObjectType):
+    class Meta:
+        model = CommentModel
+
+
 class Query(graphene.ObjectType):
     users = graphene.List(UserType,
                           kakaoID=graphene.Int(),
@@ -64,6 +69,12 @@ class Query(graphene.ObjectType):
                           record=graphene.Int(required=True),
                           username=graphene.String(),
                           )
+
+    comments = graphene.List(CommentType,
+                             accessToken=graphene.String(required=True),
+                             record=graphene.Int(required=True),
+                             parent=graphene.Int(),
+                             )
 
     def resolve_users(self, info, kakaoID=None, username=None, accessToken=None, search=None):
         query = UserModel.objects.all()
@@ -148,6 +159,18 @@ class Query(graphene.ObjectType):
 
         likes = LikeModel.objects.filter(type=typeinfo, record_id=record, user_from__kakaoID=kakaoID)
         return likes
+
+    def resolve_comments(self, info, accessToken, record, parent=None):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            raise GraphQLError("Not permitted")
+
+        if parent is not None:
+            comments = CommentModel.objects.filter(post_id=record, parent=parent)
+        else:
+            comments = CommentModel.objects.filter(post_id=record)
+        return comments
 
 
 class CreateUser(graphene.Mutation):
@@ -495,6 +518,77 @@ class unLike(graphene.Mutation):
         return unLike(success=True, likes=post.like_count)
 
 
+class addComment(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        record = graphene.Int(required=True)
+        text = graphene.String(required=True)
+        parent = graphene.Int()
+
+    def mutate(self, info, accessToken, record, text, parent=None):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            return addComment(success=False)
+
+        try:
+            post = PostModel.objects.get(post_id=record)
+            if not post.allow_comment:
+                return addComment(success=False)
+
+            user = UserModel.objects.get(kakaoID=kakaoID)
+
+            if parent is None:
+                comment = CommentModel(user=user, post_id=record, text_comment=text)
+            else:
+                try:
+                    parent_comment = CommentModel.objects.get(comment_id=parent)
+                    if parent_comment.parent:
+                        return addComment(success=False)
+
+                except:
+                    return addComment(success=False)
+                comment = CommentModel(user=user, post_id=record, text_comment=text, parent=parent)
+
+            comment.save()
+            post.comment_count += 1
+            post.save()
+            return addComment(success=True)
+
+        except:
+            return addComment(success=False)
+
+
+class removeComment(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        record = graphene.Int(required=True)
+
+    def mutate(self, info, accessToken, record):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            return removeComment(success=False)
+
+        try:
+            user = UserModel.objects.get(kakaoID=kakaoID)
+            comment = CommentModel.objects.get(user=user, comment_id=record)
+            comments = CommentModel.objects.filter(parent=comment.comment_id)
+            post = PostModel.objects.get(post_id=comment.post_id)
+            total_c = comments.count() + 1
+            post.comment_count -= total_c
+            post.save()
+            comment.delete()
+            comments.delete()
+            return removeComment(success=True)
+        except:
+            return removeComment(success=False)
+
+
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     upload_profile = UploadProfile.Field()
@@ -506,6 +600,8 @@ class Mutation(graphene.ObjectType):
     un_follow = unFollow.Field()
     add_like = addLike.Field()
     un_like = unLike.Field()
+    add_comment = addComment.Field()
+    remove_comment = removeComment.Field()
 
 schema = graphene.Schema(
     query=Query,
