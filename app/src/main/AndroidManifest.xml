@@ -12,6 +12,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_aintstagram"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_aintstagram_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
