@@ -58,6 +58,7 @@ import okhttp3.OkHttpClient;
 
 public class SearchResultProfileActivity extends FragmentActivity {
     private static final int REQUEST_TAKE_ALBUM = 2;
+    public String name;
     private ImageButton btn_add;
     private ImageButton btn_profile;
     private ImageButton btn_home;
@@ -74,14 +75,10 @@ public class SearchResultProfileActivity extends FragmentActivity {
     private RecyclerView v_recycle;
     private ProfileRecyclerAdapter adapter;
 
-    private StringBuilder username = new StringBuilder("");
-    private StringBuilder text_comment = new StringBuilder("");
     private int post_cnt = 0;
     private int follower_cnt = 0;
     private int following_cnt = 0;
     private boolean is_open = true;
-
-    private String name;
 
     private int myKakaoId;
     private int searchKakaoId;
