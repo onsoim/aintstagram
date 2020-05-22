@@ -118,7 +118,22 @@ public class CommentActivity extends Activity {
                     String textComment = response.data().comments().get(i).textComment;
                     String p_name = response.data().comments().get(i).user.name;
 
-                    comments.add(new Comment(postId, record, p_name, textComment, timestamp, parent, url, likeCount));
+                    Boolean flag_end = true;
+                    if (parent != null) {
+                        Boolean flag = false;
+                        for (Comment c : comments) {
+                            if (flag && c.getParent() == null) {
+                                comments.add(comments.indexOf(c), new Comment(postId, record, p_name, textComment, timestamp, parent, url, likeCount));
+                                flag_end = false;
+                                break;
+                            } else if (c.getRecord() == parent) {
+                                flag = true;
+                            }
+                        }
+                    }
+                    if (flag_end) {
+                        comments.add(new Comment(postId, record, p_name, textComment, timestamp, parent, url, likeCount));
+                    }
                     threads.add(new CommentInfoThread(i+1));
 
                     runOnUiThread(new Runnable() {

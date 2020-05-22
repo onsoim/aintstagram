@@ -129,4 +129,8 @@ public class Comment {
     public void setBlock(Boolean status){
         this.has_to_block = status;
     }
+
+    public Integer getParent(){
+        return this.parent;
+    }
 }
