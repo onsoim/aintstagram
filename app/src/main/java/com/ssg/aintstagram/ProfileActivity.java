@@ -56,6 +56,7 @@ import okhttp3.OkHttpClient;
 
 public class ProfileActivity extends FragmentActivity {
     private static final int REQUEST_TAKE_ALBUM = 2;
+    public String username;
     private ImageButton btn_add;
     private ImageButton btn_profile;
     private ImageButton btn_home;
@@ -72,12 +73,12 @@ public class ProfileActivity extends FragmentActivity {
     private RecyclerView v_recycle;
     private ProfileRecyclerAdapter adapter;
 
-    private StringBuilder username = new StringBuilder("");
-    private StringBuilder text_comment = new StringBuilder("");
     private int post_cnt = 0;
     private int follower_cnt = 0;
     private int following_cnt = 0;
     private boolean is_open = true;
+
+    private int kakaoID = -1;
 
     String Token;
     Bitmap bitmap;
@@ -204,7 +205,7 @@ public class ProfileActivity extends FragmentActivity {
             @Override
             public void onSuccess(MeV2Response result) {
                 String Nickname = result.getNickname();
-                int kakaoID = (int) result.getId();
+                kakaoID = (int) result.getId();
 
                 final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
                 final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
@@ -214,6 +215,7 @@ public class ProfileActivity extends FragmentActivity {
                 apolloClient.query(u).enqueue(new ApolloCall.Callback<UserTypeQuery.Data>() {
                     @Override
                     public void onResponse(@NotNull Response<UserTypeQuery.Data> response) {
+                        username = response.data().users().get(0).name;
                         post_cnt = response.data().users().get(0).postCount;
                         follower_cnt = response.data().users().get(0).followerCount;
                         following_cnt = response.data().users().get(0).followingCount;

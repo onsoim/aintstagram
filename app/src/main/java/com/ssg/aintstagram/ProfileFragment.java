@@ -1,5 +1,6 @@
 package com.ssg.aintstagram;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -97,7 +98,13 @@ public class ProfileFragment extends Fragment {
                                     ProfileRecyclerAdapter.OnPostListener mPostListener = new ProfileRecyclerAdapter.OnPostListener() {
                                         @Override
                                         public void onPostClick(int pos) {
-                                            Integer record = albums.get(pos).getRecord();
+                                            int record = albums.get(pos).getRecord();
+                                            String username = ((ProfileActivity)getActivity()).username;
+                                            Intent userPostIntent = new Intent(getActivity(), UserPostActivity.class);
+                                            userPostIntent.putExtra("username", username);
+                                            userPostIntent.putExtra("pos", pos);
+                                            userPostIntent.putExtra("record", record);
+                                            startActivity(userPostIntent);
                                         }
                                     };
 

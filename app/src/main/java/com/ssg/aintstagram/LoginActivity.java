@@ -118,7 +118,6 @@ public class LoginActivity extends Activity {
 
                     @Override
                     public void onFailure(ApolloException e) {
-                        Log.e("LOG ", e.getLocalizedMessage());
                     }
                 });
             }

@@ -75,7 +75,6 @@ public class SearchProfileFragment extends Fragment implements ProfileRecyclerAd
             @Override
             public void onResponse(@NotNull Response<PictureTypeQuery.Data> response) {
                 cnt = response.data().pics().size();
-                Log.e("DEBUG", String.valueOf(cnt));
 
                 for (int i = 0; i < cnt; i++) {
                     String album_url = getString(R.string.media_url) + response.data().pics().get(i).pic;

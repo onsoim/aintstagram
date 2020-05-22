@@ -65,7 +65,6 @@ public class EditPostActivity extends Activity {
     }
 
     public void getPost(){
-        Log.e("DEBUG", "getPost");
         final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
         final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
 

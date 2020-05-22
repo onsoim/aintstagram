@@ -357,7 +357,6 @@ public class SearchResultProfileActivity extends FragmentActivity {
     }
 
     public void getFollowInfo(){
-        Log.e("LOG", "GetFollowInfo");
         if(myKakaoId == searchKakaoId) return;
 
         Token = Session.getCurrentSession().getTokenInfo().getAccessToken();

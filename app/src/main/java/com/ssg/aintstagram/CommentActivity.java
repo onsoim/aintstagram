@@ -209,7 +209,6 @@ public class CommentActivity extends Activity {
                                 }
                             };
                             adapter = new CommentRecyclerAdapter(comments, getApplicationContext(), onCommentListener);
-                            Log.e("DEBUG", String.valueOf(comments.size()));
                             v_recycle.setAdapter(adapter);
                         }
                     });
@@ -274,6 +273,7 @@ public class CommentActivity extends Activity {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            checkLike();
         }
 
         Bitmap getProfile() throws ExecutionException, InterruptedException {
