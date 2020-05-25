@@ -23,6 +23,8 @@ public class IntroActivity extends AppCompatActivity {
     Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg){
+            Intent historyService = new Intent(getApplicationContext(), HistoryService.class);
+            startService(historyService);
             if(msg.what == 1){
                 Intent intent = new Intent(IntroActivity.this, MainActivity.class);
                 startActivity(intent);
