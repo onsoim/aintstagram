@@ -44,7 +44,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/followRequest"
+        android:id="@+id/historyOfRecentDays"
         android:layout_height="0dp"
         android:layout_width="match_parent"
         app:layout_constraintTop_toTopOf="@id/guideline_top_menu"
@@ -58,7 +58,7 @@
         android:id="@+id/historyOfthisMonth"
         android:layout_height="0dp"
         android:layout_width="match_parent"
-        app:layout_constraintTop_toBottomOf="@id/followRequest"
+        app:layout_constraintTop_toBottomOf="@id/historyOfRecentDays"
         app:layout_constraintBottom_toTopOf="@id/historyOfMonths"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

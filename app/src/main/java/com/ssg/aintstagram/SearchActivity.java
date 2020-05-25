@@ -31,6 +31,7 @@ public class SearchActivity extends FragmentActivity {
     private ImageButton btn_profile;
     private ImageButton btn_home;
     private ImageButton btn_search;
+    private ImageButton btn_history;
     private Button btn_cancel;
     private EditText searchBar;
 
@@ -95,6 +96,7 @@ public class SearchActivity extends FragmentActivity {
         btn_home = (ImageButton) findViewById(R.id.button_to_home);
         btn_search = (ImageButton) findViewById(R.id.button_to_search);
         btn_cancel = (Button) findViewById(R.id.button_cancel);
+        btn_history = (ImageButton) findViewById(R.id.button_to_history);
 
         View.OnClickListener Listener = new View.OnClickListener() {
             @Override
@@ -141,6 +143,12 @@ public class SearchActivity extends FragmentActivity {
                             imm.hideSoftInputFromWindow(searchBar.getWindowToken(), 0);
                         }
                         break;
+
+                    case R.id.button_to_history:
+                        Intent historyIntent = new Intent(SearchActivity.this, HistoryActivity.class);
+                        historyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(historyIntent);
+                        break;
                 }
             }
         };
@@ -149,6 +157,7 @@ public class SearchActivity extends FragmentActivity {
         btn_home.setOnClickListener(Listener);
         btn_search.setOnClickListener(Listener);
         btn_cancel.setOnClickListener(Listener);
+        btn_history.setOnClickListener(Listener);
     }
 
 }

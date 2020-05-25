@@ -93,7 +93,6 @@ public class HistoryService extends Service implements Runnable{
 
         final Update_history_seenMutation uh = Update_history_seenMutation.builder().accessToken(Token).record(record).build();
         apolloClient.mutate(uh).enqueue(new ApolloCall.Callback<Update_history_seenMutation.Data>() {
-            @Override
             public void onResponse(@NotNull Response<Update_history_seenMutation.Data> response) {
 
             }

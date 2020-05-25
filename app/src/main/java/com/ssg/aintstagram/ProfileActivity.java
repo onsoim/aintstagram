@@ -61,6 +61,7 @@ public class ProfileActivity extends FragmentActivity {
     private ImageButton btn_profile;
     private ImageButton btn_home;
     private ImageButton btn_search;
+    private ImageButton btn_history;
     private Button btn_edit_profile;
     private Button btn_follow;
     private Button btn_following;
@@ -119,6 +120,7 @@ public class ProfileActivity extends FragmentActivity {
         btn_follow = (Button)findViewById(R.id.user_followers);
         btn_following = (Button)findViewById(R.id.user_followings);
         btn_posts = (Button)findViewById(R.id.user_posts);
+        btn_history = (ImageButton) findViewById(R.id.button_to_history);
 
         View.OnClickListener Listener = new View.OnClickListener() {
             @Override
@@ -179,6 +181,13 @@ public class ProfileActivity extends FragmentActivity {
                         followingIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(followingIntent);
                         break;
+
+                    case R.id.button_to_history:
+                        Intent historyIntent = new Intent(ProfileActivity.this, HistoryActivity.class);
+                        historyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(historyIntent);
+                        break;
+
                 }
             }
         };
@@ -189,6 +198,7 @@ public class ProfileActivity extends FragmentActivity {
         btn_search.setOnClickListener(Listener);
         btn_follow.setOnClickListener(Listener);
         btn_following.setOnClickListener(Listener);
+        btn_history.setOnClickListener(Listener);
     }
 
     public void getUserProfile(){

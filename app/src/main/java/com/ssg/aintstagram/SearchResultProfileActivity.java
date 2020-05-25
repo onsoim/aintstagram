@@ -62,6 +62,7 @@ public class SearchResultProfileActivity extends FragmentActivity {
     private ImageButton btn_add;
     private ImageButton btn_profile;
     private ImageButton btn_home;
+    private ImageButton btn_history;
     private ImageButton btn_search;
     private Button btn_edit_profile;
     private Button btn_follow;
@@ -135,6 +136,7 @@ public class SearchResultProfileActivity extends FragmentActivity {
         btn_home = (ImageButton) findViewById(R.id.button_to_home);
         btn_search = (ImageButton) findViewById(R.id.button_to_search);
         btn_edit_profile = (Button) findViewById(R.id.button_edit_profile);
+        btn_history = (ImageButton) findViewById(R.id.button_to_history);
 
         View.OnClickListener Listener = new View.OnClickListener() {
             @SuppressLint("IntentReset")
@@ -174,11 +176,16 @@ public class SearchResultProfileActivity extends FragmentActivity {
                         startActivity(infointent);
                         break;
 
-
                     case R.id.button_edit_profile:
                         intent = new Intent(SearchResultProfileActivity.this, EditProfileActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
+                        break;
+
+                    case R.id.button_to_history:
+                        Intent historyIntent = new Intent(SearchResultProfileActivity.this, HistoryActivity.class);
+                        historyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(historyIntent);
                         break;
                 }
             }
@@ -188,6 +195,7 @@ public class SearchResultProfileActivity extends FragmentActivity {
         btn_home.setOnClickListener(Listener);
         btn_search.setOnClickListener(Listener);
         btn_edit_profile.setOnClickListener(Listener);
+        btn_history.setOnClickListener(Listener);
     }
 
     public void setRenewedButton(){

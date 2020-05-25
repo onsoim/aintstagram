@@ -81,6 +81,7 @@ public class UserPostActivity extends AppCompatActivity{
     private ImageButton btn_add;
     private ImageButton btn_profile;
     private ImageButton btn_search;
+    private ImageButton btn_history;
     private URI mImageUri;
 
     private ArrayList<Post> posts;
@@ -193,6 +194,7 @@ public class UserPostActivity extends AppCompatActivity{
         btn_add = (ImageButton) findViewById(R.id.button_to_add);
         btn_profile = (ImageButton) findViewById(R.id.button_to_info);
         btn_search = (ImageButton) findViewById(R.id.button_to_search);
+        btn_history = (ImageButton) findViewById(R.id.button_to_history);
 
         Button user_logo = (Button) findViewById(R.id.button_logo);
         user_logo.setText(username);
@@ -231,6 +233,12 @@ public class UserPostActivity extends AppCompatActivity{
                         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
                         break;
+
+                    case R.id.button_to_history:
+                        Intent historyIntent = new Intent(UserPostActivity.this, HistoryActivity.class);
+                        historyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(historyIntent);
+                        break;
                 }
             }
         };
@@ -238,6 +246,7 @@ public class UserPostActivity extends AppCompatActivity{
         btn_add.setOnClickListener(Listener);
         btn_profile.setOnClickListener(Listener);
         btn_search.setOnClickListener(Listener);
+        btn_history.setOnClickListener(Listener);
     }
 
     String imageFilePath;

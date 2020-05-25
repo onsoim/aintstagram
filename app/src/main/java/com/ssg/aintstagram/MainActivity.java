@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity{
     private ImageButton btn_add;
     private ImageButton btn_profile;
     private ImageButton btn_search;
+    private ImageButton btn_history;
     private URI mImageUri;
 
     private ArrayList<Post> posts;
@@ -173,6 +174,7 @@ public class MainActivity extends AppCompatActivity{
         btn_add = (ImageButton) findViewById(R.id.button_to_add);
         btn_profile = (ImageButton) findViewById(R.id.button_to_info);
         btn_search = (ImageButton) findViewById(R.id.button_to_search);
+        btn_history = (ImageButton) findViewById(R.id.button_to_history);
 
         View.OnClickListener Listener = new View.OnClickListener() {
             @Override
@@ -227,6 +229,12 @@ public class MainActivity extends AppCompatActivity{
                         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
                         break;
+
+                    case R.id.button_to_history:
+                        Intent historyIntent = new Intent(MainActivity.this, HistoryActivity.class);
+                        historyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(historyIntent);
+                        break;
                 }
             }
         };
@@ -235,6 +243,7 @@ public class MainActivity extends AppCompatActivity{
         btn_add.setOnClickListener(Listener);
         btn_profile.setOnClickListener(Listener);
         btn_search.setOnClickListener(Listener);
+        btn_history.setOnClickListener(Listener);
     }
 
     String imageFilePath;

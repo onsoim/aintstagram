@@ -34,6 +34,7 @@ public class FollowActivity extends FragmentActivity {
     private ImageButton btn_profile;
     private ImageButton btn_home;
     private ImageButton btn_search;
+    private ImageButton btn_history;
     private Button btn_edit_profile;
 
     private Integer choice = -1;
@@ -122,6 +123,7 @@ public class FollowActivity extends FragmentActivity {
         btn_home = (ImageButton) findViewById(R.id.button_to_home);
         btn_edit_profile = (Button) findViewById(R.id.button_edit_profile);
         btn_search = (ImageButton) findViewById(R.id.button_to_search);
+        btn_history = (ImageButton) findViewById(R.id.button_to_history);
 
         btn_follower.setText(String.valueOf(follower_cnt)+" 팔로워");
         btn_following.setText(String.valueOf(following_cnt)+" 팔로잉");
@@ -171,6 +173,12 @@ public class FollowActivity extends FragmentActivity {
                         choice = 2;
                         setFragment(choice);
                         break;
+
+                    case R.id.button_to_history:
+                        Intent historyIntent = new Intent(FollowActivity.this, HistoryActivity.class);
+                        historyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(historyIntent);
+                        break;
                 }
             }
         };
@@ -181,6 +189,7 @@ public class FollowActivity extends FragmentActivity {
         btn_search.setOnClickListener(Listener);
         btn_follower.setOnClickListener(Listener);
         btn_following.setOnClickListener(Listener);
+        btn_history.setOnClickListener(Listener);
     }
 
     public void setFragment(int c){
