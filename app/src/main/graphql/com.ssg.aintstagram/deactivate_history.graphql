@@ -1,0 +1,5 @@
+mutation deactivate_history($accessToken:String! $record:Int!){
+    deactivateHistory (accessToken: $accessToken, record:$record){
+        success
+    }
+}

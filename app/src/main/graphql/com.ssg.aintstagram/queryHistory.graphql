@@ -1,0 +1,10 @@
+query historyType($accessToken:String!){
+    histories (accessToken: $accessToken){
+        historyId
+        recordId
+        type
+        date
+        isActive
+        seen
+    }
+}

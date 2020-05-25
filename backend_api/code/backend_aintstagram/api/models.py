@@ -30,6 +30,7 @@ class HistoryModel(models.Model):
     record_id = models.IntegerField(verbose_name="번호")
     date = models.DateTimeField(auto_now_add=True, verbose_name="생성날짜")
     is_active = models.BooleanField(verbose_name="노출 여부", default=True)
+    seen = models.BooleanField(verbose_name="확인 됨", default=False)
 
 
 class PictureModel(models.Model):

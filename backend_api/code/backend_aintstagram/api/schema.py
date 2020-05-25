@@ -37,6 +37,11 @@ class CommentType(DjangoObjectType):
         model = CommentModel
 
 
+class HistoryType(DjangoObjectType):
+    class Meta:
+        model = HistoryModel
+
+
 class Query(graphene.ObjectType):
     users = graphene.List(UserType,
                           kakaoID=graphene.Int(),
@@ -75,6 +80,10 @@ class Query(graphene.ObjectType):
                              record=graphene.Int(required=True),
                              parent=graphene.Int(),
                              )
+
+    histories = graphene.List(HistoryType,
+                              accessToken=graphene.String(required=True),
+                              )
 
     def resolve_users(self, info, kakaoID=None, username=None, accessToken=None, search=None):
         query = UserModel.objects.all()
@@ -171,6 +180,15 @@ class Query(graphene.ObjectType):
         else:
             comments = CommentModel.objects.filter(post_id=record)
         return comments
+
+    def resolve_histories(self, info, accessToken):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            raise GraphQLError("Not permitted")
+
+        histories = HistoryModel.objects.filter(user__kakaoID=kakaoID).order_by("date")
+        return histories
 
 
 class CreateUser(graphene.Mutation):
@@ -619,6 +637,52 @@ class removeComment(graphene.Mutation):
             return removeComment(success=False)
 
 
+class updateHistorySeen(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        record = graphene.Int(required=True)
+
+    def mutate(self, info, accessToken, record):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            return updateHistorySeen(success=False)
+
+        try:
+            user = UserModel.objects.get(kakaoID=kakaoID)
+            history = HistoryModel.objects.get(user=user, history_id=record)
+            history.seen = True
+            history.save()
+            return updateHistorySeen(success=True)
+        except:
+            return updateHistorySeen(success=False)
+
+
+class deactivateHistory(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        record = graphene.Int(required=True)
+
+    def mutate(self, info, accessToken, record):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            return deactivateHistory(success=False)
+
+        try:
+            user = UserModel.objects.get(kakaoID=kakaoID)
+            history = HistoryModel.objects.get(user=user, history_id=record)
+            history.is_active = False
+            history.save()
+            return deactivateHistory(success=True)
+        except:
+            return deactivateHistory(success=False)
+
+
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     upload_profile = UploadProfile.Field()
@@ -632,6 +696,8 @@ class Mutation(graphene.ObjectType):
     un_like = unLike.Field()
     add_comment = addComment.Field()
     remove_comment = removeComment.Field()
+    update_history_seen = updateHistorySeen.Field()
+    deactivate_history = deactivateHistory.Field()
 
 
 schema = graphene.Schema(

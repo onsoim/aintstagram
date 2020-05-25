@@ -1,0 +1,5 @@
+mutation update_history_seen($accessToken:String! $record:Int!){
+    updateHistorySeen (accessToken: $accessToken, record:$record){
+        success
+    }
+}
