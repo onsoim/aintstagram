@@ -348,7 +348,7 @@ public class CommentActivity extends Activity {
                             public void onResponse(@NotNull Response<Add_commentMutation.Data> response) {
                                 if (response.data().addComment.success) {
                                     new_comment.getText().clear();
-                                    
+
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
