@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.bumptech.glide.Glide;
 import com.kakao.auth.Session;
 
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +37,7 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import okhttp3.OkHttpClient;
 
@@ -60,7 +63,7 @@ public class HistoryActivity extends Activity {
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
-    private ArrayList<UserPostActivity.ImgUrlThread> threads;
+    private ArrayList<HistoryQueryThread> threads;
     RecyclerView recycler_days;
     RecyclerView recycler_month;
     RecyclerView recycler_months;
@@ -163,6 +166,7 @@ public class HistoryActivity extends Activity {
         histories_days = new ArrayList<>();
         histories_month = new ArrayList<>();
         histories_months = new ArrayList<>();
+        threads = new ArrayList<>();
 
         final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
         final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
@@ -189,19 +193,26 @@ public class HistoryActivity extends Activity {
                     long mins = Duration.between(zdt, now).toMinutes();
 
                     if(days>=1) {
-                        if(days<=7)
+                        if(days<=7) {
                             histories_days.add(new HistoryCard(type_info, String.valueOf(days) + "일"));
-                        else if(days<=30)
+                            threads.add(new HistoryQueryThread(1, i, history_id));
+                        }
+                        else if(days<=30) {
                             histories_month.add(new HistoryCard(type_info, String.valueOf(days) + "일"));
-                        else
+                            threads.add(new HistoryQueryThread(2, i, history_id));
+                        }
+                        else {
                             histories_months.add(new HistoryCard(type_info, String.valueOf(days) + "일"));
+                            threads.add(new HistoryQueryThread(3, i, history_id));
+                        }
                     } else if(hours>=1){
                         histories_days.add(new HistoryCard(type_info, String.valueOf(hours) + "시간"));
+                        threads.add(new HistoryQueryThread(1, i, history_id));
                     } else {
                         histories_days.add(new HistoryCard(type_info, String.valueOf(mins) + "분"));
+                        threads.add(new HistoryQueryThread(1, i, history_id));
                     }
 
-                    Log.e("DEBUG", type_info);
 
                     Thread mThread = new Thread(){
                         @Override
@@ -229,7 +240,10 @@ public class HistoryActivity extends Activity {
                                     }
                                 });
                             } catch(Exception e){
+                            }
 
+                            for(HistoryQueryThread thread : threads){
+                                thread.run();
                             }
                         }
                     };
@@ -246,5 +260,110 @@ public class HistoryActivity extends Activity {
 
     }
 
+    private class HistoryQueryThread implements Runnable {
+        private String profile_url;
+        private String username;
+        private int idx;
+        private int affinity;
+        private int record;
+
+        public HistoryQueryThread(int affinity, int idx, int record){
+            this.affinity = affinity;
+            this.idx = idx;
+            this.record = record;
+        }
+
+        @Override
+        public void run() {
+            getUserInfo();
+        }
+
+        private void getUserInfo(){
+            final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+            final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+            Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+
+            final Get_history_detailMutation g = Get_history_detailMutation.builder().accessToken(Token).record(record).build();
+            apolloClient.mutate(g).enqueue(new ApolloCall.Callback<Get_history_detailMutation.Data>() {
+                @Override
+                public void onResponse(@NotNull Response<Get_history_detailMutation.Data> response) {
+                    if(response.data().getHistoryDetail().success){
+                        profile_url = getString(R.string.media_url) + response.data().getHistoryDetail().profile;
+                        username = response.data().getHistoryDetail().username;
+
+                        try {
+                            addProfileImage();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onFailure(@NotNull ApolloException e) {
+
+                }
+            });
+
+        }
+
+        private void addProfileImage() throws ExecutionException, InterruptedException {
+            Bitmap bitmap = Glide
+                    .with(getApplicationContext())
+                    .asBitmap()
+                    .load(profile_url)
+                    .submit().get();
+
+            switch(affinity){
+                case 1:
+                    histories_days.get(idx).setImg(bitmap);
+                    histories_days.get(idx).setUsername(username);
+                    break;
+                case 2:
+                    histories_month.get(idx).setImg(bitmap);
+                    histories_month.get(idx).setUsername(username);
+                    break;
+                case 3:
+                    histories_months.get(idx).setImg(bitmap);
+                    histories_months.get(idx).setUsername(username);
+                    break;
+            }
+
+            NotifyRunnable runnable = new NotifyRunnable(idx, affinity);
+            runOnUiThread(runnable);
+        }
+    }
+
+    public class NotifyRunnable implements Runnable {
+        private int idx;
+        private int affinity;
+
+        NotifyRunnable(int idx, int affinity){
+            this.idx = idx;
+            this.affinity = affinity;
+        }
+
+        public void run() {
+            switch (affinity){
+                case 1:
+                    if(adapter_days.getItemCount()>=idx)
+                        adapter_days.notifyItemChanged(idx);
+                    break;
+                case 2:
+                    if(adapter_month.getItemCount()>=idx)
+                        adapter_month.notifyItemChanged(idx);
+                    break;
+                case 3:
+                    if(adapter_months.getItemCount()>=idx)
+                        adapter_months.notifyItemChanged(idx);
+                    break;
+            }
+
+        }
+    }
 
 }

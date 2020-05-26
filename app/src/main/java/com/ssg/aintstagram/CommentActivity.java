@@ -150,7 +150,7 @@ public class CommentActivity extends Activity {
                                 public void onCommentClick(final int pos, int choice) {
                                     switch(choice){
                                         case 1:
-                                            Integer parent = comments.get(pos).getParent();
+                                            Integer parent = comments.get(pos).getParent() != null ? comments.get(pos).getParent() : comments.get(pos).getRecord();
                                             new_comment.setOnKeyListener(new ReplyCommentListener(parent));
                                             new_comment.requestFocus();
                                             break;
