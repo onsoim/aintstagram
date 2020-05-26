@@ -190,15 +190,15 @@ public class HistoryActivity extends Activity {
 
                     if(days>=1) {
                         if(days<=7)
-                            histories_days.add(new HistoryCard(type_info, String.valueOf(days) + " 일"));
+                            histories_days.add(new HistoryCard(type_info, String.valueOf(days) + "일"));
                         else if(days<=30)
-                            histories_month.add(new HistoryCard(type_info, String.valueOf(days) + " 일"));
+                            histories_month.add(new HistoryCard(type_info, String.valueOf(days) + "일"));
                         else
-                            histories_months.add(new HistoryCard(type_info, String.valueOf(days) + " 일"));
+                            histories_months.add(new HistoryCard(type_info, String.valueOf(days) + "일"));
                     } else if(hours>=1){
-                        histories_days.add(new HistoryCard(type_info, String.valueOf(hours) + " 시간"));
+                        histories_days.add(new HistoryCard(type_info, String.valueOf(hours) + "시간"));
                     } else {
-                        histories_days.add(new HistoryCard(type_info, String.valueOf(mins) + " 분"));
+                        histories_days.add(new HistoryCard(type_info, String.valueOf(mins) + "분"));
                     }
 
                     Log.e("DEBUG", type_info);

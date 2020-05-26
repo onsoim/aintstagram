@@ -683,6 +683,38 @@ class deactivateHistory(graphene.Mutation):
             return deactivateHistory(success=False)
 
 
+class getHistoryDetail(graphene.Mutation):
+    username = graphene.String()
+    success = graphene.Boolean()
+    profile = graphene.String()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        record = graphene.Int(required=True)
+
+    def mutate(self, info, accessToken, record):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            return deactivateHistory(success=False, username="")
+
+        try:
+            history = HistoryModel.objects.get(user__kakaoID=kakaoID, history_id=record)
+            if history.type == 'L':
+                like = LikeModel.objects.get(like_id=history.record_id)
+                return getHistoryDetail(success=True, username=like.user_from.name, profile=like.user_from.profile)
+            elif history.type == 'F':
+                follow = FollowModel.objects.get(follow_id=history.record_id)
+                return getHistoryDetail(success=True, username=follow.user_from.name, profile=follow.user_from.profile)
+            elif history.type == 'C':
+                comment = CommentModel.objects.get(comment_id=history.record_id)
+                return getHistoryDetail(success=True, username=comment.user.name, profile=comment.user.profile)
+            else:
+                return getHistoryDetail(success=False, username="", profile="")
+        except:
+            return getHistoryDetail(success=False, username="", profile="")
+
+
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     upload_profile = UploadProfile.Field()
@@ -698,6 +730,7 @@ class Mutation(graphene.ObjectType):
     remove_comment = removeComment.Field()
     update_history_seen = updateHistorySeen.Field()
     deactivate_history = deactivateHistory.Field()
+    get_history_detail = getHistoryDetail.Field()
 
 
 schema = graphene.Schema(

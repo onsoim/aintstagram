@@ -53,7 +53,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position){
         holder.imageView.setImageBitmap(cards.get(position).getImg());
-        holder.history.setText(cards.get(position).getTypeInfo()+cards.get(position).getDate());
+        holder.history.setText(cards.get(position).getUsername() + cards.get(position).getText() + " " + cards.get(position).getDate());
     }
 
     @Override

@@ -1,0 +1,7 @@
+mutation get_history_detail($accessToken:String!, $record:Int!){
+    getHistoryDetail (accessToken: $accessToken, record:$record){
+        success
+        username
+        profile
+    }
+}
