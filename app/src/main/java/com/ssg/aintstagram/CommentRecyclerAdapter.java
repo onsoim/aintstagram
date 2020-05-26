@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+
 public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecyclerAdapter.ItemViewHolder>{
     private Context context;
     private ArrayList<Comment> comments;
@@ -57,6 +58,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
                 public void onClick(View v) {
                     switch (v.getId()) {
                         case R.id.add_reply:
+                            // Todo : do new_comment.performClick() when add_reply button is clicked
                             onCommentListener.onCommentClick(getAdapterPosition(), 1);
                             break;
                         case R.id.btn_heart:
