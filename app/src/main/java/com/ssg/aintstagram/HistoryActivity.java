@@ -136,7 +136,7 @@ public class HistoryActivity extends Activity {
     }
 
     void getHistory(){
-        
+
 
     }
 

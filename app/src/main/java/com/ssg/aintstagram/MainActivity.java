@@ -122,6 +122,8 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
+        Intent historyService = new Intent(getApplicationContext(), HistoryService.class);
+        startService(historyService);
     }
 
     @Override
