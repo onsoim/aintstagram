@@ -1,0 +1,5 @@
+mutation add_comment($accessToken:String!, $record:Int!, $text:String!, $parent:Int){
+    addComment (accessToken: $accessToken, record:$record, text:$text, parent:$parent){
+        success
+    }
+}

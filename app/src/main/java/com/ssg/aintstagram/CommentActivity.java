@@ -5,10 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -32,10 +35,12 @@ import java.util.concurrent.ExecutionException;
 
 import okhttp3.OkHttpClient;
 
+
 public class CommentActivity extends Activity {
     Comment post;
     private Button button_to_cancel;
     private ImageButton button_to_sms;
+    private EditText new_comment;
     private RecyclerView v_recycle;
 
     private ArrayList<Comment> comments;
@@ -233,6 +238,7 @@ public class CommentActivity extends Activity {
     public void setBtn() {
         button_to_cancel = (Button) findViewById(R.id.button_to_cancel);
         button_to_sms = (ImageButton) findViewById(R.id.button_to_sms);
+        new_comment = (EditText) findViewById(R.id.new_comment);
 
         View.OnClickListener Listener = new View.OnClickListener() {
             @Override
@@ -249,6 +255,44 @@ public class CommentActivity extends Activity {
 
         button_to_cancel.setOnClickListener(Listener);
         button_to_sms.setOnClickListener(Listener);
+        new_comment.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    String comment = String.valueOf(new_comment.getText());
+                    if (comment.substring(0) != "\n") {
+                        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                        ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+
+                        String Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+                        final Add_commentMutation addComment = Add_commentMutation.builder().accessToken(Token).record(comments.get(0).get_post_id()).text(comment).build();
+
+                        apolloClient.mutate(addComment).enqueue(new ApolloCall.Callback<Add_commentMutation.Data>() {
+                            @Override
+                            public void onResponse(@NotNull Response<Add_commentMutation.Data> response) {
+                                if (response.data().addComment.success == true) {
+//                                    v_recycle.setVisibility(View.GONE);
+//                                    v_recycle.setVisibility(View.VISIBLE);
+                                    new_comment.getText().clear();
+//                                    new_comment.clearFocus();
+                                    InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                                    imm.hideSoftInputFromWindow( new_comment.getWindowToken(), 0);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NotNull ApolloException e) {
+                                e.printStackTrace();
+                                Toast.makeText(getApplicationContext(), "알 수 없는 이유로 실패하였습니다.", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        return true;
+                    }
+                    return false;
+                }
+                return false;
+            }
+        });
     }
 
     private class CommentInfoThread implements Runnable{
