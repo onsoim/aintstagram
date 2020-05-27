@@ -2,6 +2,7 @@ package com.ssg.aintstagram;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -83,21 +84,17 @@ public class FollowerFragment extends Fragment {
                     String comment = response.data().follows().get(i).userFrom().textComment;
                     Integer kakaoID = response.data().follows().get(i).userFrom().kakaoID;
 
+                    Bitmap bitmap = null;
                     try {
-                        Bitmap bitmap = Glide
+                        bitmap = Glide
                                 .with(getActivity())
                                 .asBitmap()
                                 .load(profile_url)
                                 .submit().get();
-
-                        cards.add(new FollowCard(bitmap, name, comment, kakaoID, false));
-
-                    } catch (ExecutionException e) {
-                        cards.add(new FollowCard(name, comment, kakaoID, false));
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    } catch (Exception e) {
+                        bitmap = ((BitmapDrawable)getResources().getDrawable(R.drawable.userinfo)).getBitmap();
                     }
+                    cards.add(new FollowCard(bitmap, name, comment, kakaoID, false));
 
                 }
 

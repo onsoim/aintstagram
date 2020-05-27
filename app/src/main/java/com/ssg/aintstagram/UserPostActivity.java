@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -604,11 +605,16 @@ public class UserPostActivity extends AppCompatActivity{
         }
 
         private void addPostProfileImage(String url) throws ExecutionException, InterruptedException {
-            Bitmap bitmap = Glide
-                    .with(getApplicationContext())
-                    .asBitmap()
-                    .load(url)
-                    .submit().get();
+            Bitmap bitmap = null;
+            try {
+                bitmap = Glide
+                        .with(getApplicationContext())
+                        .asBitmap()
+                        .load(url)
+                        .submit().get();
+            } catch (Exception e) {
+                bitmap = ((BitmapDrawable)getResources().getDrawable(R.drawable.userinfo)).getBitmap();
+            }
 
             posts.get(idx).set_profile_img(bitmap);
 
