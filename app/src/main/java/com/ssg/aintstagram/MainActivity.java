@@ -588,7 +588,7 @@ public class MainActivity extends AppCompatActivity{
         private void addPostProfileImage(String url) throws ExecutionException, InterruptedException {
             Bitmap bitmap = null;
             try {
-                bitmap = bitmap = Glide
+                bitmap = Glide
                         .with(getApplicationContext())
                         .asBitmap()
                         .load(url)
