@@ -110,13 +110,13 @@ public class CommentActivity extends Activity {
                     Integer parent = response.data().comments().get(i).parent;
                     ZonedDateTime zdt = ZonedDateTime.parse(response.data().comments().get(i).date.toString());
                     ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-                    long days = Duration.between(zdt ,now).toDays();
+                    long days = Duration.between(zdt, now).toDays();
                     long hours = Duration.between(zdt, now).toHours();
                     long mins = Duration.between(zdt, now).toMinutes();
                     String timestamp = "";
-                    if(days>=1) {
+                    if (days >= 1) {
                         timestamp = String.valueOf(days) + " 일";
-                    } else if(hours>=1){
+                    } else if (hours >= 1) {
                         timestamp = String.valueOf(hours) + " 시간";
                     } else {
                         timestamp = String.valueOf(mins) + " 분";
@@ -140,96 +140,94 @@ public class CommentActivity extends Activity {
                     if (flag_end) {
                         comments.add(new Comment(postId, record, p_name, textComment, timestamp, parent, url, likeCount));
                     }
-                    threads.add(new CommentInfoThread(i+1));
+                    threads.add(new CommentInfoThread(i + 1));
+                }
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            CommentRecyclerAdapter.OnCommentListener onCommentListener = new CommentRecyclerAdapter.OnCommentListener(){
-                                @Override
-                                public void onCommentClick(final int pos, int choice) {
-                                    switch(choice){
-                                        case 1:
-                                            Integer parent = comments.get(pos).getParent() != null ? comments.get(pos).getParent() : comments.get(pos).getRecord();
-                                            new_comment.setOnKeyListener(new ReplyCommentListener(parent));
-                                            new_comment.requestFocus();
-                                            break;
-                                        case 2:
-                                            final Boolean status = comments.get(pos).get_like_status();
-                                            final int rec = comments.get(pos).getRecord();
-                                            String Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
-                                            final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-                                            final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        CommentRecyclerAdapter.OnCommentListener onCommentListener = new CommentRecyclerAdapter.OnCommentListener(){
+                            @Override
+                            public void onCommentClick(final int pos, int choice) {
+                                switch(choice){
+                                    case 1:
+                                        Integer parent = comments.get(pos).getParent() != null ? comments.get(pos).getParent() : comments.get(pos).getRecord();
+                                        new_comment.setOnKeyListener(new ReplyCommentListener(parent));
+                                        new_comment.requestFocus();
+                                        break;
+                                    case 2:
+                                        final Boolean status = comments.get(pos).get_like_status();
+                                        final int rec = comments.get(pos).getRecord();
+                                        String Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+                                        final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                                        final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
 
-                                            if(status){
-                                                Un_likeMutation q = Un_likeMutation.builder().accessToken(Token).record(rec).typeinfo("C").build();
-                                                apolloClient.mutate(q).enqueue(new ApolloCall.Callback<Un_likeMutation.Data>() {
-                                                    @Override
-                                                    public void onResponse(@NotNull Response<Un_likeMutation.Data> response) {
-                                                        if(response.data().unLike().success){
-                                                            comments.get(pos).set_like_status(false);
-                                                            comments.get(pos).setLikes(response.data().unLike().likes);
-                                                            runOnUiThread(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    comments.get(pos).set_like_status(false);
-                                                                    adapter.notifyItemChanged(pos);
-                                                                }
-                                                            });
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onFailure(@NotNull ApolloException e) {
-
-                                                    }
-                                                });
-                                            } else {
-                                                Add_likeMutation q = Add_likeMutation.builder().accessToken(Token).record(rec).typeinfo("C").build();
-                                                apolloClient.mutate(q).enqueue(new ApolloCall.Callback<Add_likeMutation.Data>() {
-                                                    @Override
-                                                    public void onResponse(@NotNull Response<Add_likeMutation.Data> response) {
-                                                        if(response.data().addLike().success){
-                                                            comments.get(pos).set_like_status(true);
-                                                            comments.get(pos).setLikes(response.data().addLike().likes);
-                                                            runOnUiThread(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    adapter.notifyItemChanged(pos);
-                                                                }
-                                                            });
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onFailure(@NotNull ApolloException e) {
-
-                                                    }
-                                                });
-
-                                            }
-                                            runOnUiThread(new Runnable() {
+                                        if(status){
+                                            Un_likeMutation q = Un_likeMutation.builder().accessToken(Token).record(rec).typeinfo("C").build();
+                                            apolloClient.mutate(q).enqueue(new ApolloCall.Callback<Un_likeMutation.Data>() {
                                                 @Override
-                                                public void run() {
-                                                    adapter.notifyItemChanged(pos);
+                                                public void onResponse(@NotNull Response<Un_likeMutation.Data> response) {
+                                                    if(response.data().unLike().success){
+                                                        comments.get(pos).set_like_status(false);
+                                                        comments.get(pos).setLikes(response.data().unLike().likes);
+                                                        runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                comments.get(pos).set_like_status(false);
+                                                                adapter.notifyItemChanged(pos);
+                                                            }
+                                                        });
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(@NotNull ApolloException e) {
+
                                                 }
                                             });
-                                    }
-                                }
-                            };
-                            adapter = new CommentRecyclerAdapter(comments, getApplicationContext(), onCommentListener);
-                            v_recycle.setAdapter(adapter);
-                        }
-                    });
+                                        } else {
+                                            Add_likeMutation q = Add_likeMutation.builder().accessToken(Token).record(rec).typeinfo("C").build();
+                                            apolloClient.mutate(q).enqueue(new ApolloCall.Callback<Add_likeMutation.Data>() {
+                                                @Override
+                                                public void onResponse(@NotNull Response<Add_likeMutation.Data> response) {
+                                                    if(response.data().addLike().success){
+                                                        comments.get(pos).set_like_status(true);
+                                                        comments.get(pos).setLikes(response.data().addLike().likes);
+                                                        runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                adapter.notifyItemChanged(pos);
+                                                            }
+                                                        });
+                                                    }
+                                                }
 
-                }
+                                                @Override
+                                                public void onFailure(@NotNull ApolloException e) {
+
+                                                }
+                                            });
+
+                                        }
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                adapter.notifyItemChanged(pos);
+                                            }
+                                        });
+                                }
+                            }
+                        };
+                        adapter = new CommentRecyclerAdapter(comments, getApplicationContext(), onCommentListener);
+                        v_recycle.setAdapter(adapter);
+                    }
+                });
 
                 for(CommentInfoThread thread : threads){
                     thread.run();
                 }
-
             }
-
+            
             @Override
             public void onFailure(@NotNull ApolloException e) {
 
