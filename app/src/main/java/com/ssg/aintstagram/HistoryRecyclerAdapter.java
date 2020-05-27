@@ -18,10 +18,12 @@ import java.util.ArrayList;
 public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecyclerAdapter.ItemViewHolder>{
     private Context context;
     private ArrayList<HistoryCard> cards;
+    private OnRemoveListener onRemoveListener;
 
-    public HistoryRecyclerAdapter(ArrayList<HistoryCard> cards, Context context){
+    public HistoryRecyclerAdapter(ArrayList<HistoryCard> cards, Context context, OnRemoveListener onRemoveListener){
         this.cards = cards;
         this.context = context;
+        this.onRemoveListener = onRemoveListener;
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -29,18 +31,33 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         TextView history;
         TextView btn_remove;
 
-        public ItemViewHolder(View itemView){
+        public ItemViewHolder(View itemView, final OnRemoveListener onRemoveListener){
             super(itemView);
 
             imageView = (ImageView) itemView.findViewById(R.id.history_user_profile);
             history = (TextView) itemView.findViewById(R.id.history_info);
             btn_remove = (TextView) itemView.findViewById(R.id.history_remove);
+
+            View.OnClickListener onClickListener = new View.OnClickListener(){
+
+                @Override
+                public void onClick(View v) {
+                    switch(v.getId()){
+                        case R.id.history_remove:
+                            onRemoveListener.onRemoveClick(getAdapterPosition());
+                            break;
+                    }
+                }
+            };
+
+            btn_remove.setOnClickListener(onClickListener);
         }
+
     }
 
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_history_card,parent,false);
-        return new ItemViewHolder(view);
+        return new ItemViewHolder(view, onRemoveListener);
     }
 
     @Override
@@ -62,5 +79,9 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
     public void setItems(ArrayList<HistoryCard> cards){
         this.cards = cards;
+    }
+
+    public interface OnRemoveListener{
+        void onRemoveClick(int pos);
     }
 }

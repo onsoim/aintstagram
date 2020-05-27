@@ -187,8 +187,9 @@ public class HistoryActivity extends Activity {
             @Override
             public void onResponse(@NotNull Response<HistoryTypeQuery.Data> response) {
                 int cnt = response.data().histories().size();
+                int cur = 0;
 
-                for(int i=0; i<cnt; i++){
+                for(int i=0; i<cnt; i++) {
                     int history_id = Integer.parseInt(response.data().histories().get(i).historyId);
                     int record = response.data().histories().get(i).recordId;
                     String type_info = String.valueOf(response.data().histories().get(i).type);
@@ -196,97 +197,144 @@ public class HistoryActivity extends Activity {
                     String dt = response.data().histories().get(i).date.toString();
                     ZonedDateTime zdt = ZonedDateTime.parse(dt);
                     ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-                    long days = Duration.between(zdt ,now).toDays();
+                    long days = Duration.between(zdt, now).toDays();
                     long hours = Duration.between(zdt, now).toHours();
                     long mins = Duration.between(zdt, now).toMinutes();
 
-                    if(days>=1) {
-                        if(days<=7) {
-                            histories_days.add(new HistoryCard(type_info, String.valueOf(days) + "일"));
-                            threads.add(new HistoryQueryThread(1, i, history_id));
+                    if (!isActive) continue;
+
+                    if (days >= 1) {
+                        if (days <= 7) {
+                            histories_days.add(new HistoryCard(history_id, type_info, String.valueOf(days) + "일"));
+                            threads.add(new HistoryQueryThread(1, cur, history_id));
+                        } else if (days <= 30) {
+                            histories_month.add(new HistoryCard(history_id, type_info, String.valueOf(days) + "일"));
+                            threads.add(new HistoryQueryThread(2, cur, history_id));
+                        } else {
+                            histories_months.add(new HistoryCard(history_id, type_info, String.valueOf(days) + "일"));
+                            threads.add(new HistoryQueryThread(3, cur, history_id));
                         }
-                        else if(days<=30) {
-                            histories_month.add(new HistoryCard(type_info, String.valueOf(days) + "일"));
-                            threads.add(new HistoryQueryThread(2, i, history_id));
-                        }
-                        else {
-                            histories_months.add(new HistoryCard(type_info, String.valueOf(days) + "일"));
-                            threads.add(new HistoryQueryThread(3, i, history_id));
-                        }
-                    } else if(hours>=1){
-                        histories_days.add(new HistoryCard(type_info, String.valueOf(hours) + "시간"));
-                        threads.add(new HistoryQueryThread(1, i, history_id));
+                    } else if (hours >= 1) {
+                        histories_days.add(new HistoryCard(history_id, type_info, String.valueOf(hours) + "시간"));
+                        threads.add(new HistoryQueryThread(1, cur, history_id));
                     } else {
-                        histories_days.add(new HistoryCard(type_info, String.valueOf(mins) + "분"));
-                        threads.add(new HistoryQueryThread(1, i, history_id));
+                        histories_days.add(new HistoryCard(history_id, type_info, String.valueOf(mins) + "분"));
+                        threads.add(new HistoryQueryThread(1, cur, history_id));
                     }
 
+                    cur++;
+                }
 
-                    Thread mThread = new Thread(){
-                        @Override
-                        public void run() {
-                            super.run();
-                            try{
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        adapter_days = new HistoryRecyclerAdapter(histories_days, getApplicationContext());
-                                        recycler_days.setAdapter(adapter_days);
 
-                                        adapter_month = new HistoryRecyclerAdapter(histories_month, getApplicationContext());
-                                        recycler_month.setAdapter(adapter_month);
+                Thread mThread = new Thread(){
+                    @Override
+                    public void run() {
+                        super.run();
+                        try{
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    HistoryRecyclerAdapter.OnRemoveListener onRemoveListener_days = new HistoryRecyclerAdapter.OnRemoveListener() {
+                                        @Override
+                                        public void onRemoveClick(int pos) {
+                                            int record = histories_days.get(pos).getRecord();
+                                            removeHistory(record);
+                                        }
+                                    };
 
-                                        adapter_months = new HistoryRecyclerAdapter(histories_months, getApplicationContext());
-                                        recycler_months.setAdapter(adapter_months);
+                                    adapter_days = new HistoryRecyclerAdapter(histories_days, getApplicationContext(), onRemoveListener_days);
+                                    recycler_days.setAdapter(adapter_days);
 
-                                        gestureDetector = new GestureDetector(HistoryActivity.this, new GestureDetector.SimpleOnGestureListener(){
-                                            private static final int SWIPE_THRESHOLD = 100;
-                                            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+                                    HistoryRecyclerAdapter.OnRemoveListener onRemoveListener_month = new HistoryRecyclerAdapter.OnRemoveListener() {
+                                        @Override
+                                        public void onRemoveClick(int pos) {
+                                            int record = histories_month.get(pos).getRecord();
+                                            removeHistory(record);
+                                        }
+                                    };
 
-                                            @Override
-                                            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                                                boolean result = false;
+                                    adapter_month = new HistoryRecyclerAdapter(histories_month, getApplicationContext(), onRemoveListener_month);
+                                    recycler_month.setAdapter(adapter_month);
 
-                                                float diffY = e2.getY() - e1.getY();
-                                                float diffX = e2.getX() - e1.getX();
-                                                if (Math.abs(diffX) > Math.abs(diffY)) {
-                                                    if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                                                        if (diffX > 0) {
-                                                            onSwipeRight();
-                                                        } else {
-                                                            onSwipeLeft();
-                                                        }
+                                    HistoryRecyclerAdapter.OnRemoveListener onRemoveListener_months = new HistoryRecyclerAdapter.OnRemoveListener() {
+                                        @Override
+                                        public void onRemoveClick(int pos) {
+                                            int record = histories_months.get(pos).getRecord();
+                                            removeHistory(record);
+                                        }
+                                    };
+
+                                    adapter_months = new HistoryRecyclerAdapter(histories_months, getApplicationContext(), onRemoveListener_months);
+                                    recycler_months.setAdapter(adapter_months);
+
+                                    gestureDetector = new GestureDetector(HistoryActivity.this, new GestureDetector.SimpleOnGestureListener(){
+                                        private static final int SWIPE_THRESHOLD = 100;
+                                        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+                                        @Override
+                                        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                                            boolean result = false;
+
+                                            float diffY = e2.getY() - e1.getY();
+                                            float diffX = e2.getX() - e1.getX();
+                                            if (Math.abs(diffX) > Math.abs(diffY)) {
+                                                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                                                    if (diffX > 0) {
+                                                        onSwipeRight();
+                                                    } else {
+                                                        onSwipeLeft();
                                                     }
-                                                    result = true;
                                                 }
-                                                return result;
+                                                result = true;
                                             }
+                                            return result;
+                                        }
 
-                                            public void onSwipeRight() {
-                                                isLeft = true;
-                                            }
+                                        public void onSwipeRight() {
+                                            isLeft = true;
+                                        }
 
-                                            public void onSwipeLeft() {
-                                                isLeft = false;
-                                            }
+                                        public void onSwipeLeft() {
+                                            isLeft = false;
+                                        }
 
-                                        });
+                                    });
 
-                                        recycler_days.addOnItemTouchListener(new CustomOnItemTouchListener(1));
-                                        recycler_month.addOnItemTouchListener(new CustomOnItemTouchListener(2));
-                                        recycler_months.addOnItemTouchListener(new CustomOnItemTouchListener(3));
-                                    }
-                                });
-                            } catch(Exception e){
-                            }
-
-                            for(HistoryQueryThread thread : threads){
-                                thread.run();
-                            }
+                                    recycler_days.addOnItemTouchListener(new CustomOnItemTouchListener(1));
+                                    recycler_month.addOnItemTouchListener(new CustomOnItemTouchListener(2));
+                                    recycler_months.addOnItemTouchListener(new CustomOnItemTouchListener(3));
+                                }
+                            });
+                        } catch(Exception e){
                         }
-                    };
 
-                    mThread.start();
+                        for(HistoryQueryThread thread : threads){
+                            thread.run();
+                        }
+                    }
+                };
+
+                mThread.start();
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+
+            }
+        });
+    }
+
+    public void removeHistory(int record){
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+        Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+
+        final Deactivate_historyMutation q = Deactivate_historyMutation.builder().accessToken(Token).record(record).build();
+        apolloClient.mutate(q).enqueue(new ApolloCall.Callback<Deactivate_historyMutation.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<Deactivate_historyMutation.Data> response) {
+                if(response.data().deactivateHistory().success){
+                    getHistory();
                 }
             }
 
@@ -295,7 +343,6 @@ public class HistoryActivity extends Activity {
 
             }
         });
-
     }
 
     private class HistoryQueryThread implements Runnable {
@@ -414,10 +461,11 @@ public class HistoryActivity extends Activity {
         @Override
         public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
             View child = rv.findChildViewUnder(e.getX(), e.getY());
-            RecyclerView.ViewHolder viewHolder = rv.findViewHolderForAdapterPosition(rv.getChildLayoutPosition(child));
-            int pos = viewHolder.getAdapterPosition();
-
             if(child!=null) {
+
+                RecyclerView.ViewHolder viewHolder = rv.findViewHolderForAdapterPosition(rv.getChildLayoutPosition(child));
+                int pos = viewHolder.getAdapterPosition();
+
                 if (gestureDetector.onTouchEvent(e)) {
                     if(affinity == 1){
                         if(histories_days.get(pos).getBtn() && isLeft){

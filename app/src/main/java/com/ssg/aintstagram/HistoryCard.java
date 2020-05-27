@@ -3,6 +3,7 @@ package com.ssg.aintstagram;
 import android.graphics.Bitmap;
 
 public class HistoryCard {
+    private int record;
     private Bitmap img;
     private String type_info;
     private String date;
@@ -10,21 +11,27 @@ public class HistoryCard {
     private String username;
     private Boolean btn;
 
-    public HistoryCard(Bitmap img, String type_info, String date) {
+    public HistoryCard(int record, Bitmap img, String type_info, String date) {
         this.img = img;
         this.type_info = type_info;
         this.date = date;
         this.username = "";
         this.btn = false;
+        this.record = record;
         setText();
     }
 
-    public HistoryCard(String type_info, String date){
+    public HistoryCard(int record, String type_info, String date){
         this.type_info = type_info;
         this.date = date;
         this.username = "";
         this.btn = false;
+        this.record = record;
         setText();
+    }
+
+    public int getRecord() {
+        return record;
     }
 
     public void setBtn(Boolean btn) {
