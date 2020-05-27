@@ -187,7 +187,7 @@ class Query(graphene.ObjectType):
         if kakaoID is None:
             raise GraphQLError("Not permitted")
 
-        histories = HistoryModel.objects.filter(user__kakaoID=kakaoID).order_by("date")
+        histories = HistoryModel.objects.filter(user__kakaoID=kakaoID).order_by("date").reverse()
         return histories
 
 

@@ -2,6 +2,7 @@ package com.ssg.aintstagram;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -11,10 +12,13 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
@@ -57,6 +61,9 @@ public class HistoryActivity extends Activity {
     private ArrayList<HistoryCard> histories_month;
     private ArrayList<HistoryCard> histories_months;
 
+    private GestureDetector gestureDetector;
+    private float x1, x2;
+
     String[] PERMISSIONS = {
             android.Manifest.permission.CAMERA,
             android.Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -64,6 +71,7 @@ public class HistoryActivity extends Activity {
     };
 
     private ArrayList<HistoryQueryThread> threads;
+
     RecyclerView recycler_days;
     RecyclerView recycler_month;
     RecyclerView recycler_months;
@@ -222,21 +230,50 @@ public class HistoryActivity extends Activity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        HistoryRecyclerAdapter.OnCardListener onCardListener = new HistoryRecyclerAdapter.OnCardListener() {
-                                            @Override
-                                            public void onCardClick(int pos) {
-
-                                            }
-                                        };
-
-                                        adapter_days = new HistoryRecyclerAdapter(histories_days, getApplicationContext(), onCardListener);
+                                        adapter_days = new HistoryRecyclerAdapter(histories_days, getApplicationContext());
                                         recycler_days.setAdapter(adapter_days);
 
-                                        adapter_month = new HistoryRecyclerAdapter(histories_month, getApplicationContext(), onCardListener);
+                                        adapter_month = new HistoryRecyclerAdapter(histories_month, getApplicationContext());
                                         recycler_month.setAdapter(adapter_month);
 
-                                        adapter_months = new HistoryRecyclerAdapter(histories_months, getApplicationContext(), onCardListener);
+                                        adapter_months = new HistoryRecyclerAdapter(histories_months, getApplicationContext());
                                         recycler_months.setAdapter(adapter_months);
+
+                                        gestureDetector = new GestureDetector(HistoryActivity.this, new GestureDetector.SimpleOnGestureListener(){
+                                            private static final int SWIPE_THRESHOLD = 100;
+                                            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+                                            @Override
+                                            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                                                boolean result = false;
+
+                                                float diffY = e2.getY() - e1.getY();
+                                                float diffX = e2.getX() - e1.getX();
+                                                if (Math.abs(diffX) > Math.abs(diffY)) {
+                                                    if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                                                        if (diffX > 0) {
+                                                            onSwipeRight();
+                                                        } else {
+                                                            onSwipeLeft();
+                                                            result = true;
+                                                        }
+                                                    }
+                                                }
+                                                return result;
+                                            }
+
+                                            public void onSwipeRight() {
+
+                                            }
+
+                                            public void onSwipeLeft() {
+
+                                            }
+
+                                        });
+
+                                        recycler_days.addOnItemTouchListener(onItemTouchListener);
+
                                     }
                                 });
                             } catch(Exception e){
@@ -366,4 +403,28 @@ public class HistoryActivity extends Activity {
         }
     }
 
+    RecyclerView.OnItemTouchListener onItemTouchListener = new RecyclerView.OnItemTouchListener() {
+
+
+        @Override
+        public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+
+            View child = rv.findChildViewUnder(e.getX(), e.getY());
+
+            if(child!=null && gestureDetector.onTouchEvent(e)) {
+                RecyclerView.ViewHolder viewHolder = rv.findViewHolderForAdapterPosition(rv.getChildLayoutPosition(child));
+                int pos = viewHolder.getAdapterPosition();
+                Log.e("DEBUG", String.valueOf(pos));
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        }
+    };
 }
