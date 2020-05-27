@@ -58,7 +58,6 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
                 public void onClick(View v) {
                     switch (v.getId()) {
                         case R.id.add_reply:
-                            // Todo : do new_comment.performClick() when add_reply button is clicked
                             onCommentListener.onCommentClick(getAdapterPosition(), 1);
                             break;
                         case R.id.btn_heart:
@@ -110,6 +109,12 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
             holder.btn_heart.setImageResource(R.drawable.heartfull);
         } else {
             holder.btn_heart.setImageResource(R.drawable.heart);
+        }
+
+        if (comments.get(position).getLikes() > 0) {
+            holder.likes.setVisibility(View.VISIBLE);
+        } else {
+            holder.likes.setVisibility(View.GONE);
         }
     }
 

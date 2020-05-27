@@ -407,6 +407,9 @@ class addFollow(graphene.Mutation):
             follow = FollowModel(user_from=user_from, user_to=user_to)
             follow.save()
 
+            addHistory = HistoryModel(user=user_to, type='F', record_id=follow.follow_id)
+            addHistory.save()
+
             user_to.follower_count += 1
             user_to.save()
 
@@ -485,6 +488,10 @@ class addLike(graphene.Mutation):
                 like = LikeModel(user_from=user_from, user_to=user_to, type=typeinfo, record_id=record)
                 like.save()
 
+                if user_to.kakaoID != kakaoID:
+                    addHistory = HistoryModel(user=user_to, type='L', record_id=like.like_id)
+                    addHistory.save()
+
                 post.like_count += 1
                 post.save()
 
@@ -501,6 +508,10 @@ class addLike(graphene.Mutation):
 
                 like = LikeModel(user_from=user_from, user_to=user_to, type=typeinfo, record_id=record)
                 like.save()
+
+                if user_to.kakaoID != kakaoID:
+                    addHistory = HistoryModel(user=user_to, type='L', record_id=like.like_id)
+                    addHistory.save()
 
                 comment.like_count += 1
                 comment.save()
@@ -583,20 +594,27 @@ class addComment(graphene.Mutation):
                 return addComment(success=False)
 
             user = UserModel.objects.get(kakaoID=kakaoID)
+            notice_to = UserModel.objects.get(user_id=post.user_id)
 
-            if parent is None:
-                comment = CommentModel(user=user, post_id=record, text_comment=text)
-            else:
+            comment = CommentModel(user=user, post_id=record, text_comment=text)
+
+            if parent:
                 try:
                     parent_comment = CommentModel.objects.get(comment_id=parent)
                     if parent_comment.parent:
                         return addComment(success=False)
+                    notice_to = UserModel.objects.get(user_id=parent_comment.user_id)
 
                 except:
                     return addComment(success=False)
-                comment = CommentModel(user=user, post_id=record, text_comment=text, parent=parent)
+                comment.parent = parent
 
             comment.save()
+            
+            if user.user_id != notice_to.user_id:
+                addHistory = HistoryModel(user=notice_to, type='C', record_id=comment.comment_id)
+                addHistory.save()
+
             post.comment_count += 1
             post.save()
             return addComment(success=True)
