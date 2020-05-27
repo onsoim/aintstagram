@@ -48,9 +48,7 @@
                 android:layout_height="match_parent"
                 android:layout_width="wrap_content"
                 android:background="@android:color/black"
-                android:textColor="@android:color/white"
-                />
-
+                android:textColor="@android:color/white" />
 
             <Button
                 android:layout_weight="1"

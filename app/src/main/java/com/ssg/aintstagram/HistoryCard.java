@@ -8,12 +8,14 @@ public class HistoryCard {
     private String date;
     private String text;
     private String username;
+    private Boolean btn;
 
     public HistoryCard(Bitmap img, String type_info, String date) {
         this.img = img;
         this.type_info = type_info;
         this.date = date;
         this.username = "";
+        this.btn = false;
         setText();
     }
 
@@ -21,7 +23,16 @@ public class HistoryCard {
         this.type_info = type_info;
         this.date = date;
         this.username = "";
+        this.btn = false;
         setText();
+    }
+
+    public void setBtn(Boolean btn) {
+        this.btn = btn;
+    }
+
+    public Boolean getBtn() {
+        return btn;
     }
 
     public Bitmap getImg() {

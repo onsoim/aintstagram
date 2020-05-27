@@ -56,13 +56,13 @@ public class HistoryActivity extends Activity {
     private ImageButton btn_history;
 
     private String Token;
+    private Boolean isLeft;
 
     private ArrayList<HistoryCard> histories_days;
     private ArrayList<HistoryCard> histories_month;
     private ArrayList<HistoryCard> histories_months;
 
     private GestureDetector gestureDetector;
-    private float x1, x2;
 
     String[] PERMISSIONS = {
             android.Manifest.permission.CAMERA,
@@ -255,25 +255,26 @@ public class HistoryActivity extends Activity {
                                                             onSwipeRight();
                                                         } else {
                                                             onSwipeLeft();
-                                                            result = true;
                                                         }
                                                     }
+                                                    result = true;
                                                 }
                                                 return result;
                                             }
 
                                             public void onSwipeRight() {
-
+                                                isLeft = true;
                                             }
 
                                             public void onSwipeLeft() {
-
+                                                isLeft = false;
                                             }
 
                                         });
 
-                                        recycler_days.addOnItemTouchListener(onItemTouchListener);
-
+                                        recycler_days.addOnItemTouchListener(new CustomOnItemTouchListener(1));
+                                        recycler_month.addOnItemTouchListener(new CustomOnItemTouchListener(2));
+                                        recycler_months.addOnItemTouchListener(new CustomOnItemTouchListener(3));
                                     }
                                 });
                             } catch(Exception e){
@@ -403,28 +404,95 @@ public class HistoryActivity extends Activity {
         }
     }
 
-    RecyclerView.OnItemTouchListener onItemTouchListener = new RecyclerView.OnItemTouchListener() {
+    class CustomOnItemTouchListener implements RecyclerView.OnItemTouchListener {
+        int affinity;
 
+        CustomOnItemTouchListener(int affinity){
+            this.affinity = affinity;
+        }
 
         @Override
         public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-
             View child = rv.findChildViewUnder(e.getX(), e.getY());
+            RecyclerView.ViewHolder viewHolder = rv.findViewHolderForAdapterPosition(rv.getChildLayoutPosition(child));
+            int pos = viewHolder.getAdapterPosition();
 
-            if(child!=null && gestureDetector.onTouchEvent(e)) {
-                RecyclerView.ViewHolder viewHolder = rv.findViewHolderForAdapterPosition(rv.getChildLayoutPosition(child));
-                int pos = viewHolder.getAdapterPosition();
-                Log.e("DEBUG", String.valueOf(pos));
+            if(child!=null) {
+                if (gestureDetector.onTouchEvent(e)) {
+                    if(affinity == 1){
+                        if(histories_days.get(pos).getBtn() && isLeft){
+                            histories_days.get(pos).setBtn(false);
+                            ItemChangeRunnable itemChangeRunnable = new ItemChangeRunnable(affinity, pos);
+                            itemChangeRunnable.run();
+                        }
+                        else if(!isLeft){
+                            histories_days.get(pos).setBtn(true);
+                            ItemChangeRunnable itemChangeRunnable = new ItemChangeRunnable(affinity, pos);
+                            itemChangeRunnable.run();
+                        }
+                    } else if (affinity == 2){
+                        if(histories_month.get(pos).getBtn() && isLeft){
+                            histories_month.get(pos).setBtn(false);
+                            ItemChangeRunnable itemChangeRunnable = new ItemChangeRunnable(affinity, pos);
+                            itemChangeRunnable.run();
+                        }
+                        else if(!isLeft){
+                            histories_month.get(pos).setBtn(true);
+                            ItemChangeRunnable itemChangeRunnable = new ItemChangeRunnable(affinity, pos);
+                            itemChangeRunnable.run();
+                        }
+                    } else if (affinity == 3){
+                        if(histories_months.get(pos).getBtn() && isLeft){
+                            histories_months.get(pos).setBtn(false);
+                            ItemChangeRunnable itemChangeRunnable = new ItemChangeRunnable(affinity, pos);
+                            itemChangeRunnable.run();
+                        }
+                        else if(!isLeft){
+                            histories_months.get(pos).setBtn(true);
+                            ItemChangeRunnable itemChangeRunnable = new ItemChangeRunnable(affinity, pos);
+                            itemChangeRunnable.run();
+                        }
+                    }
+                }
             }
             return false;
         }
 
         @Override
         public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+
         }
 
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+        }
+
+        class ItemChangeRunnable implements Runnable{
+            int affinity;
+            int pos;
+
+            ItemChangeRunnable(int affinity, int pos){
+                this.affinity = affinity;
+                this.pos = pos;
+            }
+
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(affinity == 1){
+                            adapter_days.notifyItemChanged(pos);
+                        } else if(affinity == 2){
+                            adapter_month.notifyItemChanged(pos);
+                        } else if(affinity == 3){
+                            adapter_months.notifyItemChanged(pos);
+                        }
+                    }
+                });
+            }
         }
     };
+
 }

@@ -27,12 +27,14 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView history;
+        TextView btn_remove;
 
         public ItemViewHolder(View itemView){
             super(itemView);
 
             imageView = (ImageView) itemView.findViewById(R.id.history_user_profile);
             history = (TextView) itemView.findViewById(R.id.history_info);
+            btn_remove = (TextView) itemView.findViewById(R.id.history_remove);
         }
     }
 
@@ -45,6 +47,12 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position){
         holder.imageView.setImageBitmap(cards.get(position).getImg());
         holder.history.setText(cards.get(position).getUsername() + cards.get(position).getText() + " " + cards.get(position).getDate());
+
+        if(cards.get(position).getBtn()) {
+            holder.btn_remove.setVisibility(View.VISIBLE);
+        } else {
+            holder.btn_remove.setVisibility(View.GONE);
+        }
     }
 
     @Override
