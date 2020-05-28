@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -397,11 +398,16 @@ public class HistoryActivity extends Activity {
         }
 
         private void addProfileImage() throws ExecutionException, InterruptedException {
-            Bitmap bitmap = Glide
-                    .with(getApplicationContext())
-                    .asBitmap()
-                    .load(profile_url)
-                    .submit().get();
+            Bitmap bitmap = null;
+            try {
+                bitmap = Glide
+                        .with(getApplicationContext())
+                        .asBitmap()
+                        .load(profile_url)
+                        .submit().get();
+            } catch (Exception e) {
+                bitmap = ((BitmapDrawable)getResources().getDrawable(R.drawable.userinfo)).getBitmap();
+            }
 
             switch(affinity){
                 case 1:

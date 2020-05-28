@@ -3,6 +3,7 @@ package com.ssg.aintstagram;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -285,11 +286,16 @@ public class CommentActivity extends Activity {
         }
 
         Bitmap getProfile() throws ExecutionException, InterruptedException {
-            final Bitmap bitmap = Glide
-                    .with(getApplicationContext())
-                    .asBitmap()
-                    .load(comments.get(idx).getUrl())
-                    .submit().get();
+            Bitmap bitmap = null;
+            try {
+                bitmap = Glide
+                        .with(getApplicationContext())
+                        .asBitmap()
+                        .load(comments.get(idx).getUrl())
+                        .submit().get();
+            } catch (Exception e) {
+                bitmap = ((BitmapDrawable)getResources().getDrawable(R.drawable.userinfo)).getBitmap();
+            }
 
             return bitmap;
         };

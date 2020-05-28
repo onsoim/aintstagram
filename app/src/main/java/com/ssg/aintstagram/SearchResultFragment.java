@@ -2,6 +2,7 @@ package com.ssg.aintstagram;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -71,20 +72,17 @@ public class SearchResultFragment extends Fragment implements SearchRecyclerAdap
                     String profile_url = getString(R.string.media_url) + response.data().users().get(i).profile;
                     String name =  response.data().users().get(i).name;
                     String comment = response.data().users().get(i).textComment;
+                    Bitmap bitmap = null;
                     try {
-                        Bitmap bitmap = Glide
+                        bitmap = Glide
                                 .with(getActivity())
                                 .asBitmap()
                                 .load(profile_url)
                                 .submit().get();
-
-                        cards.add(new SearchCard(bitmap, name, comment));
-                    } catch (ExecutionException e) {
-                        cards.add(new SearchCard(name, comment));
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    } catch (Exception e) {
+                        bitmap = ((BitmapDrawable)getResources().getDrawable(R.drawable.userinfo)).getBitmap();
                     }
+                    cards.add(new SearchCard(bitmap, name, comment));
                 }
 
                 Thread mThread = new Thread() {
