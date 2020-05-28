@@ -16,7 +16,6 @@
         android:roundIcon="@mipmap/ic_launcher_aintstagram_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".ChatActivity"></activity>
         <activity android:name=".IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,6 +36,8 @@
         <activity android:name=".CommentActivity"/>
         <activity android:name=".UserPostActivity"/>
         <activity android:name=".HistoryActivity"/>
+        <activity android:name=".ChatActivity"></activity>
+        <activity android:name=".MessageActivity"></activity>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.ssg.aintstagram.fileprovider"
