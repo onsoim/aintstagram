@@ -1,0 +1,5 @@
+mutation send_message($accessToken:String!, $username:String!, $chatid:Int!, $msg:String!){
+    sendMessage (accessToken:$accessToken, username:$username, chatid:$chatid, msg:$msg){
+        success
+    }
+}

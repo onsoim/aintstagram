@@ -780,6 +780,141 @@ class getHistoryDetail(graphene.Mutation):
             return getHistoryDetail(success=False, username="", profile="")
 
 
+class createChatroom(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        username = graphene.String(required=True)
+
+    def mutate(self, info, accessToken, username):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            return createChatroom(success=False)
+
+        user_from = UserModel.objects.get(kakaoID=kakaoID)
+        try:
+            user_to = UserModel.objects.get(name=username)
+        except:
+            return createChatroom(success=False)
+
+        if user_from == user_to:
+            return createChatroom(success=False)
+
+        chatrooms = ChatroomModel.objects.filter(user_from=user_from, user_to=user_to)
+        chatrooms |= ChatroomModel.objects.filter(user_to=user_from, user_from=user_to)
+
+        if chatrooms.exists():
+            return createChatroom(success=False)
+
+        chatroom = ChatroomModel(user_from=user_from, user_to=user_to)
+        chatroom.save()
+        return createChatroom(success=True)
+
+
+class leaveChatroom(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        username = graphene.String(required=True)
+
+    def mutate(self, info, accessToken, username):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            return leaveChatroom(success=False)
+
+        user_from = UserModel.objects.get(kakaoID=kakaoID)
+        try:
+            user_to = UserModel.objects.get(name=username)
+        except:
+            return leaveChatroom(success=False)
+
+        if user_from == user_to:
+            return leaveChatroom(success=False)
+
+        try:
+            chatroom = ChatroomModel.objects.get(user_from=user_from, user_to=user_to)
+        except:
+            try:
+                chatroom = ChatroomModel.objects.get(user_to=user_to, user_from=user_from)
+            except:
+                return leaveChatroom(success=False)
+
+        messages = MessageModel.objects.filter(chatroom_id=chatroom.chatroom_id).delete()
+        chatroom.delete()
+        return leaveChatroom(success=True)
+
+
+class sendMessage(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        username = graphene.String(required=True)
+        chatid = graphene.Int(required=True)
+        msg = graphene.String(required=True)
+
+    def mutate(self, info, accessToken, username, chatid, msg):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            return sendMessage(success=False)
+
+        me = UserModel.objects.get(kakaoID=kakaoID)
+        try:
+            you = UserModel.objects.get(name=username)
+        except:
+            return sendMessage(success=False)
+
+        try:
+            chatroom = ChatroomModel.objects.get(chatroom_id=chatid)
+            if chatroom.user_from != me and chatroom.user_to != me:
+                return sendMessage(success=False)
+            if chatroom.user_from != you and chatroom.user_to != you:
+                return sendMessage(success=False)
+        except:
+            return sendMessage(success=False)
+
+        message = MessageModel(sender=me, chatroom_id=chatid, has_seen=False, text_message=msg)
+        message.save()
+        return sendMessage(success=True)
+
+
+class deleteMessage(graphene.Mutation):
+    success = graphene.Boolean()
+
+    class Arguments:
+        accessToken = graphene.String(required=True)
+        chatid = graphene.Int(required=True)
+        record = graphene.Int(required=True)
+
+    def mutate(self, info, accessToken, chatid, record):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            return deleteMessage(success=False)
+
+        me = UserModel.objects.get(kakaoID=kakaoID)
+
+        try:
+            chatroom = ChatroomModel.objects.get(chatroom_id=chatid)
+            if chatroom.user_from != me and chatroom.user_to != me:
+                return deleteMessage(success=False)
+        except:
+            return deleteMessage(success=False)
+
+        try:
+            message = MessageModel.objects.get(sender=me, chatroom_id=chatid, message_id=record)
+        except:
+            return deleteMessage(success=False)
+
+        message.delete()
+        return deleteMessage(True)
+
+
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     upload_profile = UploadProfile.Field()
@@ -796,6 +931,10 @@ class Mutation(graphene.ObjectType):
     update_history_seen = updateHistorySeen.Field()
     deactivate_history = deactivateHistory.Field()
     get_history_detail = getHistoryDetail.Field()
+    create_chatroom = createChatroom.Field()
+    leave_chatroom = leaveChatroom.Field()
+    send_message = sendMessage.Field()
+    deleteMessage = deleteMessage.Field()
 
 
 schema = graphene.Schema(

@@ -1,0 +1,5 @@
+mutation create_chatroom($accessToken:String!, $username:String!){
+    createChatroom (accessToken:$accessToken, username:$username){
+        success
+    }
+}

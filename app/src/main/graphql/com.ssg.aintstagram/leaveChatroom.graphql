@@ -1,0 +1,5 @@
+mutation leave_chatroom($accessToken:String!, $username:String!){
+    leaveChatroom (accessToken:$accessToken, username:$username){
+        success
+    }
+}

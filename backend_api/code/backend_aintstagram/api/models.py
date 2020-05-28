@@ -67,7 +67,7 @@ class MessageModel(models.Model):
     chatroom_id = models.IntegerField(verbose_name="번호")
     date = models.DateTimeField(auto_now_add=True, verbose_name="생성날짜")
     has_seen = models.BooleanField(verbose_name="확인여부", default=False)
-    pic = models.ForeignKey(PictureModel, verbose_name="사진", on_delete=models.CASCADE)
+    pic = models.ForeignKey(PictureModel, blank=True, null=True, verbose_name="사진", on_delete=models.CASCADE)
     text_message = models.CharField(max_length=50, verbose_name="메시지")
 
 

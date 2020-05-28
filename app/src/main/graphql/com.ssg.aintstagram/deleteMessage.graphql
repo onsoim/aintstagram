@@ -1,0 +1,5 @@
+mutation delete_message($accessToken:String!, $chatid:Int!, $record:Int!){
+    deleteMessage (accessToken:$accessToken, chatid:$chatid, record:$record){
+        success
+    }
+}
