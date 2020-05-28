@@ -38,7 +38,7 @@ public class ChatActivity extends AppCompatActivity{
 
     private TextView button_to_cancel;
     private ImageButton new_video_chat;
-    private ImageButton new_message;
+    private ImageButton new_chatroom;
     private TextView button_to_camera;
 
     private ArrayList<Chatroom> chatrooms;
@@ -81,7 +81,7 @@ public class ChatActivity extends AppCompatActivity{
     public void setBtn() {
         button_to_cancel = (TextView) findViewById(R.id.button_to_cancel);
         new_video_chat = (ImageButton) findViewById(R.id.new_video_chat);
-        new_message = (ImageButton) findViewById(R.id.new_message);
+        new_chatroom = (ImageButton) findViewById(R.id.new_chatroom);
         button_to_camera = (TextView) findViewById(R.id.button_to_camera);
 
         View.OnClickListener Listener = new View.OnClickListener() {
@@ -95,7 +95,7 @@ public class ChatActivity extends AppCompatActivity{
                     case R.id.new_video_chat:
                         break;
 
-                    case R.id.new_message:
+                    case R.id.new_chatroom:
                         break;
 
                     case R.id.button_to_camera:
@@ -106,7 +106,7 @@ public class ChatActivity extends AppCompatActivity{
 
         button_to_cancel.setOnClickListener(Listener);
         new_video_chat.setOnClickListener(Listener);
-        new_message.setOnClickListener(Listener);
+        new_chatroom.setOnClickListener(Listener);
         button_to_camera.setOnClickListener(Listener);
     }
 
