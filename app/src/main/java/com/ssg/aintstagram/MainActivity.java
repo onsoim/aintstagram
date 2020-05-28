@@ -51,6 +51,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity{
     private ImageButton btn_profile;
     private ImageButton btn_search;
     private ImageButton btn_history;
+    private ImageButton btn_chat;
     private URI mImageUri;
 
     private ArrayList<Post> posts;
@@ -169,6 +171,7 @@ public class MainActivity extends AppCompatActivity{
         btn_profile = (ImageButton) findViewById(R.id.button_to_info);
         btn_search = (ImageButton) findViewById(R.id.button_to_search);
         btn_history = (ImageButton) findViewById(R.id.button_to_history);
+        btn_chat = (ImageButton) findViewById(R.id.button_to_chat);
 
         View.OnClickListener Listener = new View.OnClickListener() {
             @Override
@@ -229,6 +232,12 @@ public class MainActivity extends AppCompatActivity{
                         historyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(historyIntent);
                         break;
+
+                    case R.id.button_to_chat:
+                        Intent chatIntent = new Intent(MainActivity.this, ChatActivity.class);
+                        chatIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(chatIntent);
+                        break;
                 }
             }
         };
@@ -238,6 +247,7 @@ public class MainActivity extends AppCompatActivity{
         btn_profile.setOnClickListener(Listener);
         btn_search.setOnClickListener(Listener);
         btn_history.setOnClickListener(Listener);
+        btn_chat.setOnClickListener(Listener);
     }
 
     String imageFilePath;

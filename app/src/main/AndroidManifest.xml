@@ -16,6 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_aintstagram_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".ChatActivity"></activity>
         <activity android:name=".IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
