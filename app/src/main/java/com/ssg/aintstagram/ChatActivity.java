@@ -26,11 +26,6 @@ import okhttp3.OkHttpClient;
 
 
 public class ChatActivity extends AppCompatActivity{
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_TAKE_ALBUM = 2;
-    private static final int REQUEST_EDIT_POST = 3;
-    private static final int FAIL_EDIT = 5;
-    private static final int SUCCESS_EDIT = 6;
     private String Token;
 
     RecyclerView v_recycle;
@@ -50,7 +45,7 @@ public class ChatActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        v_recycle = (RecyclerView) findViewById(R.id.recycle_message);
+        v_recycle = (RecyclerView) findViewById(R.id.recycle_chatroom);
 
         this.setBtn();
 
