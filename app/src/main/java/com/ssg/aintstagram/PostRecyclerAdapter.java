@@ -1,11 +1,12 @@
 package com.ssg.aintstagram;
 
 import android.content.Context;
-import android.media.Image;
-import android.util.Log;
+import android.text.Editable;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -14,9 +15,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.w3c.dom.Text;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapter.ItemViewHolder> {
@@ -30,7 +28,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         this.onPostListener = onPostListener;
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder {
         ImageButton btn_edit_post;
         ImageButton btn_heart;
         ImageButton btn_comment;
@@ -69,7 +67,6 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             date = (TextView) itemView.findViewById(R.id.date);
 
             this.onPostListener = onPostListener;
-            itemView.setOnClickListener(this);
 
             View.OnClickListener listener = new View.OnClickListener(){
                 @Override
@@ -100,12 +97,30 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             btn_message.setOnClickListener(listener);
             post_img.setOnClickListener(listener);
             comments.setOnClickListener(listener);
-        }
 
+            viewer_comment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(hasFocus){
+                        viewer_comment.setText("");
+                    }
+                }
+            });
 
-        @Override
-        public void onClick(View v) {
-            onPostListener.onPostClick(getAdapterPosition(), 0);
+            viewer_comment.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                        InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                        onPostListener.onCommentTyped(getAdapterPosition(), viewer_comment.getText());
+                        viewer_comment.setText("댓글 달기...");
+                        viewer_comment.clearFocus();
+                        return true;
+                    }
+                    return false;
+                }
+            });
         }
     }
 
@@ -149,5 +164,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
 
     public interface OnPostListener{
         void onPostClick(int pos, int choice);
+
+        void onCommentTyped(int pos, Editable value);
     }
 }

@@ -28,6 +28,7 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -457,6 +458,12 @@ public class UserPostActivity extends AppCompatActivity{
                                                     throw new IllegalStateException("Unexpected value: " + choice);
                                             }
                                         }
+
+                                        @Override
+                                        public void onCommentTyped(int pos, Editable value) {
+                                            int record = posts.get(pos).get_post_id();
+                                            addComment(record, String.valueOf(value));
+                                        }
                                     };
 
                                     adapter = new PostRecyclerAdapter(posts, getApplicationContext(), onPostListener);
@@ -483,6 +490,33 @@ public class UserPostActivity extends AppCompatActivity{
             }
         });
 
+    }
+
+    public void addComment(int record, String text){
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+        String Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+
+        final Add_commentMutation addComment = Add_commentMutation.builder().accessToken(Token).record(record).text(text).build();
+        apolloClient.mutate(addComment).enqueue(new ApolloCall.Callback<Add_commentMutation.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<Add_commentMutation.Data> response) {
+                if (response.data().addComment.success) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "댓글 작성을 완료하였습니다.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "알 수 없는 이유로 실패하였습니다.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void setUserProfile(){
