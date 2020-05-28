@@ -1,0 +1,12 @@
+query messageType($accessToken:String!, $username:String!){
+    messages (accessToken:$accessToken, username:$username){
+        messageId
+        chatroomId
+        sender{
+            name
+        }
+        date
+        hasSeen
+        textMessage
+    }
+}

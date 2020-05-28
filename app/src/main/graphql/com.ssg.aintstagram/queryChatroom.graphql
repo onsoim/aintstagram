@@ -1,0 +1,13 @@
+query chatroomType($accessToken:String!){
+    chatrooms (accessToken:$accessToken){
+        chatroomId
+        userFrom{
+            name
+            kakaoID
+        }
+        userTo{
+            name
+            kakaoID
+        }
+    }
+}

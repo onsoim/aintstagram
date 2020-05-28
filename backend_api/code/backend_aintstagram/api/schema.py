@@ -42,6 +42,16 @@ class HistoryType(DjangoObjectType):
         model = HistoryModel
 
 
+class ChatroomType(DjangoObjectType):
+    class Meta:
+        model = ChatroomModel
+
+
+class MessageType(DjangoObjectType):
+    class Meta:
+        model = MessageModel
+
+
 class Query(graphene.ObjectType):
     users = graphene.List(UserType,
                           kakaoID=graphene.Int(),
@@ -84,6 +94,16 @@ class Query(graphene.ObjectType):
     histories = graphene.List(HistoryType,
                               accessToken=graphene.String(required=True),
                               )
+
+    chatrooms = graphene.List(ChatroomType,
+                              accessToken=graphene.String(required=True),
+                              )
+
+    messages = graphene.List(MessageType,
+                             accessToken=graphene.String(required=True),
+                             username=graphene.String(required=True),
+                             )
+
 
     def resolve_users(self, info, kakaoID=None, username=None, accessToken=None, search=None):
         query = UserModel.objects.all()
@@ -189,6 +209,33 @@ class Query(graphene.ObjectType):
 
         histories = HistoryModel.objects.filter(user__kakaoID=kakaoID).order_by("date").reverse()
         return histories
+
+    def resolve_chatrooms(self, info, accessToken):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            raise GraphQLError("Not permitted")
+
+        chatrooms = ChatroomModel.objects.filter(user_from__kakaoID=kakaoID)
+        chatrooms |= ChatroomModel.objects.filter(user_to__kakaoID=kakaoID)
+        return chatrooms
+
+    def resolve_messages(self, info, accessToken, username):
+        kakaoID = get_kakaoID(accessToken)
+
+        if kakaoID is None:
+            raise GraphQLError("Not permitted")
+
+        try:
+            chatroom = ChatroomModel.objects.get(user_from__kakaoID=kakaoID, user_to__name=username)
+        except:
+            try:
+                chatroom = ChatroomModel.objects.filter(user_to__kakaoID=kakaoID, user_from__name=username)
+            except:
+                raise GraphQLError("Not permitted")
+
+        messages = MessageModel.objects.filter(chatroom_id=chatroom.chatroom_id)
+        return messages
 
 
 class CreateUser(graphene.Mutation):
