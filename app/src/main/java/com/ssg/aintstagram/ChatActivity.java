@@ -165,6 +165,7 @@ public class ChatActivity extends AppCompatActivity{
                                             case 1:
                                                 Intent chatroomIntent = new Intent(ChatActivity.this, MessageActivity.class);
                                                 chatroomIntent.putExtra("username", chatrooms.get(pos).getName());
+                                                chatroomIntent.putExtra("chatID", chatrooms.get(pos).getChatroomId());
                                                 startActivity(chatroomIntent);
                                                 break;
                                             case 2:
