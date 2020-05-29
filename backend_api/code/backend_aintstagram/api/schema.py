@@ -878,13 +878,10 @@ class sendMessage(graphene.Mutation):
         try:
             chatroom = ChatroomModel.objects.get(chatroom_id=chatid)
             if chatroom.user_from != me and chatroom.user_to != me:
-                print('2')
                 return sendMessage(success=False)
             if chatroom.user_from != you and chatroom.user_to != you:
-                print('3')
                 return sendMessage(success=False)
         except:
-            print('4')
             return sendMessage(success=False)
 
         message = MessageModel(sender=me, chatroom_id=chatid, has_seen=False, text_message=msg)
