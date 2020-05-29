@@ -62,11 +62,8 @@ public class MessageActivity extends AppCompatActivity{
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!v_recycle.canScrollVertically(-1)) {
-                    Log.i("RECYCLERVIEW", "Top of list");
                 } else if (!v_recycle.canScrollVertically(1)) {
-                    Log.i("RECYCLERVIEW", "End of list");
                 } else {
-                    Log.i("RECYCLERVIEW", "idle");
                 }
             }
         });
