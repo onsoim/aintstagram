@@ -16,19 +16,34 @@ import java.util.ArrayList;
 public class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecyclerAdapter.ItemViewHolder> {
     private Context context;
     private ArrayList<Message> messages;
+    private OnMessageListener onMessageListener;
 
-    MessageRecyclerAdapter(ArrayList<Message> messages, Context context){
+    MessageRecyclerAdapter(ArrayList<Message> messages, Context context, OnMessageListener onMessageListener){
         this.messages = messages;
         this.context = context;
+        this.onMessageListener = onMessageListener;
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView message;
+        OnMessageListener onMessageListener;
 
-        public ItemViewHolder(View itemView){
+        public ItemViewHolder(View itemView, final OnMessageListener onMessageListener){
             super(itemView);
 
             message = (TextView) itemView.findViewById(R.id.message);
+
+            this.onMessageListener = onMessageListener;
+
+            View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    onMessageListener.onMessageClick(getAdapterPosition());
+                    return false;
+                }
+            };
+
+            message.setOnLongClickListener(onLongClickListener);
         }
     }
 
@@ -36,7 +51,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecycler
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_message_detail, parent,false);
-        return new ItemViewHolder(view);
+        return new ItemViewHolder(view, onMessageListener);
     }
 
     @Override
@@ -51,5 +66,9 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecycler
     @Override
     public int getItemCount() {
         return messages.size();
+    }
+
+    public interface OnMessageListener {
+        void onMessageClick(int pos);
     }
 }

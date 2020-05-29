@@ -2,15 +2,17 @@ package com.ssg.aintstagram;
 
 
 public class Message {
-    private String name;
+    private int messageID;
     private String text;
     private Boolean mine;
 
-    public Message(String name, String text, Boolean mine) {
-        this.name = name;
+    public Message(int messageID, String text, Boolean mine) {
+        this.messageID = messageID;
         this.text = text;
         this.mine = mine;
     }
+
+    public int getMessageID() { return this.messageID; }
 
     public String getText() {
         return this.text;

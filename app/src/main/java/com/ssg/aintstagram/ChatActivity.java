@@ -154,6 +154,7 @@ public class ChatActivity extends AppCompatActivity{
                                     public void onChatroomClick(int pos) {
                                         Intent chatroomIntent = new Intent(ChatActivity.this, MessageActivity.class);
                                         chatroomIntent.putExtra("username", chatrooms.get(pos).getName());
+                                        chatroomIntent.putExtra("chatID", chatrooms.get(pos).getChatroomId());
                                         startActivity(chatroomIntent);
                                     }
 
