@@ -1,7 +1,5 @@
 package com.ssg.aintstagram;
 
-import android.util.Log;
-
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.FileUpload;

@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,7 +26,6 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -51,7 +49,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
@@ -62,7 +59,6 @@ public class MainActivity extends AppCompatActivity{
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_TAKE_ALBUM = 2;
     private static final int REQUEST_EDIT_POST = 3;
-    private static final int FAIL_EDIT = 5;
     private static final int SUCCESS_EDIT = 6;
     private String Token;
 
@@ -76,7 +72,6 @@ public class MainActivity extends AppCompatActivity{
     private ImageButton btn_search;
     private ImageButton btn_history;
     private ImageButton btn_chat;
-    private URI mImageUri;
 
     private ArrayList<Post> posts;
     private int changed_post_pos;

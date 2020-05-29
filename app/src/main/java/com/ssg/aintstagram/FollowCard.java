@@ -2,15 +2,6 @@ package com.ssg.aintstagram;
 
 import android.graphics.Bitmap;
 
-import com.apollographql.apollo.ApolloCall;
-import com.apollographql.apollo.ApolloClient;
-import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.exception.ApolloException;
-import com.kakao.auth.Session;
-
-import org.jetbrains.annotations.NotNull;
-
-import okhttp3.OkHttpClient;
 
 public class FollowCard {
     private Bitmap img;

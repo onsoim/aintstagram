@@ -1,22 +1,17 @@
 package com.ssg.aintstagram;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
-import com.apollographql.apollo.api.FileUpload;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.bumptech.glide.Glide;
@@ -33,7 +28,6 @@ public class EditPostActivity extends Activity {
     private static final int SUCCESS_EDIT = 6;
     Bitmap bitmap;
     ImageView v_img;
-    String imgpath;
     EditText v_comment;
     EditText v_place;
     int record;

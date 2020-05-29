@@ -114,7 +114,7 @@ public class ChatActivity extends AppCompatActivity{
 
 
     public void getChatrooms(){
-        chatrooms = new ArrayList<Chatroom>();
+        chatrooms = new ArrayList<>();
         imgThreads = new ArrayList<>();
 
         final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
@@ -139,6 +139,8 @@ public class ChatActivity extends AppCompatActivity{
         apolloClient.query(m).enqueue(new ApolloCall.Callback<ChatroomTypeQuery.Data>() {
             @Override
             public void onResponse(@NotNull Response<ChatroomTypeQuery.Data> response) {
+                if(response == null) return;
+
                 int cnt = response.data().chatrooms().size();
 
                 for(int i=0; i<cnt; i++){

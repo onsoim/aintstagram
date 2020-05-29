@@ -210,7 +210,7 @@ class Query(graphene.ObjectType):
         histories = HistoryModel.objects.filter(user__kakaoID=kakaoID).order_by("date").reverse()
         return histories
 
-    def resolve_chatrooms(self, info, accessToken, username):
+    def resolve_chatrooms(self, info, accessToken, username=None):
         kakaoID = get_kakaoID(accessToken)
 
         if kakaoID is None:

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import com.kakao.auth.Session;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import okhttp3.OkHttpClient;
 
@@ -165,38 +163,6 @@ public class FollowerFragment extends Fragment {
         });
     }
 
-    private void setMutuality(){
-        for(int i=0; i<cards.size(); i++){
-            String name = cards.get(i).getName();
-
-            final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-            ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
-            Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
-            final FollowTypeQuery ps = FollowTypeQuery.builder().accessToken(Token).username(name).build();
-            apolloClient.query(ps).enqueue(new ApolloCall.Callback<FollowTypeQuery.Data>() {
-                @Override
-                public void onResponse(@NotNull Response<FollowTypeQuery.Data> response) {
-                    if (response.data().follows().size() >=1){
-                        final Boolean res = true;
-                        mutuality.add(true);
-                    } else {
-                        final Boolean res = false;
-                        mutuality.add(false);
-                    }
-                    if(mutuality.size() == cards.size()){
-                        for(int i=0; i<mutuality.size(); i++){
-                            cards.get(i).setIsMutual(mutuality.get(i));
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(@NotNull ApolloException e) {
-
-                }
-            });
-        }
-    }
 
     public void filterSeq(CharSequence charsequence){
         adapter.getFilter().filter(charsequence);

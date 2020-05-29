@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,12 +15,10 @@ import android.widget.ImageButton;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import static android.view.View.VISIBLE;
 
 public class FollowActivity extends FragmentActivity {
     private static final int REQUEST_TAKE_ALBUM = 2;
@@ -104,7 +101,6 @@ public class FollowActivity extends FragmentActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                // 입력 완료
             }
         });
 
