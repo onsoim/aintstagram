@@ -1,6 +1,7 @@
 package com.ssg.aintstagram;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -39,11 +40,13 @@ import okhttp3.OkHttpClient;
 
 
 public class CommentActivity extends Activity {
-    Comment post;
+    private Comment post;
+    private Boolean myPost;
     private Button button_to_cancel;
     private ImageButton button_to_sms;
     private EditText new_comment;
     private RecyclerView v_recycle;
+    private String Token;
 
     private ArrayList<Comment> comments;
     private ArrayList<CommentInfoThread> threads;
@@ -54,6 +57,8 @@ public class CommentActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
 
+        Token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+
         if(savedInstanceState == null){
             Bundle extras = getIntent().getExtras();
             if(extras == null){
@@ -63,6 +68,7 @@ public class CommentActivity extends Activity {
                 Bitmap img = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 post = new Comment(extras.getInt("p_post_id"), -1, img, extras.getString("p_name"), extras.getString("p_comment"), extras.getString("p_date"), null, null, 0);
                 post.set_mine(true);
+                myPost = extras.getBoolean("p_mine");
             }
         }
 
@@ -251,6 +257,8 @@ public class CommentActivity extends Activity {
                         finish();
                         break;
                     case R.id.button_to_sms:
+                        if(myPost) break;
+                        moveToChatroom(post.getName());
                         break;
                 }
             }
@@ -409,4 +417,61 @@ public class CommentActivity extends Activity {
             return false;
         }
     }
+
+    private void moveToChatroom(final String username){
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+
+        ChatroomTypeQuery q = ChatroomTypeQuery.builder().accessToken(Token).username(username).build();
+        apolloClient.query(q).enqueue(new ApolloCall.Callback<ChatroomTypeQuery.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<ChatroomTypeQuery.Data> response) {
+                if(response.data().chatrooms().size() == 0){
+                    createChatroom(username);
+                }
+                else {
+                    gotoChatroom(username);
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+
+            }
+        });
+    }
+
+    private void createChatroom(final String username){
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+
+        Create_chatroomMutation q = Create_chatroomMutation.builder().accessToken(Token).username(username).build();
+        apolloClient.mutate(q).enqueue(new ApolloCall.Callback<Create_chatroomMutation.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<Create_chatroomMutation.Data> response) {
+                if(response.data().createChatroom.success){
+                    gotoChatroom(username);
+                }
+                else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+
+            }
+        });
+    }
+
+    private void gotoChatroom(final String username){
+        Intent chatroomIntent = new Intent(CommentActivity.this, MessageActivity.class);
+        chatroomIntent.putExtra("username", username);
+        startActivity(chatroomIntent);
+    };
 }

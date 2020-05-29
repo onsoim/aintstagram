@@ -1,5 +1,5 @@
-query chatroomType($accessToken:String!){
-    chatrooms (accessToken:$accessToken){
+query chatroomType($accessToken:String!, $username:String){
+    chatrooms (accessToken:$accessToken, username:$username){
         chatroomId
         userFrom{
             name

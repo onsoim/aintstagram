@@ -97,6 +97,7 @@ class Query(graphene.ObjectType):
 
     chatrooms = graphene.List(ChatroomType,
                               accessToken=graphene.String(required=True),
+                              username=graphene.String(),
                               )
 
     messages = graphene.List(MessageType,
@@ -209,11 +210,16 @@ class Query(graphene.ObjectType):
         histories = HistoryModel.objects.filter(user__kakaoID=kakaoID).order_by("date").reverse()
         return histories
 
-    def resolve_chatrooms(self, info, accessToken):
+    def resolve_chatrooms(self, info, accessToken, username):
         kakaoID = get_kakaoID(accessToken)
 
         if kakaoID is None:
             raise GraphQLError("Not permitted")
+
+        if username:
+            chatrooms = ChatroomModel.objects.filter(user_from__kakaoID=kakaoID, user_to__name=username)
+            chatrooms |= ChatroomModel.objects.filter(user_to__kakaoID=kakaoID, user_from__name=username)
+            return chatrooms
 
         chatrooms = ChatroomModel.objects.filter(user_from__kakaoID=kakaoID)
         chatrooms |= ChatroomModel.objects.filter(user_to__kakaoID=kakaoID)

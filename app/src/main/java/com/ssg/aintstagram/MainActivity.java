@@ -443,9 +443,15 @@ public class MainActivity extends AppCompatActivity{
                                                     commentIntent.putExtra("p_comment", posts.get(pos).get_text_comment());
                                                     commentIntent.putExtra("p_date", posts.get(pos).getDate());
                                                     commentIntent.putExtra("p_post_id", posts.get(pos).get_post_id());
+                                                    commentIntent.putExtra("p_mine", posts.get(pos).getMine());
                                                     startActivity(commentIntent);
                                                     break;
                                                 case 4:
+                                                    if(posts.get(pos).getMine()) break;
+                                                    String username = posts.get(pos).getName();
+                                                    Log.e("DEBUG", "NOT MINE");
+                                                    moveToChatroom(username);
+
                                                     break;
                                                 case 5:
                                                     break;
@@ -718,5 +724,63 @@ public class MainActivity extends AppCompatActivity{
                 adapter.notifyItemChanged(idx);
         }
     }
+
+    private void moveToChatroom(final String username){
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+
+        ChatroomTypeQuery q = ChatroomTypeQuery.builder().accessToken(Token).username(username).build();
+        apolloClient.query(q).enqueue(new ApolloCall.Callback<ChatroomTypeQuery.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<ChatroomTypeQuery.Data> response) {
+                if(response.data().chatrooms().size() == 0){
+                    createChatroom(username);
+                }
+                else {
+                    gotoChatroom(username);
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+
+            }
+        });
+    }
+
+    private void createChatroom(final String username){
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+
+        Create_chatroomMutation q = Create_chatroomMutation.builder().accessToken(Token).username(username).build();
+        apolloClient.mutate(q).enqueue(new ApolloCall.Callback<Create_chatroomMutation.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<Create_chatroomMutation.Data> response) {
+                if(response.data().createChatroom.success){
+                    gotoChatroom(username);
+                }
+                else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+
+            }
+        });
+    }
+
+    private void gotoChatroom(final String username){
+        Intent chatroomIntent = new Intent(MainActivity.this, MessageActivity.class);
+        chatroomIntent.putExtra("username", username);
+        startActivity(chatroomIntent);
+    };
+
 }
 
