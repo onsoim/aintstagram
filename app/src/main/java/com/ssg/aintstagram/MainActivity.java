@@ -539,7 +539,7 @@ public class MainActivity extends AppCompatActivity{
                                 public void run(){
                                     for(int idx=0; idx<posts.size(); idx++) {
                                         posts.get(idx).set_comment_img(bitmap);
-                                        adapter.notifyItemChanged(idx);
+                                        if(adapter != null) adapter.notifyItemChanged(idx);
                                     }
                                 }
                             });

@@ -116,7 +116,6 @@ public class MessageActivity extends AppCompatActivity{
                 for(int i = 0; i < cnt; i++){
                     String name = response.data().messages().get(i).sender().name;
                     String textMessage = response.data().messages().get(i).textMessage;
-                    Log.d("Onsoim", String.valueOf(username.length() + " " + name.length()));
                     messages.add(new Message(name, textMessage, username.equals(name)));
                 }
 

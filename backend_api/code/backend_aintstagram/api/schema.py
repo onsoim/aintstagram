@@ -104,7 +104,6 @@ class Query(graphene.ObjectType):
                              username=graphene.String(required=True),
                              )
 
-
     def resolve_users(self, info, kakaoID=None, username=None, accessToken=None, search=None):
         query = UserModel.objects.all()
 
@@ -230,7 +229,7 @@ class Query(graphene.ObjectType):
             chatroom = ChatroomModel.objects.get(user_from__kakaoID=kakaoID, user_to__name=username)
         except:
             try:
-                chatroom = ChatroomModel.objects.filter(user_to__kakaoID=kakaoID, user_from__name=username)
+                chatroom = ChatroomModel.objects.get(user_to__kakaoID=kakaoID, user_from__name=username)
             except:
                 raise GraphQLError("Not permitted")
 
@@ -657,7 +656,7 @@ class addComment(graphene.Mutation):
                 comment.parent = parent
 
             comment.save()
-            
+
             if user.user_id != notice_to.user_id:
                 addHistory = HistoryModel(user=notice_to, type='C', record_id=comment.comment_id)
                 addHistory.save()
@@ -839,7 +838,7 @@ class leaveChatroom(graphene.Mutation):
             chatroom = ChatroomModel.objects.get(user_from=user_from, user_to=user_to)
         except:
             try:
-                chatroom = ChatroomModel.objects.get(user_to=user_to, user_from=user_from)
+                chatroom = ChatroomModel.objects.get(user_from=user_to, user_to=user_from)
             except:
                 return leaveChatroom(success=False)
 

@@ -44,13 +44,23 @@ public class ChatroomRecyclerAdapter extends RecyclerView.Adapter<ChatroomRecycl
                 public void onClick(View v) {
                     switch (v.getId()){
                         case R.id.btn_user:
-                            onChatroomListener.onChatroomClick(getAdapterPosition());
+                            onChatroomListener.onChatroomClick(getAdapterPosition(), 1);
                             break;
                     }
                 }
             };
 
+            View.OnLongClickListener longClickListener = new View.OnLongClickListener(){
+                @Override
+                public boolean onLongClick(View v) {
+                    onChatroomListener.onChatroomClick(getAdapterPosition(), 2);
+                    return false;
+                }
+            };
+
             btn_user.setOnClickListener(listener);
+            btn_user.setOnLongClickListener(longClickListener);
+
         }
     }
 
@@ -64,8 +74,9 @@ public class ChatroomRecyclerAdapter extends RecyclerView.Adapter<ChatroomRecycl
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-//        holder.btn_user.setCompoundDrawablesRelativeWithIntrinsicBounds(new BitmapDrawable(chatrooms.get(position).getProfile()), null, null, null);
         holder.btn_user.setText(chatrooms.get(position).getName());
+        BitmapDrawable drawableLeft = new BitmapDrawable(chatrooms.get(position).getImg());
+        holder.btn_user.setCompoundDrawablesWithIntrinsicBounds(drawableLeft, null, null, null);
     }
 
     @Override
@@ -74,6 +85,6 @@ public class ChatroomRecyclerAdapter extends RecyclerView.Adapter<ChatroomRecycl
     }
 
     public interface OnChatroomListener{
-        void onChatroomClick(int pos);
+        void onChatroomClick(int pos, int choice);
     }
 }
