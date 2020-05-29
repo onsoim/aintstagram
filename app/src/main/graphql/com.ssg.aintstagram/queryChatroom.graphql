@@ -4,10 +4,12 @@ query chatroomType($accessToken:String!){
         userFrom{
             name
             kakaoID
+            profile
         }
         userTo{
             name
             kakaoID
+            profile
         }
     }
 }
