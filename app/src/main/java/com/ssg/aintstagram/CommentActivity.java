@@ -429,7 +429,7 @@ public class CommentActivity extends Activity {
                     createChatroom(username);
                 }
                 else {
-                    gotoChatroom(username);
+                    gotoChatroom(username, Integer.parseInt(response.data().chatrooms().get(0).chatroomId));
                 }
             }
 
@@ -449,7 +449,7 @@ public class CommentActivity extends Activity {
             @Override
             public void onResponse(@NotNull Response<Create_chatroomMutation.Data> response) {
                 if(response.data().createChatroom.success){
-                    gotoChatroom(username);
+                    gotoChatroom(username, response.data().createChatroom.id);
                 }
                 else{
                     runOnUiThread(new Runnable() {
@@ -468,9 +468,10 @@ public class CommentActivity extends Activity {
         });
     }
 
-    private void gotoChatroom(final String username){
+    private void gotoChatroom(final String username, int id){
         Intent chatroomIntent = new Intent(CommentActivity.this, MessageActivity.class);
         chatroomIntent.putExtra("username", username);
+        chatroomIntent.putExtra("chatID", id);
         startActivity(chatroomIntent);
     };
 }

@@ -787,6 +787,7 @@ class getHistoryDetail(graphene.Mutation):
 
 class createChatroom(graphene.Mutation):
     success = graphene.Boolean()
+    id = graphene.Int()
 
     class Arguments:
         accessToken = graphene.String(required=True)
@@ -796,26 +797,26 @@ class createChatroom(graphene.Mutation):
         kakaoID = get_kakaoID(accessToken)
 
         if kakaoID is None:
-            return createChatroom(success=False)
+            return createChatroom(success=False, id=-1)
 
         user_from = UserModel.objects.get(kakaoID=kakaoID)
         try:
             user_to = UserModel.objects.get(name=username)
         except:
-            return createChatroom(success=False)
+            return createChatroom(success=False, id=-1)
 
         if user_from == user_to:
-            return createChatroom(success=False)
+            return createChatroom(success=False, id=-1)
 
         chatrooms = ChatroomModel.objects.filter(user_from=user_from, user_to=user_to)
         chatrooms |= ChatroomModel.objects.filter(user_to=user_from, user_from=user_to)
 
         if chatrooms.exists():
-            return createChatroom(success=False)
+            return createChatroom(success=False, id=-1)
 
         chatroom = ChatroomModel(user_from=user_from, user_to=user_to)
         chatroom.save()
-        return createChatroom(success=True)
+        return createChatroom(success=True, id=chatroom.chatroom_id)
 
 
 class leaveChatroom(graphene.Mutation):
@@ -877,10 +878,13 @@ class sendMessage(graphene.Mutation):
         try:
             chatroom = ChatroomModel.objects.get(chatroom_id=chatid)
             if chatroom.user_from != me and chatroom.user_to != me:
+                print('2')
                 return sendMessage(success=False)
             if chatroom.user_from != you and chatroom.user_to != you:
+                print('3')
                 return sendMessage(success=False)
         except:
+            print('4')
             return sendMessage(success=False)
 
         message = MessageModel(sender=me, chatroom_id=chatid, has_seen=False, text_message=msg)
