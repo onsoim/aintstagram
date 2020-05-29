@@ -14,12 +14,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.apollographql.apollo.ApolloClient;
-import com.kakao.auth.Session;
-
 import java.util.ArrayList;
 
-import okhttp3.OkHttpClient;
 
 public class FollowerRecyclerAdapter extends RecyclerView.Adapter<FollowerRecyclerAdapter.ItemViewHolder> implements Filterable {
     private Context context;

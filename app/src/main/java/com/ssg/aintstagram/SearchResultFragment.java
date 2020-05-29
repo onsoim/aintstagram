@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,6 @@ import com.kakao.auth.Session;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import okhttp3.OkHttpClient;
 
@@ -33,7 +31,6 @@ public class SearchResultFragment extends Fragment implements SearchRecyclerAdap
     RecyclerView v_recycle;
     private SearchRecyclerAdapter adapter;
     private ArrayList<SearchCard> cards = new ArrayList<>();
-    private SearchRecyclerAdapter.OnCardListener onCardListener;
     private String Token;
     private int cnt;
 

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,14 +26,12 @@ import com.kakao.auth.Session;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import okhttp3.OkHttpClient;
 
 public class FollowingFragment extends Fragment {
     private FollowingRecyclerAdapter adapter;
     private ArrayList<FollowCard> cards = new ArrayList<>();
-    private ArrayList<Boolean> mutuality = new ArrayList<>();
 
     RecyclerView v_recycle;
     private String Token;

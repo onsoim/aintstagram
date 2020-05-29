@@ -97,13 +97,13 @@ class Query(graphene.ObjectType):
 
     chatrooms = graphene.List(ChatroomType,
                               accessToken=graphene.String(required=True),
+                              username=graphene.String(),
                               )
 
     messages = graphene.List(MessageType,
                              accessToken=graphene.String(required=True),
                              username=graphene.String(required=True),
                              )
-
 
     def resolve_users(self, info, kakaoID=None, username=None, accessToken=None, search=None):
         query = UserModel.objects.all()
@@ -210,11 +210,16 @@ class Query(graphene.ObjectType):
         histories = HistoryModel.objects.filter(user__kakaoID=kakaoID).order_by("date").reverse()
         return histories
 
-    def resolve_chatrooms(self, info, accessToken):
+    def resolve_chatrooms(self, info, accessToken, username=None):
         kakaoID = get_kakaoID(accessToken)
 
         if kakaoID is None:
             raise GraphQLError("Not permitted")
+
+        if username:
+            chatrooms = ChatroomModel.objects.filter(user_from__kakaoID=kakaoID, user_to__name=username)
+            chatrooms |= ChatroomModel.objects.filter(user_to__kakaoID=kakaoID, user_from__name=username)
+            return chatrooms
 
         chatrooms = ChatroomModel.objects.filter(user_from__kakaoID=kakaoID)
         chatrooms |= ChatroomModel.objects.filter(user_to__kakaoID=kakaoID)
@@ -230,7 +235,7 @@ class Query(graphene.ObjectType):
             chatroom = ChatroomModel.objects.get(user_from__kakaoID=kakaoID, user_to__name=username)
         except:
             try:
-                chatroom = ChatroomModel.objects.filter(user_to__kakaoID=kakaoID, user_from__name=username)
+                chatroom = ChatroomModel.objects.get(user_to__kakaoID=kakaoID, user_from__name=username)
             except:
                 raise GraphQLError("Not permitted")
 
@@ -657,7 +662,7 @@ class addComment(graphene.Mutation):
                 comment.parent = parent
 
             comment.save()
-            
+
             if user.user_id != notice_to.user_id:
                 addHistory = HistoryModel(user=notice_to, type='C', record_id=comment.comment_id)
                 addHistory.save()
@@ -839,7 +844,7 @@ class leaveChatroom(graphene.Mutation):
             chatroom = ChatroomModel.objects.get(user_from=user_from, user_to=user_to)
         except:
             try:
-                chatroom = ChatroomModel.objects.get(user_to=user_to, user_from=user_from)
+                chatroom = ChatroomModel.objects.get(user_from=user_to, user_to=user_from)
             except:
                 return leaveChatroom(success=False)
 

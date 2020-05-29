@@ -5,6 +5,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecycler
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView message;
         OnMessageListener onMessageListener;
+        LinearLayout message_side;
 
         public ItemViewHolder(View itemView, final OnMessageListener onMessageListener){
             super(itemView);
@@ -44,6 +46,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecycler
             };
 
             message.setOnLongClickListener(onLongClickListener);
+            message_side = (LinearLayout) itemView.findViewById(R.id.message_side);
         }
     }
 
@@ -59,7 +62,8 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<MessageRecycler
         holder.message.setText(messages.get(position).getText());
 
         if (messages.get(position).getMine()) {
-            holder.message.setGravity(Gravity.LEFT);
+            holder.message_side.setGravity(Gravity.LEFT);
+            holder.message.setBackgroundColor(R.color.skyblue);
         }
     }
 

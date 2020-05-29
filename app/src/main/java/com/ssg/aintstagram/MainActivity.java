@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,7 +26,6 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -51,7 +49,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
@@ -62,7 +59,6 @@ public class MainActivity extends AppCompatActivity{
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_TAKE_ALBUM = 2;
     private static final int REQUEST_EDIT_POST = 3;
-    private static final int FAIL_EDIT = 5;
     private static final int SUCCESS_EDIT = 6;
     private String Token;
 
@@ -76,7 +72,6 @@ public class MainActivity extends AppCompatActivity{
     private ImageButton btn_search;
     private ImageButton btn_history;
     private ImageButton btn_chat;
-    private URI mImageUri;
 
     private ArrayList<Post> posts;
     private int changed_post_pos;
@@ -107,11 +102,8 @@ public class MainActivity extends AppCompatActivity{
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!v_recycle.canScrollVertically(-1)) {
-                    Log.i("RECYCLERVIEW", "Top of list");
                 } else if (!v_recycle.canScrollVertically(1)) {
-                    Log.i("RECYCLERVIEW", "End of list");
                 } else {
-                    Log.i("RECYCLERVIEW", "idle");
                 }
             }
         });
@@ -443,9 +435,14 @@ public class MainActivity extends AppCompatActivity{
                                                     commentIntent.putExtra("p_comment", posts.get(pos).get_text_comment());
                                                     commentIntent.putExtra("p_date", posts.get(pos).getDate());
                                                     commentIntent.putExtra("p_post_id", posts.get(pos).get_post_id());
+                                                    commentIntent.putExtra("p_mine", posts.get(pos).getMine());
                                                     startActivity(commentIntent);
                                                     break;
                                                 case 4:
+                                                    if(posts.get(pos).getMine()) break;
+                                                    String username = posts.get(pos).getName();
+                                                    moveToChatroom(username);
+
                                                     break;
                                                 case 5:
                                                     break;
@@ -539,7 +536,7 @@ public class MainActivity extends AppCompatActivity{
                                 public void run(){
                                     for(int idx=0; idx<posts.size(); idx++) {
                                         posts.get(idx).set_comment_img(bitmap);
-                                        adapter.notifyItemChanged(idx);
+                                        if(adapter != null) adapter.notifyItemChanged(idx);
                                     }
                                 }
                             });
@@ -718,5 +715,63 @@ public class MainActivity extends AppCompatActivity{
                 adapter.notifyItemChanged(idx);
         }
     }
+
+    private void moveToChatroom(final String username){
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+
+        ChatroomTypeQuery q = ChatroomTypeQuery.builder().accessToken(Token).username(username).build();
+        apolloClient.query(q).enqueue(new ApolloCall.Callback<ChatroomTypeQuery.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<ChatroomTypeQuery.Data> response) {
+                if(response.data().chatrooms().size() == 0){
+                    createChatroom(username);
+                }
+                else {
+                    gotoChatroom(username);
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+
+            }
+        });
+    }
+
+    private void createChatroom(final String username){
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        final ApolloClient apolloClient = ApolloClient.builder().serverUrl(getString(R.string.api_url)).okHttpClient(okHttpClient).build();
+
+        Create_chatroomMutation q = Create_chatroomMutation.builder().accessToken(Token).username(username).build();
+        apolloClient.mutate(q).enqueue(new ApolloCall.Callback<Create_chatroomMutation.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<Create_chatroomMutation.Data> response) {
+                if(response.data().createChatroom.success){
+                    gotoChatroom(username);
+                }
+                else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+
+            }
+        });
+    }
+
+    private void gotoChatroom(final String username){
+        Intent chatroomIntent = new Intent(MainActivity.this, MessageActivity.class);
+        chatroomIntent.putExtra("username", username);
+        startActivity(chatroomIntent);
+    };
+
 }
 

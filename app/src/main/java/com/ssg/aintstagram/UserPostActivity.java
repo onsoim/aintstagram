@@ -25,7 +25,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcelable;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -33,12 +32,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
-import com.apollographql.apollo.api.FileUpload;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.bumptech.glide.Glide;
@@ -50,16 +47,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -72,7 +64,6 @@ public class UserPostActivity extends AppCompatActivity{
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_TAKE_ALBUM = 2;
     private static final int REQUEST_EDIT_POST = 3;
-    private static final int FAIL_EDIT = 5;
     private static final int SUCCESS_EDIT = 6;
     private String Token;
 
@@ -84,7 +75,6 @@ public class UserPostActivity extends AppCompatActivity{
     private ImageButton btn_profile;
     private ImageButton btn_search;
     private ImageButton btn_history;
-    private URI mImageUri;
 
     private ArrayList<Post> posts;
     private int changed_post_pos;
@@ -136,11 +126,8 @@ public class UserPostActivity extends AppCompatActivity{
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!v_recycle.canScrollVertically(-1)) {
-                    Log.i("RECYCLERVIEW", "Top of list");
                 } else if (!v_recycle.canScrollVertically(1)) {
-                    Log.i("RECYCLERVIEW", "End of list");
                 } else {
-                    Log.i("RECYCLERVIEW", "idle");
                 }
             }
         });

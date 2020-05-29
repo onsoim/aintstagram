@@ -1,7 +1,10 @@
 package com.ssg.aintstagram;
 
 
+import android.graphics.Bitmap;
+
 public class Chatroom {
+    private Bitmap img;
     private int chatroomId;
     private String name;
     private int kakaoID;
@@ -21,4 +24,12 @@ public class Chatroom {
     public String getName() { return name; }
 
     public String getProfile() { return profile; }
+
+    public void setImg(Bitmap img) {
+        this.img = img;
+    }
+
+    public Bitmap getImg() {
+        return img;
+    }
 }

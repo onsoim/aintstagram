@@ -47,7 +47,6 @@
         app:layout_constraintBottom_toBottomOf="@id/guideline_top"
         app:layout_constraintLeft_toRightOf="@id/button_to_cancel"
         android:layout_marginLeft="10dp"
-        android:text="Onsoim"
         android:textAllCaps="false"
         android:textSize="20dp"
         android:textColor="@color/white"

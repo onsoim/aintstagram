@@ -16,7 +16,6 @@ public class SearchRecyclerAdapter extends RecyclerView.Adapter<SearchRecyclerAd
     private Context context;
     private ArrayList<SearchCard> cards;
     private OnCardListener onCardListener;
-    private int lastPosition = -1;
 
     public SearchRecyclerAdapter(ArrayList<SearchCard> cards, Context context, OnCardListener onCardListener){
         this.cards = cards;

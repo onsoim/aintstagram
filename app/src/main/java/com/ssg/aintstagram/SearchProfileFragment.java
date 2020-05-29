@@ -2,13 +2,10 @@ package com.ssg.aintstagram;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,11 +23,6 @@ import com.kakao.auth.Session;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -42,7 +34,6 @@ public class SearchProfileFragment extends Fragment implements ProfileRecyclerAd
     private ArrayList<Album> albums = new ArrayList<>();
     private ArrayList<String> album_urls = new ArrayList<>();
     private ArrayList<Integer> records = new ArrayList<>();
-    private ProfileRecyclerAdapter.OnPostListener onPostListener;
     private String Token;
     private String name;
     private int cnt;
